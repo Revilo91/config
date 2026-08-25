@@ -1,39 +1,37 @@
 exclude:
   domains:
-    - automation
-    - device_tracker
-    - persistent_notification
-    - script
-    - update
-    - button
-    - sun
-    - weather
+  - automation
+  - device_tracker
+  - persistent_notification
+  - script
+  - update
+  - button
 
   event_types:
-    - automation_triggered
-    - call_service
-    - component_loaded
-    - feedreader
-    - homeassistant_start
-    - homeassistant_stop
-    - logbook_entry
-    - platform_discovered
-    - script_started
-    - service_executed
-    - service_registered
-    - service_removed
-    - system_log_event
-    - timer_out_of_sync
+  - automation_triggered
+  - call_service
+  - component_loaded
+  - feedreader
+  - homeassistant_start
+  - homeassistant_stop
+  - logbook_entry
+  - platform_discovered
+  - script_started
+  - service_executed
+  - service_registered
+  - service_removed
+  - system_log_event
+  - timer_out_of_sync
 
   entity_globs:
-    - "sensor.ebusd_*"
-    - "number.ebusd_*"
-    - "select.ebusd_*"
-    - "text.ebusd_*"
-    - "binary_sensor.ebusd_*"
-    - "sensor.pixel_8a*"
-    - "sensor.pixel_9a*"
-    - "sensor.pixel_watch_4*"
-    - "binary_sensor.pixel_8a*"
-    - "binary_sensor.pixel_9a*"
-    - "binary_sensor.pixel_watch_4*"
+  - "sensor.ebusd_*"
+  - "number.ebusd_*"
+  - "select.ebusd_*"
+  - "text.ebusd_*"
+  - "binary_sensor.ebusd_*"
+  # - "sensor.pixel_8a*"
+  # - "sensor.pixel_9a*"
+  # - "sensor.pixel_watch_4*"
+  # - "binary_sensor.pixel_8a*"
+  # - "binary_sensor.pixel_9a*"
+  # - "binary_sensor.pixel_watch_4*"
