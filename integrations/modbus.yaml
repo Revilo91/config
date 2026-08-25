@@ -1,0 +1,38 @@
+- name: fronius_symo
+  type: tcp
+  host: 10.0.2.25
+  port: 502
+  message_wait_milliseconds: 0
+  sensors:
+    - name: "PV Leistung"
+      unique_id: "pv_leistung_modbus"
+      slave: 1
+      address: 40090
+      data_type: float32
+      swap: word
+      unit_of_measurement: "W"
+      device_class: power
+    - name: "PV Scheinleistung"
+      unique_id: "pv_scheinleistung_modbus"
+      slave: 1
+      address: 40094
+      data_type: float32
+      swap: word
+      unit_of_measurement: "VA"
+      device_class: apparent_power
+    - name: "PV Energie"
+      unique_id: "pv_energy_modbus"
+      slave: 1
+      address: 40100
+      data_type: float32
+      swap: word
+      unit_of_measurement: "Wh"
+      device_class: energy
+    - name: "Fronius Temperatur"
+      unique_id: "fronius_temperatur_modbus"
+      slave: 1
+      address: 40108
+      data_type: float32
+      swap: word
+      unit_of_measurement: "°C"
+      device_class: temperature

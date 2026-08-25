@@ -1,0 +1,71 @@
+
+shellyplus1pm_7c87ce64cda8:
+  name: ShellyPlus1PM-7C87CE64CDA8
+  mac: BLE_7C:87:CE:64:CD:AA
+  icon:
+  picture:
+  track: true
+
+shellyplus1pm_7c87ce655198:
+  name: ShellyPlus1PM-7C87CE655198
+  mac: BLE_7C:87:CE:65:51:9A
+  icon:
+  picture:
+  track: true
+
+shellyplus1pm_d4d4da7c995c:
+  name: ShellyPlus1PM-D4D4DA7C995C
+  mac: BLE_D4:D4:DA:7C:99:5E
+  icon:
+  picture:
+  track: true
+
+goat_0065:
+  name: GOAT-0065
+  mac: BLE_64:82:14:7B:4D:63
+  icon:
+  picture:
+  track: true
+
+shellyplus1pm_a8032ab8b550:
+  name: ShellyPlus1PM-A8032AB8B550
+  mac: BLE_A8:03:2A:B8:B5:52
+  icon:
+  picture:
+  track: true
+
+shellyplus1pm_3c6105726ddc:
+  name: ShellyPlus1PM-3C6105726DDC
+  mac: BLE_3C:61:05:72:6D:DE
+  icon:
+  picture:
+  track: true
+
+shellyplus1pm_a8032abb758c:
+  name: ShellyPlus1PM-A8032ABB758C
+  mac: BLE_A8:03:2A:BB:75:8E
+  icon:
+  picture:
+  track: true
+
+shellyplus1pm_d4d4da7cf3a4:
+  name: ShellyPlus1PM-D4D4DA7CF3A4
+  mac: BLE_D4:D4:DA:7C:F3:A6
+  icon:
+  picture:
+  track: true
+
+shellyplus1pm_7c87ce6538d0:
+  name: ShellyPlus1PM-7C87CE6538D0
+  mac: BLE_7C:87:CE:65:38:D2
+  icon:
+  picture:
+  track: true
+  
+pixel_8a_Oliver_BLE:
+  name: Pixel-8a-Oliver
+  mac: BLE_E8:D5:2B:19:A9:0F
+  icon:
+  picture:
+  track: true
+

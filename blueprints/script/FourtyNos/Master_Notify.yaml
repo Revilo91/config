@@ -1,0 +1,206 @@
+blueprint:
+  name: Master Notify (V1.1.0)
+  description: "<div>\n<b>Version 1.1.0</b> | \n<a href=\"https://github.com/FourtyNos/master_notify\"
+    target=\"_blank\">Github Link</a> |\n<a href=\"https://ko-fi.com/techindustries\"
+    target=\"_blank\">Support me on Ko-Fi</a>\n</div>\n\nCentralized notification
+    management system for automations. Configure device groups\n(Admin, Family) once
+    and send notifications to mobile apps, Alexa devices, and TTS\nspeakers with customizable
+    critical alerts and volume control.\n"
+  source_url: https://raw.githubusercontent.com/FourtyNos/master_notify/refs/heads/main/Master_Notify.yaml
+  homeassistant:
+    min_version: 2024.06.0
+  author: Fourtynos/master_notify
+  domain: script
+  input:
+    user_group_admins:
+      name: Admin User Devices
+      description: choose Admin Devices (just mobile_app Devices).
+      default: []
+      selector:
+        device:
+          integration: mobile_app
+          multiple: true
+    user_group_family:
+      name: Family User Devices
+      description: choose Family Devices (just mobile_app Devices).
+      default: []
+      selector:
+        device:
+          integration: mobile_app
+          multiple: true
+    alexa_group_devices:
+      name: alexa devices
+      description: choose alexa Devices (just notify alexa).
+      default: []
+      selector:
+        entity:
+          domain:
+          - notify
+          integration: alexa_media
+          multiple: true
+          reorder: false
+    tts_provider:
+      name: tts provider
+      description: 'choose the TTS provider for example: tts.google_translate.'
+      default: []
+      selector:
+        entity:
+          domain:
+          - tts
+          multiple: false
+          reorder: false
+    tts_group_devices:
+      name: Google and other TTS Devices
+      description: choose TTS Devices (just TTS / media_player).
+      default: []
+      selector:
+        entity:
+          domain:
+          - media_player
+          multiple: true
+          reorder: false
+fields:
+  title:
+    name: title
+    selector:
+      text:
+  message:
+    name: message
+    required: false
+    selector:
+      text:
+        multiline: true
+  field_data:
+    name: Data
+    default: {}
+    required: false
+    advanced: true
+    description: 'Optional extras like:  notification_icon: mdi:trash-can persistent:
+      true tag: trash'
+    selector:
+      object: {}
+  group_admins_enable:
+    name: Send to Admin group
+    required: true
+    selector:
+      boolean: {}
+  group_family_enable:
+    name: Send to Family group
+    required: true
+    selector:
+      boolean: {}
+  alexa_enabled:
+    name: Send to Alexa group
+    required: true
+    selector:
+      boolean: {}
+  google_enabled:
+    name: Google & other (TTS)
+    description: Devices that use TTS instead of notify
+    required: true
+    selector:
+      boolean: {}
+  critical_enabled:
+    name: critical
+    required: true
+    selector:
+      boolean: {}
+sequence:
+- variables:
+    push_data: '{{ {''push'': {''sound'': {''name'': ''default'', ''critical'': 1,
+      ''volume'': 1.0}}} if critical_enabled else {} }}'
+  alias: push_data Variable, for the "Critical" channel on iPhones
+- variables:
+    admins: !input user_group_admins
+    family: !input user_group_family
+    alexa: !input alexa_group_devices
+    tts_devices: !input tts_group_devices
+    tts_provider: !input tts_provider
+  alias: gather input variables for jinja usage
+- variables:
+    names_admins: "{% set out = [] %} {% set d_admins = namespace(names=[]) %} {%
+      for device in (admins | default([], true) | list) %}\n  {% set name = device_attr(device,
+      'name') %}\n  {% set d_admins.names = d_admins.names + [name] %}\n  {% set notify_service
+      = \"notify.mobile_app_{}\".format(name | slugify) %}\n  {% set out = out + [notify_service]
+      %}\n{% endfor %} {{ d_admins.names }}"
+  alias: names from admins for services
+- variables:
+    notify_admins: "{{\n  names_admins\n  | default([], true)\n  | map('string')\n
+      \ | map('slugify')\n  | map('regex_replace', '^', 'notify.mobile_app_')\n  |
+      list\n  | unique\n  | list\n}}"
+  alias: targets from admins for services
+- variables:
+    names_family: "{% set out = [] %} {% set d_family = namespace(names=[]) %} {%
+      for device in (family | default([], true) | list) %}\n  {% set name = device_attr(device,
+      'name') %}\n  {% set d_family.names = d_family.names + [name] %}\n  {% set notify_service
+      = \"notify.mobile_app_{}\".format(name | slugify) %}\n  {% set out = out + [notify_service]
+      %}\n{% endfor %} {{ d_family.names }}"
+  alias: targets form famile for services
+- variables:
+    notify_family: "{{\n  names_family\n  | default([], true)\n  | map('string')\n
+      \ | map('slugify')\n  | map('regex_replace', '^', 'notify.mobile_app_')\n  |
+      list\n  | unique\n  | list\n}}"
+  alias: targets from family for services
+- variables:
+    alexa_devices: '{{ alexa | select(''search'', ''notify.alexa_media_'') | list
+      }}'
+  alias: 'alexa_devices : Filter alexa devices from notify services'
+- variables:
+    media_players: '{{ alexa_devices | map(''replace'', ''notify.alexa_media_'', ''media_player.'')
+      | list }}'
+  alias: media_players derived from alexa notify services
+- variables:
+    all_media_player: "{% if google_enabled %}\n  {{ (media_players + (tts_devices
+      | default([], true) | list)) | unique | list }}\n{% else %}\n  {{ media_players
+      | unique | list }}\n{% endif %}"
+  alias: add Google Devices in var
+- variables:
+    volume_level: '{{ 0.8 if critical_enabled else 0.5 }}'
+  alias: volume level based on critical flag
+- repeat:
+    for_each: '{{ all_media_player }}'
+    sequence:
+    - service: media_player.volume_set
+      data:
+        volume_level: '{{ volume_level }}'
+      target:
+        entity_id: '{{ repeat.item }}'
+  enabled: true
+- variables:
+    targets: "{% set out = [] %} {% if group_admins_enable %}\n  {% set out = out
+      + notify_admins %}\n{% endif %} {% if group_family_enable %}\n  {% set out =
+      out + notify_family %}\n{% endif %} {% if alexa_enabled %}\n  {% set out = out
+      + (alexa | default([], true) | list) %}\n{% endif %} {{ out | unique | list
+      }}"
+- repeat:
+    for_each: '{{ targets }}'
+    sequence:
+    - service: '{{ repeat.item }}'
+      data:
+        title: '{{ title }}'
+        message: '{{ message }}'
+        data: '{{ (field_data | default({}, true)) | combine(push_data) }}'
+  enabled: true
+  alias: Send notify
+- service: tts.speak
+  target:
+    entity_id: '{{ tts_provider }}'
+  data:
+    cache: true
+    media_player_entity_id: '{{ all_media_player }}'
+    message: '{{ message }}'
+  enabled: true
+- delay:
+    seconds: '{{ (message | length / 15) | int + 3 }}'
+  alias: wait function
+- alias: Set volume down
+  repeat:
+    for_each: '{{ all_media_player }}'
+    sequence:
+    - service: media_player.volume_set
+      data:
+        volume_level: 0.3
+      target:
+        entity_id: '{{ repeat.item }}'
+  enabled: true
+icon: mdi:message-badge

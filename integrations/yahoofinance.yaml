@@ -1,0 +1,17 @@
+symbols:
+  - DE000A0M03Y9.SG
+  - NQ60.MU
+  - 0P0001GRAF.F
+  - ZESN.MU
+  - 0P0001PU5N.F
+  - 0P0001PU6V.F
+  - 0P0001STGA.F
+scan_interval:
+  minutes: 1
+show_trending_icon: true
+include_dividend_values: true
+include_fifty_day_values: true
+include_fifty_two_week_values: true
+include_post_values: true
+include_pre_values: true
+include_two_hundred_day_values: true

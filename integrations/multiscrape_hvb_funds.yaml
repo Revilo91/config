@@ -1,0 +1,89 @@
+- name: HVB Fund 1
+  resource: https://kurse.hypovereinsbank.de/hvb-markets/funds/Overview.htm?id=19543173
+  scan_interval: 60
+  sensor:
+    - unique_id: hvb_fund_19543173_price
+      name: "HVB Fund 19543173"
+      select: r"#prices.quote.price"
+      value_template: "{{ value | replace(',', '.') | float }}"
+      unit_of_measurement: "€"
+      device_class: monetary
+      state_class: measurement
+      attributes:
+        - name: fund_name
+          select: r"#derivatives.descriptor.name_security"
+          value_template: "{{ value }}"
+        - name: fund_id
+          value_template: "19543173"
+
+- name: HVB Fund 2
+  resource: https://kurse.hypovereinsbank.de/hvb-markets/funds/Overview.htm?id=243981822
+  scan_interval: 60
+  sensor:
+    - unique_id: hvb_fund_243981822_price
+      name: "HVB Fund 243981822"
+      select: r"#prices.quote.price"
+      value_template: "{{ value | replace(',', '.') | float }}"
+      unit_of_measurement: "€"
+      device_class: monetary
+      state_class: measurement
+      attributes:
+        - name: fund_name
+          select: r"#derivatives.descriptor.name_security"
+          value_template: "{{ value }}"
+        - name: fund_id
+          value_template: "243981822"
+
+- name: HVB Fund 3
+  resource: https://kurse.hypovereinsbank.de/hvb-markets/funds/Overview.htm?id=396894778
+  scan_interval: 60
+  sensor:
+    - unique_id: hvb_fund_396894778_price
+      name: "HVB Fund 396894778"
+      select: r"#prices.quote.price"
+      value_template: "{{ value | replace(',', '.') | float }}"
+      unit_of_measurement: "€"
+      device_class: monetary
+      state_class: measurement
+      attributes:
+        - name: fund_name
+          select: r"#derivatives.descriptor.name_security"
+          value_template: "{{ value }}"
+        - name: fund_id
+          value_template: "396894778"
+
+- name: HVB Fund 4
+  resource: https://kurse.hypovereinsbank.de/hvb-markets/funds/Overview.htm?id=396894789
+  scan_interval: 60
+  sensor:
+    - unique_id: hvb_fund_396894789_price
+      name: "HVB Fund 396894789"
+      select: r"#prices.quote.price"
+      value_template: "{{ value | replace(',', '.') | float }}"
+      unit_of_measurement: "€"
+      device_class: monetary
+      state_class: measurement
+      attributes:
+        - name: fund_name
+          select: r"#derivatives.descriptor.name_security"
+          value_template: "{{ value }}"
+        - name: fund_id
+          value_template: "396894789"
+
+- name: HVB Fund 5
+  resource: https://kurse.hypovereinsbank.de/hvb-markets/funds/Overview.htm?id=459699475
+  scan_interval: 60
+  sensor:
+    - unique_id: hvb_fund_459699475_price
+      name: "HVB Fund 459699475"
+      select: r"#prices.quote.price"
+      value_template: "{{ value | replace(',', '.') | float }}"
+      unit_of_measurement: "€"
+      device_class: monetary
+      state_class: measurement
+      attributes:
+        - name: fund_name
+          select: r"#derivatives.descriptor.name_security"
+          value_template: "{{ value }}"
+        - name: fund_id
+          value_template: "459699475"

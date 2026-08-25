@@ -1,0 +1,5 @@
+- id: '1768484802587'
+  name: Vor Alarm Lichteinstellungen
+  entities: {}
+  icon: mdi:fire-truck
+  metadata: {}

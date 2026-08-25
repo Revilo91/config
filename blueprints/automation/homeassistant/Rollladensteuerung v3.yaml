@@ -1,0 +1,319 @@
+blueprint:
+  name: Rollladensteuerung 3
+  description: >-
+    Beschattung, Nacht-/Tagbetrieb, Kontakt-Sicherheit, Sonnenuntergangs-Öffnung und Erkennung manueller Bedienung. Pro Rollladen eine Instanz.
+
+    Cover-Attribut `direction` (osten/suden/westen/norden) wird weiterhin gelesen. Die Attribute `window` und `room_switch` werden NICHT mehr benutzt -> jetzt Inputs.
+  domain: automation
+  author: Oliver
+  source_url: https://github.com/revilo91/ha-blueprints/blob/main/rollladensteuerung_v3.yaml
+  homeassistant:
+    min_version: "2024.10.0"
+  input:
+    geraete:
+      name: Gerät
+      icon: mdi:window-shutter
+      input:
+        rolllade_input:
+          name: Rolllade
+          selector:
+            entity:
+              domain: cover
+        window_contacts:
+          name: Fenster-/Türkontakte
+          description: >-
+            Alle Kontakte dieses Rollladens. Solange einer davon offen ist, fährt der Rollladen hoch – unabhängig vom Modus.
+          default: []
+          selector:
+            entity:
+              domain: binary_sensor
+              multiple: true
+        room_switch_input:
+          name: Raum-Modus (input_select)
+          selector:
+            entity:
+              domain: input_select
+
+    verhalten:
+      name: Verhalten
+      icon: mdi:cog
+      collapsed: true
+      input:
+        sunset_offset:
+          name: Öffnen vor Sonnenuntergang
+          default: "-00:10:00"
+          selector:
+            select:
+              options:
+              - "-00:45:00"
+              - "-00:30:00"
+              - "-00:20:00"
+              - "-00:15:00"
+              - "-00:10:00"
+              - "-00:05:00"
+              - "00:00:00"
+        sunset_open_enabled:
+          name: Öffnen vor Sonnenuntergang aktiv
+          default: true
+          selector:
+            boolean:
+        manual_tracking_enabled:
+          name: Manuelle Bedienung auf Raum-Modus zurückschreiben
+          description: >-
+            Runterfahren -> Raum-Modus "Zu". Hochfahren -> Raum-Modus = Gesamt-Automatik. ACHTUNG: wirkt auf alle Rollläden, die sich denselben input_select teilen.
+          default: true
+          selector:
+            boolean:
+        position_tolerance:
+          name: Positions-Toleranz (%)
+          description: Unterhalb dieser Abweichung wird kein Fahrbefehl gesendet.
+          default: 2
+          selector:
+            number: { min: 0, max: 20, step: 1, unit_of_measurement: "%" }
+        manual_settle_time:
+          name: Beruhigungszeit nach Fahrt
+          default: 5
+          selector:
+            number: { min: 2, max: 60, step: 1, unit_of_measurement: s }
+
+    optional:
+      name: Optionale Sonderfunktionen
+      icon: mdi:puzzle
+      collapsed: true
+      input:
+        pc_switch:
+          name: PC-Schalter
+          description: Nur setzen, wenn dieser Raum die PC-Beschattung nutzt (Büro). Leer = aus.
+          default: []
+          selector:
+            entity:
+              domain: switch
+              multiple: true
+        morgens_switch:
+          name: Schalter "Morgens auf"
+          description: Nur setzen, wenn dieser Rollladen nachts auf Nachthöhe fahren soll. Leer = aus.
+          default: []
+          selector:
+            entity:
+              multiple: true
+              domain: switch
+
+    helfer:
+      name: Globale Helfer
+      icon: mdi:tune
+      collapsed: true
+      input:
+        gesamt_select:
+          name: Gesamt-Automatik
+          default: input_select.gesamt_rollladen_automatik
+          selector:
+            entity: { domain: input_select }
+        beschattung_sensor:
+          name: Beschattungs-Hysterese
+          default: binary_sensor.beschattung_hysterese
+          selector:
+            entity: { domain: binary_sensor }
+        tag_nacht_boolean:
+          name: Tag/Nacht-Modus
+          default: input_boolean.tag_nacht_modus
+          selector:
+            entity: { domain: input_boolean }
+        hoehe_tag_number:
+          name: Beschattungshöhe Tag
+          default: input_number.beschattungshohe_tag
+          selector:
+            entity: { domain: input_number }
+        hoehe_nacht_number:
+          name: Beschattungshöhe Nacht
+          default: input_number.beschattungshohe_nacht
+          selector:
+            entity: { domain: input_number }
+
+mode: restart
+max_exceeded: silent
+
+trigger_variables:
+  rolllade_id: !input rolllade_input
+
+triggers:
+# --- Kontakte ---
+- trigger: state
+  id: kontakt
+  entity_id: !input window_contacts
+  to: "on"
+- trigger: state
+  id: kontakt
+  entity_id: !input window_contacts
+  to: "off"
+
+# --- Sonnenrichtung (Ein- UND Austritt) ---
+- trigger: template
+  id: richtung
+  alias: Sonne in Richtung
+  value_template: "{{ is_state('binary_sensor.richtung' ~ state_attr(rolllade_id, 'direction'), 'on') }}"
+- trigger: template
+  id: richtung
+  alias: Sonne nicht mehr in Richtung
+  value_template: "{{ not is_state('binary_sensor.richtung' ~ state_attr(rolllade_id, 'direction'), 'on') }}"
+- trigger: template
+  id: richtung
+  alias: Sonne in PC-Richtung
+  value_template: "{{ is_state('binary_sensor.richtung' ~ state_attr(rolllade_id, 'direction') ~ 'pc', 'on') }}"
+- trigger: template
+  id: richtung
+  alias: Sonne nicht mehr in PC-Richtung
+  value_template: "{{ not is_state('binary_sensor.richtung' ~ state_attr(rolllade_id, 'direction') ~ 'pc', 'on') }}"
+
+# --- Beschattung ---
+- trigger: state
+  id: beschattung
+  entity_id: !input beschattung_sensor
+  from: "off"
+  to: "on"
+- trigger: state
+  id: beschattung
+  entity_id: !input beschattung_sensor
+  from: "on"
+  to: "off"
+  for: "00:05:00"
+
+# --- Modus ---
+- trigger: state
+  id: modus
+  entity_id: !input room_switch_input
+- trigger: state
+  id: modus
+  entity_id: !input gesamt_select
+
+# --- Sonstige Helfer ---
+- trigger: state
+  id: helfer
+  entity_id:
+  - !input tag_nacht_boolean
+  - !input hoehe_tag_number
+  - !input hoehe_nacht_number
+- trigger: state
+  id: helfer
+  entity_id: !input pc_switch
+- trigger: state
+  id: helfer
+  entity_id: !input morgens_switch
+
+# --- Sonnenuntergang ---
+- trigger: sun
+  id: sunset
+  event: sunset
+  offset: !input sunset_offset
+
+# --- Manuelle Bedienung ---
+- trigger: state
+  id: manual
+  entity_id: !input rolllade_input
+  attribute: current_position
+  for:
+    seconds: !input manual_settle_time
+
+conditions: []
+
+variables:
+  rolllade_id: !input rolllade_input
+  room_switch_id: !input room_switch_input
+  gesamt_id: !input gesamt_select
+  beschattung_id: !input beschattung_sensor
+  tag_nacht_id: !input tag_nacht_boolean
+  hoehe_tag_id: !input hoehe_tag_number
+  hoehe_nacht_id: !input hoehe_nacht_number
+  kontakte: !input window_contacts
+  pc_ids: !input pc_switch
+  morgens_ids: !input morgens_switch
+  sunset_enabled: !input sunset_open_enabled
+  manual_enabled: !input manual_tracking_enabled
+  toleranz: !input position_tolerance
+
+  trigger_id: "{{ trigger.id if trigger is defined and trigger.id is defined else '' }}"
+
+  raum_modus: "{{ states(room_switch_id) }}"
+  gesamt_modus: "{{ states(gesamt_id) }}"
+  richtung: "{{ state_attr(rolllade_id, 'direction') }}"
+  pos_ist: "{{ state_attr(rolllade_id, 'current_position') | int(-1) }}"
+
+  hoehe_tag: "{{ states(hoehe_tag_id) | int(20) }}"
+  hoehe_nacht: "{{ states(hoehe_nacht_id) | int(100) }}"
+
+  is_day: "{{ is_state(tag_nacht_id, 'on') }}"
+  is_beschattung: "{{ is_state(beschattung_id, 'on') }}"
+
+  # Optionale Schalter: leere Liste == Funktion aus
+  is_pc_an: "{{ expand(pc_ids) | selectattr('state', 'eq', 'on') | list | count > 0 }}"
+  is_morgens: "{{ expand(morgens_ids) | selectattr('state', 'eq', 'on') | list | count > 0 }}"
+
+  # Ein beliebiger Kontakt offen -> Sicherheitsfall, keine Fenster/Tür-Unterscheidung mehr
+  is_offen: "{{ expand(kontakte) | selectattr('state', 'eq', 'on') | list | count > 0 }}"
+
+  is_direction: "{{ is_state('binary_sensor.richtung' ~ richtung, 'on') }}"
+  is_pc_direction: "{{ is_state('binary_sensor.richtung' ~ richtung ~ 'pc', 'on') }}"
+
+  is_raum_aktiv: "{{ 'Inaktiv' not in raum_modus }}"
+  is_raum_zu: "{{ raum_modus == 'Zu' }}"
+  is_manuell_raum: "{{ 'Manuell' in raum_modus }}"
+  is_automatik_raum: "{{ 'PC' not in raum_modus and 'Automatik' in raum_modus }}"
+  is_erzwungen_raum: "{{ 'PC' not in raum_modus and 'Erzwungen' in raum_modus }}"
+  is_pc_automatik: "{{ 'PC' in raum_modus and 'Automatik' in raum_modus }}"
+  is_pc_erzwungen: "{{ 'PC' in raum_modus and 'Erzwungen' in raum_modus }}"
+
+  # Reine Entscheidungsfunktion: soll jetzt beschattet werden?
+  beschatten: >-
+    {{ (is_beschattung and ((is_direction and is_automatik_raum)
+                            or (is_pc_an and is_pc_direction and is_pc_automatik)))
+       or (is_direction and is_erzwungen_raum)
+       or (is_pc_an and is_pc_direction and is_pc_erzwungen)
+       or is_manuell_raum }}
+
+  # Ein einziger Sollwert. Reihenfolge = Priorität, oben gewinnt.
+  # Kein gespeicherter "vorheriger Wert" nötig: schließt der Kontakt,
+  # liefert dieselbe Funktion automatisch wieder den Regelwert.
+  ziel_position: >-
+    {%- if is_offen -%}                                      100 {%- elif is_raum_zu -%}                                  0 {%- elif sunset_enabled and trigger_id == 'sunset' -%}   100 {%- elif not is_day and is_morgens and is_raum_aktiv -%} {{ hoehe_nacht }} {%- elif not is_day -%}                                  0 {%- elif is_raum_aktiv and beschatten -%}                {{ hoehe_tag }} {%- elif is_day -%}                                      100 {%- else -%}                                             0 {%- endif -%}
+
+actions:
+- choose:
+  # ---------------------------------------------------------------
+  - alias: Manuelle Bedienung erkannt
+    conditions:
+    - condition: template
+      value_template: "{{ manual_enabled and trigger_id == 'manual' and not is_offen }}"
+    - alias: Position weicht vom Regel-Soll ab (schließt eigene Fahrten aus)
+      condition: template
+      value_template: >-
+        {{ ((trigger.to_state.attributes.current_position | int(-1))
+            - (ziel_position | int)) | abs > toleranz | int }}
+    sequence:
+    - variables:
+        neuer_modus: >-
+          {{ 'Zu' if (trigger.to_state.attributes.current_position | int(0))
+                    < (trigger.from_state.attributes.current_position | int(0))
+             else gesamt_modus }}
+    - condition: template
+      value_template: >-
+        {{ neuer_modus != raum_modus
+           and neuer_modus in (state_attr(room_switch_id, 'options') | default([], true)) }}
+    - action: input_select.select_option
+      target:
+        entity_id: !input room_switch_input
+      data:
+        option: "{{ neuer_modus }}"
+
+  # ---------------------------------------------------------------
+  - alias: Regelbetrieb
+    conditions:
+    - condition: template
+      value_template: "{{ trigger_id != 'manual' }}"
+    - alias: Nur fahren wenn nötig
+      condition: template
+      value_template: "{{ (pos_ist - (ziel_position | int)) | abs > toleranz | int }}"
+    sequence:
+    - action: cover.set_cover_position
+      target:
+        entity_id: !input rolllade_input
+      data:
+        position: "{{ ziel_position | int }}"

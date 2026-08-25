@@ -1,0 +1,81 @@
+# "binary_sensor.schlafzimmer_turkontakt_*":
+#   device_class: door
+#   templates:
+#     icon: >
+#       if (state == 'on') return 'mdi:window-open-variant'; return 'mdi:window-closed-variant';
+
+"sensor.*temp*":
+  attributes:
+    icon_color: >
+      function map_range(value, low1, high1, low2, high2) { return (value - low1) * (high2 - low2) / (high1 - low1) + low2; }
+      var r = 0;
+      var g = 0;
+      var b = 0;
+      if (state <= 20) {
+        b = Math.round(map_range(state,-20,20,255,0));
+        g = Math.round(map_range(state,-20,20,0,255));
+              } else {
+        r = Math.round(map_range(state,20,42,0,255));
+        g = Math.round(map_range(state,20,42,255,0));
+      }
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+  templates:
+    icon_color: >
+      function map_range(value, low1, high1, low2, high2) { return (value - low1) * (high2 - low2) / (high1 - low1) + low2; }
+      var r = 0;
+      var g = 0;
+      var b = 0;
+      if (state <= 20) {
+        b = Math.round(map_range(state,-20,20,255,0));
+        g = Math.round(map_range(state,-20,20,0,255));
+              } else {
+        r = Math.round(map_range(state,20,42,0,255));
+        g = Math.round(map_range(state,20,42,255,0));
+      }
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+
+"sensor.*rssi*":
+  templates:
+    icon_color: >
+      function map_range(value, low1, high1, low2, high2) { return (value - low1) * (high2 - low2) / (high1 - low1) + low2; }
+      var r = Math.round(map_range(state,-100,0,255,0));
+      var g = Math.round(map_range(state,-100,0,0,255));
+      return 'rgb(' + r + ',' + g + ',0)';
+
+"sensor.*rel_luftfeuchtigkeit*":
+  templates:
+    icon_color: >
+      if (state < 40) return 'firebrick';
+      if (state > 60) return 'deepskyblue';
+      return 'forestgreen'
+
+"sensor.trendsensortemperatur*":
+  templates:
+    icon: >
+      if (state < -2) return 'mdi:arrow-down-thick';
+      else if (state < -0.5) return 'mdi:arrow-bottom-right-thick';
+      else if (state > 2) return 'mdi:arrow-up-thick';
+      else if (state > 0.5) return 'mdi:arrow-top-right-thick';
+      else return 'mdi:arrow-right-thick';
+    icon_color: >
+      if (state < -2) return 'blue';
+      else if (state < -0.5) return 'lightblue';
+      else if (state > 2) return 'red';
+      else if (state > 0.5) return 'orange'; 
+      else return 'grey';
+
+"input_select.*_rollladen_automatik":
+  templates:
+    icon: >
+      if (state == 'Automatik') return 'mdi:window-shutter-auto';
+      else if (state == 'Erzwungen') return 'mdi:window-shutter-alert';
+      else if (state == 'Manuell') return 'mdi:window-shutter-cog';
+      else if (state == 'Inaktiv') return 'mdi:window-shutter-settings';
+      else return 'mdi:window-shutter';
+
+    icon_color: >
+      if (state == 'Automatik') return 'green';
+      else if (state == 'Erzwungen') return 'orange';
+      else if (state == 'Manuell') return 'darkred';
+      else if (state == 'Inaktiv') return 'darkgrey';
+      else return 'grey';

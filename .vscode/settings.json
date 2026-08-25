@@ -1,0 +1,12 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/yamllint.json": [
+            "file:///config/configuration.yaml",
+            "file:///config/blueprints/automation/homeassistant/RollladenSteuerungsVorlage.yaml",
+            "file:///config/template.yaml"
+        ]
+    },
+    "[yaml]": {
+        "editor.defaultFormatter": "joseph-ravenwolfe.kubernetes-yaml-formatter"
+}
+}

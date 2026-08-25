@@ -1,0 +1,265 @@
+blueprint:
+  name: Rollladensteuerung 2
+  description: Steuert den Rolladen basierend auf dem Zustand der Fensterkontakte
+  domain: automation
+  input:
+    rolllade_input:
+      name: Rolllade
+      selector:
+        entity:
+          domain: cover
+
+variables:
+  rolllade_id: !input rolllade_input
+
+  window_list: >-
+    {{ state_attr(rolllade_id, 'window') | default([], true) }}
+
+  is_direction: >-
+    {{is_state('binary_sensor.richtung'~state_attr(rolllade_id,'direction'), 'on') }}
+  is_pc_direction: >-
+    {{is_state('binary_sensor.richtung'~state_attr(rolllade_id,'direction')~'pc', 'on') }}
+
+  is_beschattung: >-
+    {{is_state('binary_sensor.beschattung_hysterese', 'on')}}
+
+  is_beschattung_aktiv_raum: >-
+    {{ 'Inaktiv' not in states(state_attr(rolllade_id, 'room_switch')) }}
+  is_beschattung_erzwungen_raum: >-
+    {{ 'PC' not in states(state_attr(rolllade_id, 'room_switch')) and 'Erzwungen' in states(state_attr(rolllade_id, 'room_switch')) }}
+  is_beschattung_automatik_raum: >-
+    {{ 'PC' not in states(state_attr(rolllade_id, 'room_switch')) and 'Automatik' in states(state_attr(rolllade_id, 'room_switch')) }}
+  is_beschattung_manuell_raum: >-
+    {{ 'Manuell' in states(state_attr(rolllade_id, 'room_switch')) }}
+
+  #Sondersachen Dropdown Menu
+  is_beschattung_PC_erzwungen: >-
+    {{ 'PC' in states(state_attr(rolllade_id, 'room_switch')) and 'Erzwungen' in states(state_attr(rolllade_id, 'room_switch')) }}
+  is_beschattung_PC_automatik: >-
+    {{ 'PC' in states(state_attr(rolllade_id, 'room_switch')) and 'Automatik' in states(state_attr(rolllade_id, 'room_switch')) }}
+  is_raum_schlafen: >-
+    {{ 'Schlafen' in states(state_attr(rolllade_id, 'room_switch')) }}
+  is_raum_zu: >-
+    {{ 'Zu' in states(state_attr(rolllade_id, 'room_switch')) }}
+
+  ##################
+  is_day: >-
+    {{ is_state('input_boolean.tag_nacht_modus', 'on') }}
+  is_pc_an: >-
+    {{ is_state('switch.buro_steckdose_buro_steckdose', 'on') }}
+
+  is_filmeabend: >-
+    {{ is_state('switch.kino', 'on') }}
+  is_filmeabend_label: >-
+    {{ 'filmeabend' in labels(rolllade_id) }}
+
+  is_morgens_auf: >-
+    {{ is_state('switch.ankleide_rollladen_1_morgens_auf', 'on') }}
+  is_morgens_label: >-
+    {{ 'morgens' in labels(rolllade_id) }}
+
+  is_window: >-
+    {{ expand(window_list) | selectattr('attributes.device_class', 'eq', 'window')  | list | length > 0 }}
+
+  is_window_open: >-
+    {{ expand(window_list) | selectattr('state', 'eq', 'on')  | list | length > 0 }}
+
+trigger_variables:
+  rolllade_id: !input rolllade_input
+
+triggers:
+- trigger: template
+  value_template: >
+    {%- set window_list = state_attr(rolllade_id, 'window') | default([], true) %} {{ expand(window_list) | selectattr('state', 'eq', 'on') | list | length > 0  }}
+  alias: Fenster geöffnet
+- trigger: template
+  value_template: >
+    {%- set window_list = state_attr(rolllade_id, 'window') | default([], true) %} {{ not (expand(window_list) | selectattr('state', 'eq', 'on') | list | length > 0) }}
+  alias: Fenster geschlossen
+- trigger: template
+  value_template: >
+    {{ states('binary_sensor.richtung'~state_attr(rolllade_id,'direction')~'pc' ) }}
+  alias: PC Richtung geändert
+- trigger: template
+  value_template: >
+    {{ states('binary_sensor.richtung'~state_attr(rolllade_id,'direction')) }}
+  alias: Richtung geändert
+- trigger: state
+  entity_id:
+  - binary_sensor.beschattung_hysterese
+  from: 'off'
+  to: 'on'
+- trigger: state
+  entity_id:
+  - binary_sensor.beschattung_hysterese
+  from: 'on'
+  to: 'off'
+  for: "00:05:00"
+- trigger: state
+  entity_id:
+  - switch.ankleide_rollladen_1_morgens_auf
+  - input_boolean.tag_nacht_modus
+  - input_number.beschattungshohe_nacht
+  - input_number.beschattungshohe_tag
+  - input_select.gesamt_rollladen_automatik
+  - switch.kino
+  - switch.buro_steckdose_buro_steckdose
+
+conditions: []
+
+actions:
+- choose:
+  - conditions:
+    - condition: template
+      value_template: "{{ not is_day }}"
+      alias: Ist Nacht?
+    - condition: template
+      value_template: "{{ is_window and is_window_open }}"
+      alias: Ist das Fenster offen?
+    sequence:
+    - data:
+        position: >-
+          {{ states('input_number.beschattungshohe_nacht') | int }}
+      target:
+        entity_id: !input rolllade_input
+      action: cover.set_cover_position
+      alias: Beschattungshöhe Nachts
+    alias: Nacht und Fenster geöffnet
+  - conditions:
+    - condition: template
+      value_template: "{{ not is_window and is_window_open }}"
+      alias: Ist die Tür offen?
+    sequence:
+    - target:
+        entity_id: !input rolllade_input
+      action: cover.open_cover
+      alias: Offen
+    alias: Tür geöffnet
+  - conditions:
+    - condition: template
+      value_template: "{{ not is_day }}"
+      alias: Ist Nacht?
+    - condition: template
+      value_template: "{{ is_morgens_label }}"
+      alias: Hat Morgens Label
+    - condition: template
+      value_template: "{{ is_morgens_auf }}"
+      alias: Morgens auf?
+    - condition: template
+      value_template: "{{ is_beschattung_aktiv_raum }}"
+      alias: Beschattung im Raum aktiv?
+    sequence:
+    - data:
+        position: "{{ states('input_number.beschattungshohe_nacht') | int }}"
+      target:
+        entity_id: !input rolllade_input
+      alias: Cover Nachtwert
+      action: cover.set_cover_position
+    alias: Morgens Ankleide
+  - conditions:
+    - condition: template
+      value_template: "{{ not is_window_open }}"
+      alias: Ist Fenster/Tür geschlossen?
+    - condition: template
+      value_template: "{{ not is_day }}"
+      alias: Ist Nacht?
+    sequence:
+    - target:
+        entity_id: !input rolllade_input
+      action: cover.close_cover
+      alias: Geschlossen
+    alias: Nacht und Fenster/Tür geschlossen
+  - conditions:
+    - condition: template
+      value_template: "{{ is_filmeabend }}"
+      alias: Filmeabend Aktiv
+    - condition: template
+      value_template: "{{ is_filmeabend_label }}"
+      alias: Hat Filmeabend Label
+    sequence:
+    - target:
+        entity_id: !input rolllade_input
+      action: cover.close_cover
+    alias: Filmeabend Beschattung
+  - conditions:
+    - condition: template
+      value_template: "{{ is_day }}"
+      alias: Ist Tag?
+    - condition: template
+      value_template: "{{ is_raum_schlafen }}"
+      alias: Schlafen im Raum aktiv?
+    sequence:
+    - data:
+        position: "{{ states('input_number.beschattungshohe_schlafen') | int }}"
+      target:
+        entity_id: !input rolllade_input
+      alias: Cover Schlafen
+      action: cover.set_cover_position
+    alias: Raum Schlafhöhe Beschattung
+  - conditions:
+    - condition: template
+      value_template: "{{ is_raum_zu }}"
+      alias: Raum soll zu sein?
+    sequence:
+    - target:
+        entity_id: !input rolllade_input
+      action: cover.close_cover
+    alias: Raum Rollladen zu
+  - conditions:
+    - condition: template
+      value_template: "{{ is_beschattung_aktiv_raum }}"
+      alias: Beschattung im Raum aktiv?
+    - condition: template
+      value_template: "{{ is_day }}"
+      alias: Ist Tag?
+    - condition: or
+      conditions:
+      - condition: template
+        value_template: "{{ is_window }}"
+        alias: Ist es ein Fenster?
+      - condition: template
+        value_template: "{{ not is_window and not is_window_open }}"
+        alias: Ist es eine geschlossene Tür?
+      alias: Fenster oder geschlossene Tür
+    - condition: or
+      conditions:
+      - condition: template
+        value_template: >-
+          {{ is_beschattung and
+            ((is_direction and is_beschattung_automatik_raum) or (is_pc_an and is_pc_direction and is_beschattung_PC_automatik))
+          }}
+        alias: Ist in Richtung und Beschattung gewollt?
+      - condition: template
+        value_template: >-
+          {{ 
+            (is_direction and is_beschattung_erzwungen_raum) or (is_pc_an and is_pc_direction and is_beschattung_PC_erzwungen) 
+          }}
+        alias: Ist in Richtung und Beschattung erzwungen?
+      - condition: template
+        value_template: "{{ is_beschattung_manuell_raum }}"
+        alias: Raum wird immer beschattet!
+      alias: Beschattungsentscheidung
+    sequence:
+    - data:
+        position: "{{ states('input_number.beschattungshohe_tag') | int }}"
+      target:
+        entity_id: !input rolllade_input
+      action: cover.set_cover_position
+      alias: Tagesbeschattungswert
+    alias: Tag und Beschattung aktiv
+  default:
+  - alias: Standarddurchführung
+    if:
+    - condition: state
+      entity_id: input_boolean.tag_nacht_modus
+      state: 'on'
+    then:
+    - target:
+        entity_id: !input rolllade_input
+      action: cover.open_cover
+      alias: Offen
+    else:
+    - target:
+        entity_id: !input rolllade_input
+      action: cover.close_cover
+      alias: Geschlossen

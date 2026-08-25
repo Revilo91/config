@@ -1,0 +1,10 @@
+default: info
+# logs:
+#   custom_components.multiscrape: debug
+#   homeassistant.components.backup: debug
+#   homeassistant.components.script: warning
+#   homeassistant.components.recorder: debug
+#   custom_components.pyscript: info
+#   homeassistant.components.reolink_aio: warn
+#   homeassistant.components.rest: debug
+#   homeassistant.components.webhook: debug

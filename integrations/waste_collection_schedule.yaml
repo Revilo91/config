@@ -1,0 +1,21 @@
+sources:
+  - name: awido_de
+    args:
+      customer: kelheim
+      city: Markt Langquaid
+      street: Herzogin-Ludmilla-Ring
+    customize:
+      - type: Biotonne
+        alias: Biotonne
+        icon: mdi:flower
+      - type: Gelber Sack
+        alias: Gelber Sack
+        icon: mdi:recycle
+      - type: Papierabfuhr
+        alias: Papiertonne
+        icon: mdi:newspaper-variant-multiple
+      - type: Restmüll
+        alias: Restmüll
+        icon: mdi:trash-can
+      - type: Problemmüll
+        show: false

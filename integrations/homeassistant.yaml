@@ -1,0 +1,13 @@
+customize: !include customize.yaml
+customize_glob: !include customize_glob.yaml
+whitelist_external_dirs:
+  - /media
+  - /config/www/Haustuer
+  # - /api/camera_proxy
+  # - media-source://camera
+allowlist_external_dirs:
+  - /media
+  - /config/www/Haustuer
+  # - /api/camera_proxy
+  # - media-source://camera
+# debug: true

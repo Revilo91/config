@@ -1,0 +1,425 @@
+binary_sensor.anwesenheit:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:home-lock-open'; else return 'mdi:home-lock';
+    icon_color: >
+      if (state == 'on') return 'green'; else return 'red';
+
+binary_sensor.abends_licht_an:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:lightbulb-night'; else return 'mdi:lightbulb-night-outline';
+
+binary_sensor.tag_nacht_sensor:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:white-balance-sunny'; else return 'mdi:weather-night';
+    icon_color: >
+      if (state == 'on') return 'gold'; return 'royalblue';
+
+sensor.pumpstatus_heizkreis:
+  templates:
+    icon: >
+      if (state == 1) return 'mdi:fire';  else if (state == 0) return 'mdi:snowflake'; else return 'mdi:eye';
+    icon_color: >
+      if (state == 1) return 'red'; return 'disable';
+
+binary_sensor.weihnachtszeit:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:string-lights'; else return 'mdi:string-lights-off';
+    icon_color: >
+      if (state == 'on') return 'green'; return 'grey';
+
+sensor.smartmeter_power_2:
+  templates:
+    icon: >
+      if (state < 0) return 'mdi:home-export-outline'; else return 'mdi:home-import-outline';
+    icon_color: >
+      if (state < 0) return 'green'; return 'red';
+    color: >
+      if (state < 0) return 'green'; return 'red';
+
+sensor.beschattung_status:
+  templates:
+    icon: >
+      if (state == 'beschatten') return 'mdi:weather-sunny';
+      if (state == 'neutral') return 'mdi:weather-partly-cloudy';
+      return 'mdi:weather-cloudy';
+
+input_boolean.tag_nacht_modus:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:white-balance-sunny'; else return 'mdi:weather-night';
+    icon_color: >
+      if (state == 'on') return 'gold'; return 'royalblue';
+    # friendly_name: >
+    #   if (state == 'on') return 'Rollladen offen'; return 'Rollladen geschlossen';
+
+input_boolean.sommermodus_heizung:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:sun-thermometer-outline'; else return 'mdi:snowflake-thermometer';
+    icon_color: >
+      if (state == 'on') return 'gold'; return 'royalblue';
+    friendly_name: >
+      if (state == 'on') return 'Sommermodus (Heizung aus)'; return 'Wintermodus (Heizung an)';
+
+light.elements_1d57_nanoleafs:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:hexagon-multiple'; else return 'mdi:hexagon-multiple-outline';
+
+sensor.garagentor_turzustand:
+  templates:
+    icon: >
+      if (state == 'closed') return 'mdi:garage-variant';  else if (state == 'open') return 'mdi:garage-open-variant'; else if (state == 'ventilation_position') return 'mdi:garage-open-variant'; else if (state == 'position_unknown') return 'mdi:garage-alert-variant'; else return 'mdi:garage-alert-variant';
+    icon_color: >
+      if (state == 'closed') return 'green';  else if (state == 'open') return 'red'; else if (state == 'ventilation_position') return 'orange'; else if (state == 'position_unknown') return 'grey'; else return 'yellow';
+    friendly_name: >
+      if (state == 'closed') return 'Geschlossen';  else if (state == 'open') return 'Geöffnet'; else if (state == 'ventilation_position') return 'Teilweise geöffnet'; else if (state == 'position_unknown') return 'Position unbekannt'; else return 'Bewegt sich';
+
+cover.garagentor:
+  templates:
+    icon: >
+      if (state == 'closed') return 'mdi:garage-variant';  else if (state == 'open') return 'mdi:garage-open-variant'; else if (state == 'ventilation_position') return 'mdi:garage-open-variant'; else return 'mdi:garage-alert-variant';
+    icon_color: >
+      if (state == 'closed') return 'green';  else if (state == 'closing') return 'greenyellow';  else if (state == 'open') return 'red'; else if (state == 'opening') return 'orangered'; else if (state == 'ventilation_position') return 'orange'; else if (state == 'position_unknown') return 'grey'; else return 'yellow';
+
+cover.garagentor_olli:
+  templates:
+    icon: >
+      if (state == 'closed') return 'mdi:garage-variant';  else if (state == 'open') return 'mdi:garage-open-variant'; else if (state == 'ventilation_position') return 'mdi:garage-open-variant'; else return 'mdi:garage-alert-variant';
+    icon_color: >
+      if (state == 'closed') return 'green';  else if (state == 'closing') return 'greenyellow';  else if (state == 'open') return 'red'; else if (state == 'opening') return 'orangered'; else if (state == 'ventilation_position') return 'orange'; else if (state == 'position_unknown') return 'grey'; else return 'yellow';
+
+switch.waschmaschine:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:washing-machine'; else return 'mdi:washing-machine-off';
+
+switch.trockner:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:tumble-dryer'; else return 'mdi:tumble-dryer-off';
+
+switch.geschirrspuler:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:dishwasher'; else return 'mdi:dishwasher-off';
+
+switch.hebeanlage:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:pump'; else return 'mdi:pump-off';
+
+switch.hauswasserwerk:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:water-pump'; else return 'mdi:water-pump-off';
+
+sensor.goat_gx_600_ladevorgang:
+  templates:
+    icon: >
+      if (state > 0) return 'line-md:uploading-loop'; else return 'line-md:downloading-loop';
+
+light.wohnwand:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:led-strip-variant'; else return 'mdi:led-strip-variant-off';
+
+light.raumteiler:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:led-strip-variant'; else return 'mdi:led-strip-variant-off';
+
+switch.wohnzimmer_soundanlage:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:speaker'; else return 'mdi:speaker-off';
+
+switch.3d_drucker:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:printer-3d-nozzle'; else return 'mdi:printer-3d-nozzle-off';
+
+switch.regen_erkannt:
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:weather-pouring'; else return 'mdi:weather-sunny';
+    icon_color: >
+      if (state == 'on') return 'blue'; else return 'yellow';
+
+select.comfoairq_bypass_mode:
+  templates:
+    icon: >
+      if (state == 'auto') return 'mdi:valve';  else if (state == 'on') return 'mdi:valve-open'; else if (state == 'off') return 'mdi:valve-closed';
+
+counter.comfoair_einzelfilter_tauschen:
+  templates:
+    icon: mdi:air-filter
+    icon_color: >
+      if (state <= 7) return 'red'; else if (state <= 14) return 'yellow'; return 'green';
+
+sensor.comfoairq_days_to_replace_filter:
+  templates:
+    icon: mdi:air-filter
+    icon_color: >
+      if (state <= 7) return 'red'; else if (state <= 14) return 'yellow'; return 'green';
+
+counter.enthartung_salz_nachfullen:
+  templates:
+    icon: mdi:shaker
+    icon_color: >
+      if (state <= 7) return 'red'; else if (state <= 14) return 'yellow'; return 'green';
+
+counter.comfoair_einzelfilter_saugen:
+  templates:
+    icon: mdi:air-filter
+    icon_color: >
+      if (state <= 7) return 'red'; else if (state <= 14) return 'yellow'; return 'green';
+
+sensor.epson_et_2750_series_black_ink:
+  templates:
+    icon: mdi:water-percent
+    icon_color: "dimgray"
+
+sensor.epson_et_2750_series_cyan_ink:
+  templates:
+    icon: mdi:water-percent
+    icon_color: "cyan"
+
+sensor.epson_et_2750_series_magenta_ink:
+  templates:
+    icon: mdi:water-percent
+    icon_color: "magenta"
+
+sensor.epson_et_2750_series_yellow_ink:
+  templates:
+    icon: mdi:water-percent
+    icon_color: "yellow"
+
+# Fensterkontakt to Cover
+binary_sensor.wohnzimmer_schiebetur:
+  cover: "cover.wohnzimmer_rollladen"
+  direction: "suden"
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:door-sliding-open'; return 'mdi:door-sliding';
+
+binary_sensor.esszimmer_turkontakt:
+  cover: "cover.esszimmer_rollladen_1"
+  direction: "suden"
+
+binary_sensor.sebastian_fensterkontakt_2:
+  cover: "cover.sebastian_rollladen_2"
+  direction: "norden"
+
+binary_sensor.bad_og_fensterkontakt_2:
+  cover: "cover.bad_og_rollladen_2"
+  direction: "osten"
+
+binary_sensor.schlafzimmer_turkontakt_1:
+  cover: "cover.schlafzimmer_rollladen"
+  direction: "suden"
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:window-open-variant'; return 'mdi:window-closed-variant';
+
+binary_sensor.kind1_fensterkontakt_2:
+  cover: "cover.kind1_rollladen_2"
+  direction: "westen"
+
+binary_sensor.bad_eg_fensterkontakt:
+  cover: "cover.bad_eg_rollladen"
+  direction: "osten"
+
+binary_sensor.ankleide_fensterkontakt_1:
+  cover: "cover.ankleide_rollladen_1"
+  direction: "osten"
+
+binary_sensor.bad_og_fensterkontakt_1:
+  cover: "cover.bad_og_rollladen_1"
+  direction: "norden"
+
+binary_sensor.buro_turkontakt:
+  cover: "cover.buro_rollladen_2"
+  direction: "suden"
+
+binary_sensor.kuche_fensterkontakt_2:
+  cover: "cover.kuche_rollladen_2"
+  direction: "norden"
+
+binary_sensor.schlafzimmer_turkontakt_2:
+  cover: "cover.schlafzimmer_rollladen"
+  direction: "suden"
+  templates:
+    icon: >
+      if (state == 'on') return 'mdi:window-open-variant'; return 'mdi:window-closed-variant';
+
+binary_sensor.sebastian_fensterkontakt_1:
+  cover: "cover.sebastian_rollladen_1"
+  direction: "westen"
+
+binary_sensor.buro_fensterkontakt:
+  cover: "cover.buro_rollladen_1"
+  direction: "osten"
+
+binary_sensor.kind1_fensterkontakt_1:
+  cover: "cover.kind1_rollladen_1"
+  direction: "suden"
+
+binary_sensor.ankleide_fensterkontakt_2:
+  cover: "cover.ankleide_rollladen_2"
+  direction: "suden"
+
+binary_sensor.speisekammer_fensterkontakt:
+  cover: "cover.speisekammer_rollladen"
+  direction: "norden"
+
+binary_sensor.kuche_fensterkontakt_1:
+  cover: "cover.kuche_rollladen_1"
+  direction: "westen"
+
+binary_sensor.esszimmer_fensterkontakt:
+  cover: "cover.esszimmer_rollladen_2"
+  direction: "westen"
+
+# Cover to Fensterkontakt
+cover.esszimmer_rollladen_1:
+  window: ["binary_sensor.esszimmer_turkontakt"]
+  taster_hoch: ["event.em_1_esszimmer_rollladen_hoch"]
+  taster_runter: ["event.em_1_esszimmer_rollladen_runter"]
+  direction: "suden"
+  room_switch: "input_select.wohnzimmer_rollladen_automatik"
+
+cover.sebastian_rollladen_2:
+  window: ["binary_sensor.sebastian_fensterkontakt_2"]
+  taster_hoch: ["event.em_2_sebastian_rolllade_hoch"]
+  taster_runter: ["event.em_2_sebastian_rolllade_runter"]
+  direction: "norden"
+  room_switch: "input_select.sebastian_rollladen_automatik"
+
+cover.bad_og_rollladen_2:
+  window: ["binary_sensor.bad_og_fensterkontakt_2"]
+  taster_hoch: ["event.em_2_bad_og_rolllade_hoch"]
+  taster_runter: ["event.em_2_bad_og_rolllade_runter"]
+  direction: "osten"
+  room_switch: "input_select.bad_og_rollladen_automatik"
+
+cover.schlafzimmer_rollladen:
+  window:
+    [
+      "binary_sensor.schlafzimmer_turkontakt_1",
+      "binary_sensor.schlafzimmer_turkontakt_2",
+    ]
+  taster_hoch: ["event.em_2_schlafzimmer_rolllade_hoch"]
+  taster_runter: ["event.em_2_schlafzimmer_rolllade_runter"]
+  direction: "suden"
+  room_switch: "input_select.schlafzimmer_rollladen_automatik"
+
+cover.kind1_rollladen_2:
+  window: ["binary_sensor.kind1_fensterkontakt_2"]
+  taster_hoch: ["event.em_2_kind1_rolllade_hoch"]
+  taster_runter: ["event.em_2_kind1_rolllade_runter"]
+  direction: "westen"
+  room_switch: "input_select.kind1_rollladen_automatik"
+
+cover.bad_eg_rollladen:
+  window: ["binary_sensor.bad_eg_fensterkontakt"]
+  taster_hoch: [""]
+  taster_runter: [""]
+  direction: "osten"
+  room_switch: "input_select.bad_eg_rollladen_automatik"
+
+cover.ankleide_rollladen_1:
+  window: ["binary_sensor.ankleide_fensterkontakt_1"]
+  taster_hoch: ["event.em_2_ankleide_rolllade_hoch"]
+  taster_runter: ["event.em_2_ankleider_rolllade_runter"]
+  direction: "osten"
+  room_switch: "input_select.schlafzimmer_rollladen_automatik"
+
+cover.bad_og_rollladen_1:
+  window: ["binary_sensor.bad_og_fensterkontakt_1"]
+  taster_hoch: ["event.em_2_bad_og_rolllade_hoch"]
+  taster_runter: ["event.em_2_bad_og_rolllade_runter"]
+  direction: "norden"
+  room_switch: "input_select.bad_og_rollladen_automatik"
+
+cover.buro_rollladen_2:
+  window: ["binary_sensor.buro_turkontakt"]
+  taster_hoch: ["event.em_1_buro_rolllade_hoch"]
+  taster_runter: ["event.em_1_buro_rolllade_runter"]
+  direction: "suden"
+  room_switch: "input_select.buro_rollladen_automatik"
+
+cover.kuche_rollladen_2:
+  window: ["binary_sensor.kuche_fensterkontakt_2"]
+  taster_hoch: ["event.em_1_kuche_rollladen_hoch_2"]
+  taster_runter: ["event.em_1_kuche_rollladen_runter_2"]
+  direction: "norden"
+  room_switch: "input_select.kuche_rollladen_automatik"
+
+cover.sebastian_rollladen_1:
+  window: ["binary_sensor.sebastian_fensterkontakt_1"]
+  taster_hoch: ["event.em_2_sebastian_rolllade_hoch"]
+  taster_runter: ["event.em_2_sebastian_rolllade_runter"]
+  direction: "westen"
+  room_switch: "input_select.sebastian_rollladen_automatik"
+
+cover.wohnzimmer_rollladen:
+  window: ["binary_sensor.wohnzimmer_schiebetur"]
+  taster_hoch:
+    [
+      "event.em_1_wohnzimmer_rolllade_hoch",
+      "event.em_1_wohnzimmer_rolllade_hoch_2",
+    ]
+  taster_runter:
+    [
+      "event.em_1_wohnzimmer_rolllade_runter",
+      "event.em_1_wohnzimmer_rolllade_runter_2",
+    ]
+  direction: "suden"
+  room_switch: "input_select.wohnzimmer_rollladen_automatik"
+
+cover.buro_rollladen_1:
+  window: ["binary_sensor.buro_fensterkontakt"]
+  taster_hoch: ["event.em_1_buro_rolllade_hoch"]
+  taster_runter: ["event.em_1_buro_rolllade_runter"]
+  direction: "osten"
+  room_switch: "input_select.buro_rollladen_automatik"
+
+cover.kind1_rollladen_1:
+  window: ["binary_sensor.kind1_fensterkontakt_1"]
+  taster_hoch: ["event.em_2_kind1_rolllade_hoch"]
+  taster_runter: ["event.em_2_kind1_rolllade_runter"]
+  direction: "suden"
+  room_switch: "input_select.kind1_rollladen_automatik"
+
+cover.ankleide_rollladen_2:
+  window: ["binary_sensor.ankleide_fensterkontakt_2"]
+  taster_hoch: ["event.em_2_ankleide_rolllade_hoch"]
+  taster_runter: ["event.em_2_ankleider_rolllade_runter"]
+  direction: "suden"
+  room_switch: "input_select.schlafzimmer_rollladen_automatik"
+
+cover.speisekammer_rollladen:
+  window: ["binary_sensor.speisekammer_fensterkontakt"]
+  taster_hoch: ["event.em_1_kuche_rollladen_hoch_2"]
+  taster_runter: ["event.em_1_kuche_rollladen_runter_2"]
+  direction: "norden"
+  room_switch: "input_select.kuche_rollladen_automatik"
+
+cover.kuche_rollladen_1:
+  window: ["binary_sensor.kuche_fensterkontakt_1"]
+  taster_hoch: ["event.em_1_kuche_rollladen_hoch_2"]
+  taster_runter: ["event.em_1_kuche_rollladen_runter_2"]
+  direction: "westen"
+  room_switch: "input_select.kuche_rollladen_automatik"
+
+cover.esszimmer_rollladen_2:
+  window: ["binary_sensor.esszimmer_fensterkontakt"]
+  taster_hoch: ["event.em_1_esszimmer_rollladen_hoch"]
+  taster_runter: ["event.em_1_esszimmer_rollladen_runter"]
+  direction: "westen"
+  room_switch: "input_select.wohnzimmer_rollladen_automatik"

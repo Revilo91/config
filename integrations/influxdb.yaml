@@ -1,0 +1,22 @@
+api_version: 2
+ssl: false
+host: 10.0.2.12
+port: 8086
+#ORIGINAL #token: klTBQW0ST7s4p0m7w7aKls5i3N-rWvbvdEi8WKxHVA-jJFKmdM0zepgz5GV67s52f9RcO_YICK66YECN7HxLlQ==
+#ORIGINAL #organization: e4e395810e62e6d5
+
+
+token: mmLvq9wTOx3nOEtup0TdpHXaQnG9tthBNlXTDSzd6W-KQZZjR3jiEHWdomxtJ1w11JW36ZhpJUqU0po4eTe1Fg==
+organization: e4e395810e62e6d5
+# token: tCEGKJgTycwp0YrKC9iiyVpJRTOLT5EvKAaOyb1EK4eYA3Gt5tWsTZ1uP2AxBe5rfA_kwkfjsG69M6I8lZQGqQ==
+# organization: 08f34ebed62e6b15
+bucket: Hassio
+tags:
+  source: HA
+tags_attributes:
+  - friendly_name  
+  - device_class
+  - unit_of_measurement
+  - area
+  - label
+default_measurement: units

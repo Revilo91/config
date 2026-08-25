@@ -1,0 +1,5 @@
+platform: group
+name: Oliver_group
+services:
+  - action: mobile_app_pixel_8a
+  - action: telegram_bot_2058163316_155848237

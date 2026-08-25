@@ -1,0 +1,38 @@
+
+fenster_kontakt_template:
+  card:
+    type: vertical-stack
+    cards:
+      - type: heading
+        heading: '[[heading_name]]'
+        heading_style: subtitle
+        badges:
+          - type: entity
+            show_state: false
+            show_icon: true
+            entity: '[[low_battery_entity]]'
+            color: state
+            tap_action:
+              action: more-info
+          - type: entity
+            show_state: true
+            show_icon: true
+            entity: '[[operating_voltage_entity]]'
+            color: state
+            tap_action:
+              action: more-info
+      - show_name: false
+        type: button
+        entity: '[[battery_replace_entity]]'
+        tap_action:
+          action: toggle
+      - show_name: false
+        show_icon: false
+        type: custom:button-card
+        entity: '[[last_replaced_entity]]'
+        show_state: true
+        styles:
+          card:
+            - height: 56px
+        grid_options:
+          columns: 9

@@ -1,0 +1,5 @@
+platform: group
+name: Marina_group
+services:
+  - action: mobile_app_pixel_9a
+  - action: telegram_bot_2058163316_291690771

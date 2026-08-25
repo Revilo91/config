@@ -1,0 +1,170 @@
+{%- macro set_cover_position(position) -%}
+  - service: cover.set_cover_position
+    data:
+      position: "{{ position }}"
+    target:
+      entity_id: !input rollladen
+{%- endmacro -%}
+
+# Definiere eine Macro-Funktion für das Öffnen des Rollladens
+{%- macro open_cover() -%}
+  - service: cover.open_cover
+    target:
+      entity_id: !input rollladen
+{%- endmacro -%}
+
+
+{%- macro close_cover() -%}
+  - service: cover.close_cover
+    target:
+      entity_id: !input rollladen
+{%- endmacro -%}
+
+
+{# ########################################################################## #}
+{# ############################## BESCHATTUNG ############################### #}
+{# ########################################################################## #}
+
+{%- macro threshold_activ(elevation, offset = 0) -%}
+  {{ (offset|float + 15 + (elevation / 61 * 25)) | float}}
+{%- endmacro -%}
+
+{%- macro normalize_linear(value, vmin, vmax) -%}
+  {%- set val = value|float -%}
+  {%- set a = vmin|float -%}
+  {%- set b = vmax|float -%}
+  {%- if val <= a -%}{{ 0.0 }}
+  {%- elif val >= b -%}{{ 1.0 }}
+  {%- else -%}{{ ((val - a) / (b - a))|float }}
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro normalize_log(value, vmin, vmax) -%}
+  {%- set val = [ value|float, 1 ]|max -%}
+  {%- set a   = [ vmin|float, 1 ]|max -%}
+  {%- set b   = [ vmax|float, 1 ]|max -%}
+  {%- set ln = (val|log) -%}
+  {%- set la = (a|log) -%}
+  {%- set lb = (b|log) -%}
+  {%- if ln <= la -%}{{ 0.0 }}
+  {%- elif ln >= lb -%}{{ 1.0 }}
+  {%- else -%}{{ ((ln - la) / (lb - la))|float }}
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro angle_diff(a, b) -%}
+  {%- set d = (a - b) % 360 -%}
+  {%- if d > 180 -%}{{ d - 360 }}{%- else -%}{{ d }}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro alignment_soft(azimuth, facade_min, facade_max, shape="cos") -%}
+  {%- set az = azimuth|float -%}
+  {%- set fmin = facade_min|float -%}
+  {%- set fmax = facade_max|float -%}
+  {%- set span = (fmax - fmin) % 360 -%}
+  {%- if span == 0 -%}{{ 0.0 }}
+  {%- else -%}
+    {%- set half = span / 2.0 -%}
+    {%- set center = (fmin + half) % 360 -%}
+    {%- set diff = angle_diff(az, center)|float -%}
+    {%- set x = (diff / half)|float -%}
+    {%- if x|abs > 1 -%}{{ 0.0 }}
+    {%- else -%}
+      {%- if shape == "cos" -%}
+        {{ (((1 + cos(x * 3.1415926535)) / 2 )|float) }}
+      {%- else -%}
+        {{ (1.0 - x|abs)|float }}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro shading(lux, elevation, azimuth,
+                 facade_min, facade_max,
+                 lux_min=500, lux_max=63860,
+                 elevation_min=15, elevation_max=61,
+                 weight_lux=0.7, weight_sun=0.3,
+                 gamma=2.0,
+                 align_shape="cos",
+                 lux_mode="log",
+                 cloud_threshold=5000,
+                 min_elevation_for_shading=10) -%}
+
+  {# Grundlegende Überprüfungen #}
+  {%- if elevation|float < min_elevation_for_shading -%}
+    {{ 0.0 }}
+  {%- else -%}
+    {# Bewölkungserkennung - bei niedrigen Lux-Werten trotz hoher Sonnenhöhe #}
+    {%- set expected_lux_clear = (elevation|float / 90) * cloud_threshold -%}
+    {%- set cloud_factor = (lux|float / expected_lux_clear)|float -%}
+    {%- set is_cloudy = cloud_factor < 5 -%}
+    
+    {# Bei starker Bewölkung reduzierte Beschattung #}
+    {%- if is_cloudy -%}
+      {{ 0.0 }}
+    {%- else -%}
+      {# Normierungen #}
+      {%- if lux_mode == "log" -%}
+        {%- set lux_norm = normalize_log(lux, lux_min, lux_max)|float -%}
+      {%- else -%}
+        {%- set lux_norm = normalize_linear(lux, lux_min, lux_max)|float -%}
+      {%- endif -%}
+      {%- set elev_norm = normalize_linear(elevation, elevation_min, elevation_max)|float -%}
+
+      {# Sichtbarkeit/Alignment #}
+      {%- set align = alignment_soft(azimuth, facade_min, facade_max, align_shape)|float -%}
+      {%- set align_eff = (align ** gamma)|float -%}
+      
+      {# Bewölkungsreduktion anwenden #}
+      {%- set cloud_reduction = 1.0 -%}
+      {%- if cloud_factor < 1.0 -%}
+        {%- set cloud_reduction = [cloud_factor * 2, 1.0]|min -%}
+      {%- endif -%}
+
+      {# Kombinierte Berechnung mit Bewölkungsreduktion #}
+      {%- set raw_value = ((weight_lux * lux_norm) + (weight_sun * elev_norm)) * align_eff * cloud_reduction -%}
+      
+      {{ (100.0 * [1, [0, raw_value]|max]|min)|float }}
+    
+    {%- endif -%}
+  {%- endif -%}
+
+{%- endmacro -%}
+
+{% macro calculate_direction_factor(azimuth, elevation, start_az, end_az) %}
+  {# Prüfe ob Azimuth in Bereich liegt #}
+  {% if start_az <= end_az %}
+    {% set in_range = azimuth >= start_az and azimuth <= end_az %}
+  {% else %}
+    {# Wrap-around für Nord (über 360°) #}
+    {% set in_range = azimuth >= start_az or azimuth <= end_az %}
+  {% endif %}
+  
+  {% if in_range and elevation > 0 %}
+    {# Berechne Position innerhalb des Azimuth-Bereichs (0-1) #}
+    {% if start_az <= end_az %}
+      {% set range_size = end_az - start_az %}
+      {% set position_in_range = (azimuth - start_az) / range_size %}
+    {% else %}
+      {# Wrap-around Behandlung #}
+      {% if azimuth >= start_az %}
+        {% set position_in_range = (azimuth - start_az) / (360 - start_az + end_az) %}
+      {% else %}
+        {% set position_in_range = (360 - start_az + azimuth) / (360 - start_az + end_az) %}
+      {% endif %}
+    {% endif %}
+    
+    {# Berechne Elevation-Faktor (je niedriger, desto höher der Faktor) #}
+    {# Annahme: Max Elevation = 90°, bei 0° = 100%, bei 90° = 0% #}
+    {% set elevation_factor = 1 - (elevation / 90) %}
+    
+    {# Linearer Verlauf über Azimuth-Bereich #}
+    {# Maximum in der Mitte des Bereichs #}
+    {% set azimuth_factor = 1 - (2 * (position_in_range - 0.5)) ** 2 %}
+    
+    {# Kombiniere beide Faktoren #}
+    {{ (elevation_factor * azimuth_factor * 100) | round(1) }}
+  {% else %}
+    0
+  {% endif %}
+{% endmacro %}

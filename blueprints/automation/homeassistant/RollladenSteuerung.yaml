@@ -1,0 +1,417 @@
+blueprint:
+  name: Rollladensteuerung Modern
+  description: Automatische Rolladenkontrolle mit Fenster-Safety, Beschattung, Morgens/Kino-Modi
+  domain: automation
+  input:
+    cover_entity:
+      name: Rolllade
+      description: Die zu steuernde Rolllade
+      selector:
+        entity:
+          domain: cover
+
+    window_entities:
+      name: Fenster (Safety)
+      description: Fenster-Kontakte (Öffnen → Nacht=Position, Tag=Offen)
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: window
+          multiple: true
+      default: []
+
+    door_entities:
+      name: Türen (Optional)
+      description: Tür-Kontakte (Öffnen → Immer Rolllade offen)
+      selector:
+        entity:
+          domain: binary_sensor
+          device_class: door
+          multiple: true
+      default: []
+
+    shading_hysteresis_sensor:
+      name: Beschattungs-Hysterese Sensor
+      description: binary_sensor mit Beschattungs-Entscheidung (mit Hysterese)
+      selector:
+        entity:
+          domain: binary_sensor
+      default: binary_sensor.beschattung_hysterese
+
+    day_night_switch:
+      name: Tag/Nacht Modus
+      description: input_boolean für Tag (on) / Nacht (off)
+      selector:
+        entity:
+          domain: input_boolean
+      default: input_boolean.tag_nacht_modus
+
+    shading_height_day:
+      name: Beschattungshöhe Tag
+      selector:
+        entity:
+          domain: input_number
+      default: input_number.beschattungshohe_tag
+
+    shading_height_night:
+      name: Beschattungshöhe Nacht
+      selector:
+        entity:
+          domain: input_number
+      default: input_number.beschattungshohe_nacht
+
+    shading_height_sleep:
+      name: Beschattungshöhe Schlafen
+      selector:
+        entity:
+          domain: input_number
+      default: input_number.beschattungshohe_schlafen
+
+    sun_elevation_sensor:
+      name: Sonnenelevation
+      description: sensor.sun_elevation oder ähnlich
+      selector:
+        entity:
+          domain: sensor
+      default: sensor.sun_elevation
+
+    brightness_sensor:
+      name: Helligkeitssensor
+      selector:
+        entity:
+          domain: sensor
+      default: sensor.helligkeitssensor_beleuchtungsstarke
+
+    room_mode_select:
+      name: Raummodus Select
+      description: input_select mit Modi wie "Inaktiv", "Automatik", "Erzwungen", "Manuell", "Schlafen", "Zu"
+      selector:
+        entity:
+          domain: input_select
+      default: ""
+
+    cinema_switch:
+      name: Kino Modus (Optional)
+      selector:
+        entity:
+          domain: switch
+      default: ""
+
+    morning_switch:
+      name: Morgens Schalter (Optional)
+      selector:
+        entity:
+          domain: switch
+      default: ""
+
+    pc_active_switch:
+      name: PC aktiv Switch (Optional)
+      selector:
+        entity:
+          domain: switch
+      default: ""
+
+    direction_sensor:
+      name: Sonnen-Richtungs-Sensor
+      description: binary_sensor für Richtungsprüfung (z.B. binary_sensor.richtung_ost)
+      selector:
+        entity:
+          domain: binary_sensor
+      default: ""
+
+    pc_direction_sensor:
+      name: PC Sonnen-Richtungs-Sensor
+      description: binary_sensor für PC-Richtung (z.B. binary_sensor.richtung_ostpc)
+      selector:
+        entity:
+          domain: binary_sensor
+      default: ""
+
+variables:
+  cover_id: !input cover_entity
+  window_entities: !input window_entities
+  door_entities: !input door_entities
+  shading_hysteresis_sensor: !input shading_hysteresis_sensor
+  day_night_switch: !input day_night_switch
+  shading_height_day: !input shading_height_day
+  shading_height_night: !input shading_height_night
+  shading_height_sleep: !input shading_height_sleep
+  room_mode_select: !input room_mode_select
+  cinema_switch: !input cinema_switch
+  morning_switch: !input morning_switch
+  pc_active_switch: !input pc_active_switch
+  direction_sensor: !input direction_sensor
+  pc_direction_sensor: !input pc_direction_sensor
+
+  # Berechnung der Stati
+  is_day: "{{ is_state(day_night_switch, 'on') }}"
+  is_night: "{{ not is_day }}"
+
+  windows_open: >
+    {%- if window_entities | length > 0 -%} {{ expand(window_entities) | selectattr('state', 'eq', 'on') | list | length > 0 }} {%- else -%} false {%- endif -%}
+
+  doors_open: >
+    {%- if door_entities | length > 0 -%} {{ expand(door_entities) | selectattr('state', 'eq', 'on') | list | length > 0 }} {%- else -%} false {%- endif -%}
+
+  is_shading_triggered: "{{ is_state(shading_hysteresis_sensor, 'on') }}"
+
+  is_cinema_active: "{{ cinema_switch != '' and is_state(cinema_switch, 'on') }}"
+  is_morning_active: "{{ morning_switch != '' and is_state(morning_switch, 'on') }}"
+  is_pc_active: "{{ pc_active_switch != '' and is_state(pc_active_switch, 'on') }}"
+
+  is_direction_ok: "{{ direction_sensor and direction_sensor != '' and is_state(direction_sensor, 'on') }}"
+  is_pc_direction_ok: "{{ pc_direction_sensor and pc_direction_sensor != '' and is_state(pc_direction_sensor, 'on') }}"
+
+  # Room Mode auslesen (falls input_select vorhanden)
+  room_mode: >
+    {%- if room_mode_select != "" -%} {{ states(room_mode_select) | default('Inaktiv') }} {%- else -%} Inaktiv {%- endif -%}
+
+  is_room_inactive: "{{ 'Inaktiv' in room_mode }}"
+  is_room_auto: "{{ 'Automatik' in room_mode and 'PC' not in room_mode }}"
+  is_room_forced: "{{ 'Erzwungen' in room_mode and 'PC' not in room_mode }}"
+  is_room_manual: "{{ 'Manuell' in room_mode }}"
+  is_room_sleep: "{{ 'Schlafen' in room_mode }}"
+  is_room_closed: "{{ 'Zu' in room_mode }}"
+  is_pc_auto: "{{ 'Automatik' in room_mode and 'PC' in room_mode }}"
+  is_pc_forced: "{{ 'Erzwungen' in room_mode and 'PC' in room_mode }}"
+
+triggers:
+# === Window Events ===
+- id: window_opened
+  trigger: state
+  entity_id: !input window_entities
+  to: 'on'
+
+- id: window_closed
+  trigger: state
+  entity_id: !input window_entities
+  to: 'off'
+
+# === Door Events ===
+- id: door_opened
+  trigger: state
+  entity_id: !input door_entities
+  to: 'on'
+
+- id: door_closed
+  trigger: state
+  entity_id: !input door_entities
+  to: 'off'
+
+# === Shading Events ===
+- id: shading_triggered
+  trigger: state
+  entity_id: !input shading_hysteresis_sensor
+  to: 'on'
+
+- id: shading_ended
+  trigger: state
+  entity_id: !input shading_hysteresis_sensor
+  to: 'off'
+  for:
+    minutes: 5
+
+# === Time Mode Events ===
+- id: day_night_changed
+  trigger: state
+  entity_id: !input day_night_switch
+
+- id: room_mode_changed
+  trigger: state
+  entity_id: !input room_mode_select
+
+# === Special Features (Optional) ===
+- id: cinema_toggled
+  trigger: state
+  entity_id: !input cinema_switch
+
+- id: morning_toggled
+  trigger: state
+  entity_id: !input morning_switch
+
+- id: pc_toggled
+  trigger: state
+  entity_id: !input pc_active_switch
+
+- id: direction_changed
+  trigger: state
+  entity_id: !input direction_sensor
+
+- id: pc_direction_changed
+  trigger: state
+  entity_id: !input pc_direction_sensor
+
+# === Config Changes ===
+- id: shading_height_changed
+  trigger: state
+  entity_id:
+  - !input shading_height_day
+  - !input shading_height_night
+  - !input shading_height_sleep
+
+conditions: []
+
+actions:
+- choose:
+  # === PRIORITY 1a: Tür offen → Immer auf ===
+  - alias: "Tür offen → Rolllade auf (immer)"
+    conditions:
+    - condition: trigger
+      id: door_opened
+    sequence:
+    - action: cover.open_cover
+      target:
+        entity_id: !input cover_entity
+
+  # === PRIORITY 1b: Fenster offen → Tageszeit-abhängig ===
+  - alias: "Fenster offen in Nacht → Nacht-Position"
+    conditions:
+    - condition: trigger
+      id: window_opened
+    - condition: template
+      value_template: "{{ is_night }}"
+    sequence:
+    - action: cover.set_cover_position
+      target:
+        entity_id: !input cover_entity
+      data:
+        position: "{{ states(shading_height_night) | int(0) }}"
+
+  - alias: "Fenster offen am Tag → Rolllade auf"
+    conditions:
+    - condition: trigger
+      id: window_opened
+    - condition: template
+      value_template: "{{ is_day }}"
+    sequence:
+    - action: cover.open_cover
+      target:
+        entity_id: !input cover_entity
+
+  # === PRIORITY 1c: Fenster/Tür geschlossen ===
+  - alias: "Fenster/Tür geschlossen in Nacht → Zu"
+    conditions:
+    - condition: or
+      conditions:
+      - condition: trigger
+        id: window_closed
+      - condition: trigger
+        id: door_closed
+    - condition: template
+      value_template: "{{ is_night }}"
+    sequence:
+    - action: cover.close_cover
+      target:
+        entity_id: !input cover_entity
+
+  # === PRIORITY 2: Spezial-Modi (Cinema, Schlafen, Zu) ===
+  - alias: "Kino aktiv → Zu"
+    conditions:
+    - condition: trigger
+      id: cinema_toggled
+    - condition: template
+      value_template: "{{ is_cinema_active }}"
+    - condition: template
+      value_template: "{{ not windows_open and not doors_open }}"
+    sequence:
+    - action: cover.close_cover
+      target:
+        entity_id: !input cover_entity
+
+  - alias: "Schlafen Modus → Schlafen Position"
+    conditions:
+    - condition: trigger
+      id: room_mode_changed
+    - condition: template
+      value_template: "{{ is_room_sleep and is_day }}"
+    sequence:
+    - action: cover.set_cover_position
+      target:
+        entity_id: !input cover_entity
+      data:
+        position: "{{ states(shading_height_sleep) | int(0) }}"
+
+  - alias: "Raum zu → Rolllade zu"
+    conditions:
+    - condition: trigger
+      id: room_mode_changed
+    - condition: template
+      value_template: "{{ is_room_closed }}"
+    sequence:
+    - action: cover.close_cover
+      target:
+        entity_id: !input cover_entity
+
+  # === PRIORITY 3: Morgens Special (Ankleide) ===
+  - alias: "Morgens aktiv in Nacht → Nacht-Position"
+    conditions:
+    - condition: trigger
+      id: morning_toggled
+    - condition: template
+      value_template: "{{ is_morning_active and is_night and not is_room_inactive }}"
+    sequence:
+    - action: cover.set_cover_position
+      target:
+        entity_id: !input cover_entity
+      data:
+        position: "{{ states(shading_height_night) | int(0) }}"
+
+  # === PRIORITY 4: Tag + Beschattung aktiv ===
+  - alias: "Tag + Beschattung + Richtung OK → Tag-Position"
+    conditions:
+    - condition: trigger
+      id:
+      - shading_triggered
+      - day_night_changed
+      - direction_changed
+      - pc_direction_changed
+    - condition: template
+      value_template: "{{ is_day }}"
+    - condition: template
+      value_template: "{{ not is_room_inactive }}"
+    - condition: template
+      value_template: "{{ not windows_open and not doors_open }}"
+    - condition: or
+      conditions:
+      - condition: template
+        value_template: "{{ is_shading_triggered and ((is_room_auto and is_direction_ok) or is_room_forced or is_room_manual) }}"
+      - condition: template
+        value_template: "{{ is_shading_triggered and is_pc_active and ((is_pc_auto and is_pc_direction_ok) or is_pc_forced) }}"
+    sequence:
+    - action: cover.set_cover_position
+      target:
+        entity_id: !input cover_entity
+      data:
+        position: "{{ states(shading_height_day) | int(0) }}"
+
+  # === PRIORITY 5: Beschattung vorbei ===
+  - alias: "Beschattung vorbei → Auf"
+    conditions:
+    - condition: trigger
+      id: shading_ended
+    - condition: template
+      value_template: "{{ is_day }}"
+    - condition: template
+      value_template: "{{ not windows_open and not doors_open }}"
+    - condition: template
+      value_template: "{{ not is_cinema_active }}"
+    - condition: template
+      value_template: "{{ not is_room_closed }}"
+    sequence:
+    - action: cover.open_cover
+      target:
+        entity_id: !input cover_entity
+
+  default:
+  - alias: "Fallback: Tag offen, Nacht zu"
+    if:
+    - condition: template
+      value_template: "{{ is_day }}"
+    then:
+    - action: cover.open_cover
+      target:
+        entity_id: !input cover_entity
+    else:
+    - action: cover.close_cover
+      target:
+        entity_id: !input cover_entity

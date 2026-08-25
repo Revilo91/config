@@ -1,0 +1,77 @@
+{%- macro battery_icon(battery_level_raw, is_charging=false) -%}
+    {%- if (battery_level_raw | float(None)) == None -%}
+        mdi:battery-unknown
+    {%- else -%}
+        {%- set level = float(battery_level_raw) -%}
+
+        {%- if is_charging -%}
+            {%- if level < 5 -%}
+                mdi:battery-charging-outline
+            {%- elif level <= 10 -%}
+                mdi-battery-charging-10
+            {%- elif level <= 20 -%}
+                mdi:battery-charging-20
+            {%- elif level <= 30 -%}
+                mdi:battery-charging-30
+            {%- elif level <= 40 -%}
+                mdi:battery-charging-40
+            {%- elif level <= 50 -%}
+                mdi:battery-charging-50
+            {%- elif level <= 60 -%}
+                mdi:battery-charging-60
+            {%- elif level <= 70 -%}
+                mdi:battery-charging-70
+            {%- elif level <= 80 -%}
+                mdi:battery-charging-80
+            {%- elif level <= 90 -%}
+                mdi:battery-charging-90
+            {%- else -%}
+                mdi:battery-charging
+            {%- endif -%}
+        {%- else -%}
+            {%- if level < 5 -%}
+                mdi:battery-alert-variant-outline
+            {%- elif level <= 10 -%}
+                mdi:battery-10
+            {%- elif level <= 20 -%}
+                mdi:battery-20
+            {%- elif level <= 30 -%}
+                mdi:battery-30
+            {%- elif level <= 40 -%}
+                mdi:battery-40
+            {%- elif level <= 50 -%}
+                mdi:battery-50
+            {%- elif level <= 60 -%}
+                mdi:battery-60
+            {%- elif level <= 70 -%}
+                mdi:battery-70
+            {%- elif level <= 80 -%}
+                mdi:battery-80
+            {%- elif level <= 90 -%}
+                mdi:battery-90
+            {%- else -%}
+                mdi:battery
+            {%- endif -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro battery_color(battery_level_raw) -%}
+    {%- if (battery_level_raw | float(None)) == None -%}
+        grey
+    {%- else -%}
+        {%- set level = float(battery_level_raw) -%}
+
+        {%- if level <= 10 -%}
+            red
+        {%- elif level <= 30 -%}
+            orange
+        {%- elif level <= 50 -%}
+            yellow
+        {%- elif level <= 70 -%}
+            lime
+        {%- else -%}
+            green
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}

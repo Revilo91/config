@@ -1,0 +1,30 @@
+#Loads default set of integrations. Do not remove.
+default_config:
+
+frontend:
+  themes: !include_dir_merge_named themes/
+
+#Text to speech
+tts:
+- platform: google_translate
+
+automation: !include automations.yaml
+scene: !include scenes.yaml
+script: !include scripts.yaml
+sensor: !include integrations/sensor.yaml
+#influxdb: !include integrations/influxdb.yaml
+logger: !include integrations/logger.yaml
+homeassistant: !include integrations/homeassistant.yaml
+recorder: !include integrations/recorder.yaml
+template: !include_dir_list template
+notify: !include_dir_list integrations/notify/
+modbus: !include integrations/modbus.yaml
+# multiscrape: !include integrations/multiscrape_hvb_funds.yaml
+yahoofinance: !include integrations/yahoofinance.yaml
+mqtt: !include integrations/mqtt.yaml
+
+
+# decluttering_templates: !include integrations/decluttering_templates.yaml
+
+
+# influxdb_query_api:

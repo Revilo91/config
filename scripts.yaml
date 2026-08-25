@@ -1,0 +1,769 @@
+sende_get_befehle_basierend_auf_ebus_entitaten:
+  alias: Update Ebus
+  description: Fragt eine definierte Liste von eBus-Entitäten via MQTT ab
+  variables:
+    ebus_topics:
+    - ebusd/700/AdaptHeatCurve
+    - ebusd/700/BankHolidayEndPeriod
+    - ebusd/700/BankHolidayStartPeriod
+    - ebusd/700/CcTimer_Friday
+    - ebusd/700/CcTimer_Monday
+    - ebusd/700/CcTimer_Saturday
+    - ebusd/700/CcTimer_Sunday
+    - ebusd/700/CcTimer_Thursday
+    - ebusd/700/CcTimer_Tuesday
+    - ebusd/700/CcTimer_Wednesday
+    - ebusd/700/ContinuosHeating
+    - ebusd/700/Currenterror
+    - ebusd/700/CylinderChargeHyst
+    - ebusd/700/CylinderChargeOffset
+    - ebusd/700/Date
+    - ebusd/700/DisplayedOutsideTemp
+    - ebusd/700/Errorhistory
+    - ebusd/700/FrostOverRideTime
+    - ebusd/700/GlobalSystemOff
+    - ebusd/700/Hc1ActualFlowTempDesired
+    - ebusd/700/Hc1AutoOffMode
+    - ebusd/700/Hc1CircuitType
+    - ebusd/700/Hc1ExcessTemp
+    - ebusd/700/Hc1FlowTemp
+    - ebusd/700/Hc1HeatCurve
+    - ebusd/700/Hc1HeatCurveAdaption
+    - ebusd/700/Hc1MaxFlowTempDesired
+    - ebusd/700/Hc1MinFlowTempDesired
+    - ebusd/700/Hc1MixerMovement
+    - ebusd/700/Hc1PumpStatus
+    - ebusd/700/Hc1RoomTempSwitchOn
+    - ebusd/700/Hc1Status
+    - ebusd/700/Hc1SummerTempLimit
+    - ebusd/700/Hc2ActualFlowTempDesired
+    - ebusd/700/Hc2AutoOffMode
+    - ebusd/700/Hc2CircuitType
+    - ebusd/700/Hc2ExcessTemp
+    - ebusd/700/Hc2FlowTemp
+    - ebusd/700/Hc2HeatCurve
+    - ebusd/700/Hc2HeatCurveAdaption
+    - ebusd/700/Hc2MaxFlowTempDesired
+    - ebusd/700/Hc2MinFlowTempDesired
+    - ebusd/700/Hc2MixerMovement
+    - ebusd/700/Hc2PumpStatus
+    - ebusd/700/Hc2RoomTempSwitchOn
+    - ebusd/700/Hc2Status
+    - ebusd/700/Hc2SummerTempLimit
+    - ebusd/700/Hc3ActualFlowTempDesired
+    - ebusd/700/Hc3AutoOffMode
+    - ebusd/700/Hc3CircuitType
+    - ebusd/700/Hc3ExcessTemp
+    - ebusd/700/Hc3FlowTemp
+    - ebusd/700/Hc3HeatCurve
+    - ebusd/700/Hc3HeatCurveAdaption
+    - ebusd/700/Hc3MaxFlowTempDesired
+    - ebusd/700/Hc3MinFlowTempDesired
+    - ebusd/700/Hc3MixerMovement
+    - ebusd/700/Hc3PumpStatus
+    - ebusd/700/Hc3RoomTempSwitchOn
+    - ebusd/700/Hc3Status
+    - ebusd/700/Hc3SummerTempLimit
+    - ebusd/700/HcStorageTempBottom
+    - ebusd/700/HcStorageTempTop
+    - ebusd/700/HolidayEndPeriod
+    - ebusd/700/HolidayStartPeriod
+    - ebusd/700/HolidayTemp
+    - ebusd/700/HwcBankHolidayEndPeriod
+    - ebusd/700/HwcBankHolidayStartPeriod
+    - ebusd/700/HwcFlowTemp
+    - ebusd/700/HwcHolidayEndPeriod
+    - ebusd/700/HwcHolidayStartPeriod
+    - ebusd/700/HwcLockTime
+    - ebusd/700/HwcMaxFlowTempDesired
+    - ebusd/700/HwcOpMode
+    - ebusd/700/HwcParallelLoading
+    - ebusd/700/HwcSFMode
+    - ebusd/700/HwcStorageTemp
+    - ebusd/700/HwcStorageTempBottom
+    - ebusd/700/HwcStorageTempTop
+    - ebusd/700/HwcTempDesired
+    - ebusd/700/HwcTimer_Friday
+    - ebusd/700/HwcTimer_Monday
+    - ebusd/700/HwcTimer_Saturday
+    - ebusd/700/HwcTimer_Sunday
+    - ebusd/700/HwcTimer_Thursday
+    - ebusd/700/HwcTimer_Tuesday
+    - ebusd/700/HwcTimer_Wednesday
+    - ebusd/700/HydraulicScheme
+    - ebusd/700/Installer1
+    - ebusd/700/Installer2
+    - ebusd/700/KeyCodeforConfigMenu
+    - ebusd/700/MaintenanceDate
+    - ebusd/700/MaintenanceDue
+    - ebusd/700/ManualCooling
+    - ebusd/700/MaxCylinderChargeTime
+    - ebusd/700/MaxRoomHumidity
+    - ebusd/700/MultiRelaySetting
+    - ebusd/700/NoiseReductionTimer_Friday
+    - ebusd/700/NoiseReductionTimer_Monday
+    - ebusd/700/NoiseReductionTimer_Saturday
+    - ebusd/700/NoiseReductionTimer_Sunday
+    - ebusd/700/NoiseReductionTimer_Thursday
+    - ebusd/700/NoiseReductionTimer_Tuesday
+    - ebusd/700/NoiseReductionTimer_Wednesday
+    - ebusd/700/OpMode
+    - ebusd/700/OpModeCooling
+    - ebusd/700/OpModeEffect
+    - ebusd/700/OpModeVentilation
+    - ebusd/700/OutsideTempAvg
+    - ebusd/700/PhoneNumber1
+    - ebusd/700/PhoneNumber2
+    - ebusd/700/PrEnergySum
+    - ebusd/700/PrEnergySumHc
+    - ebusd/700/PrEnergySumHcLastMonth
+    - ebusd/700/PrEnergySumHcThisMonth
+    - ebusd/700/PrEnergySumHwc
+    - ebusd/700/PrEnergySumHwcLastMonth
+    - ebusd/700/PrEnergySumHwcThisMonth
+    - ebusd/700/PrFuelSum
+    - ebusd/700/PrFuelSumHc
+    - ebusd/700/PrFuelSumHcLastMonth
+    - ebusd/700/PrFuelSumHcThisMonth
+    - ebusd/700/PrFuelSumHwc
+    - ebusd/700/PrFuelSumHwcLastMonth
+    - ebusd/700/PrFuelSumHwcThisMonth
+    - ebusd/700/PumpAdditionalTime
+    - ebusd/700/SFMode
+    - ebusd/700/SolarYieldTotal
+    - ebusd/700/SystemFlowTemp
+    - ebusd/700/TariffTimer_Friday
+    - ebusd/700/TariffTimer_Monday
+    - ebusd/700/TariffTimer_Saturday
+    - ebusd/700/TariffTimer_Sunday
+    - ebusd/700/TariffTimer_Thursday
+    - ebusd/700/TariffTimer_Tuesday
+    - ebusd/700/TariffTimer_Wednesday
+    - ebusd/700/Time
+    - ebusd/700/VentilationDay
+    - ebusd/700/VentilationNight
+    - ebusd/700/VentilationTimer_Friday
+    - ebusd/700/VentilationTimer_Monday
+    - ebusd/700/VentilationTimer_Saturday
+    - ebusd/700/VentilationTimer_Sunday
+    - ebusd/700/VentilationTimer_Thursday
+    - ebusd/700/VentilationTimer_Tuesday
+    - ebusd/700/VentilationTimer_Wednesday
+    - ebusd/700/WaterPressure
+    - ebusd/700/YieldTotal
+    - ebusd/700/Z1ActualRoomTempDesired
+    - ebusd/700/Z1BankHolidayEndPeriod
+    - ebusd/700/Z1BankHolidayStartPeriod
+    - ebusd/700/Z1CoolingTemp
+    - ebusd/700/Z1CoolingTimer_Friday
+    - ebusd/700/Z1CoolingTimer_Monday
+    - ebusd/700/Z1CoolingTimer_Saturday
+    - ebusd/700/Z1CoolingTimer_Sunday
+    - ebusd/700/Z1CoolingTimer_Thursday
+    - ebusd/700/Z1CoolingTimer_Tuesday
+    - ebusd/700/Z1CoolingTimer_Wednesday
+    - ebusd/700/Z1DayTemp
+    - ebusd/700/Z1HolidayEndPeriod
+    - ebusd/700/Z1HolidayStartPeriod
+    - ebusd/700/Z1HolidayTemp
+    - ebusd/700/Z1Name1
+    - ebusd/700/Z1Name2
+    - ebusd/700/Z1NightTemp
+    - ebusd/700/Z1OpMode
+    - ebusd/700/Z1OpModeCooling
+    - ebusd/700/Z1QuickVetoTemp
+    - ebusd/700/Z1RoomTemp
+    - ebusd/700/Z1RoomZoneMapping
+    - ebusd/700/Z1SFMode
+    - ebusd/700/Z1Shortname
+    - ebusd/700/Z1Timer_Friday
+    - ebusd/700/Z1Timer_Monday
+    - ebusd/700/Z1Timer_Saturday
+    - ebusd/700/Z1Timer_Sunday
+    - ebusd/700/Z1Timer_Thursday
+    - ebusd/700/Z1Timer_Tuesday
+    - ebusd/700/Z1Timer_Wednesday
+    - ebusd/700/Z1ValveStatus
+    - ebusd/700/Z2ActualRoomTempDesired
+    - ebusd/700/Z2BankHolidayEndPeriod
+    - ebusd/700/Z2BankHolidayStartPeriod
+    - ebusd/700/Z2CoolingTemp
+    - ebusd/700/Z2CoolingTimer_Friday
+    - ebusd/700/Z2CoolingTimer_Monday
+    - ebusd/700/Z2CoolingTimer_Saturday
+    - ebusd/700/Z2CoolingTimer_Sunday
+    - ebusd/700/Z2CoolingTimer_Thursday
+    - ebusd/700/Z2CoolingTimer_Tuesday
+    - ebusd/700/Z2CoolingTimer_Wednesday
+    - ebusd/700/Z2DayTemp
+    - ebusd/700/Z2HolidayEndPeriod
+    - ebusd/700/Z2HolidayStartPeriod
+    - ebusd/700/Z2HolidayTemp
+    - ebusd/700/Z2Name1
+    - ebusd/700/Z2Name2
+    - ebusd/700/Z2NightTemp
+    - ebusd/700/Z2OpMode
+    - ebusd/700/Z2OpModeCooling
+    - ebusd/700/Z2QuickVetoTemp
+    - ebusd/700/Z2RoomTemp
+    - ebusd/700/Z2RoomZoneMapping
+    - ebusd/700/Z2SFMode
+    - ebusd/700/Z2Shortname
+    - ebusd/700/Z2Timer_Friday
+    - ebusd/700/Z2Timer_Monday
+    - ebusd/700/Z2Timer_Saturday
+    - ebusd/700/Z2Timer_Sunday
+    - ebusd/700/Z2Timer_Thursday
+    - ebusd/700/Z2Timer_Tuesday
+    - ebusd/700/Z2Timer_Wednesday
+    - ebusd/700/Z2ValveStatus
+    - ebusd/700/Z3ActualRoomTempDesired
+    - ebusd/700/Z3BankHolidayEndPeriod
+    - ebusd/700/Z3BankHolidayStartPeriod
+    - ebusd/700/Z3CoolingTemp
+    - ebusd/700/Z3CoolingTimer_Friday
+    - ebusd/700/Z3CoolingTimer_Monday
+    - ebusd/700/Z3CoolingTimer_Saturday
+    - ebusd/700/Z3CoolingTimer_Sunday
+    - ebusd/700/Z3CoolingTimer_Thursday
+    - ebusd/700/Z3CoolingTimer_Tuesday
+    - ebusd/700/Z3CoolingTimer_Wednesday
+    - ebusd/700/Z3DayTemp
+    - ebusd/700/Z3HolidayEndPeriod
+    - ebusd/700/Z3HolidayStartPeriod
+    - ebusd/700/Z3HolidayTemp
+    - ebusd/700/Z3Name1
+    - ebusd/700/Z3Name2
+    - ebusd/700/Z3NightTemp
+    - ebusd/700/Z3OpMode
+    - ebusd/700/Z3OpModeCooling
+    - ebusd/700/Z3QuickVetoTemp
+    - ebusd/700/Z3RoomTemp
+    - ebusd/700/Z3RoomZoneMapping
+    - ebusd/700/Z3SFMode
+    - ebusd/700/Z3Shortname
+    - ebusd/700/Z3Timer_Friday
+    - ebusd/700/Z3Timer_Monday
+    - ebusd/700/Z3Timer_Saturday
+    - ebusd/700/Z3Timer_Sunday
+    - ebusd/700/Z3Timer_Thursday
+    - ebusd/700/Z3Timer_Tuesday
+    - ebusd/700/Z3Timer_Wednesday
+    - ebusd/700/Z3ValveStatus
+    - ebusd/bai/AccessoriesOne
+    - ebusd/bai/AccessoriesTwo
+    - ebusd/bai/ACRoomthermostat
+    - ebusd/bai/AntiCondensValue
+    - ebusd/bai/AverageIgnitiontime
+    - ebusd/bai/BlockTimeHcMax
+    - ebusd/bai/BoilerType
+    - ebusd/bai/ChangesDSN
+    - ebusd/bai/CirPump
+    - ebusd/bai/CodingResistor
+    - ebusd/bai/CounterStartattempts1
+    - ebusd/bai/CounterStartattempts2
+    - ebusd/bai/CounterStartAttempts3
+    - ebusd/bai/CounterStartAttempts4
+    - ebusd/bai/Currenterror
+    - ebusd/bai/DateTime
+    - ebusd/bai/DcfState
+    - ebusd/bai/DCFTimeDate
+    - ebusd/bai/DCRoomthermostat
+    - ebusd/bai/DeactivationsIFC
+    - ebusd/bai/DeactivationsTemplimiter
+    - ebusd/bai/DeltaFlowReturnMax
+    - ebusd/bai/DisplayMode
+    - ebusd/bai/DSN
+    - ebusd/bai/DSNOffset
+    - ebusd/bai/DSNStart
+    - ebusd/bai/EBusHeatcontrol
+    - ebusd/bai/EbusSourceOn
+    - ebusd/bai/EbusVoltage
+    - ebusd/bai/Errorhistory
+    - ebusd/bai/ExternalFaultmessage
+    - ebusd/bai/ExternalHwcSwitch
+    - ebusd/bai/ExternGasvalve
+    - ebusd/bai/ExtFlowTempDesiredMin
+    - ebusd/bai/ExtStorageModulCon
+    - ebusd/bai/ExtWP
+    - ebusd/bai/FanHours
+    - ebusd/bai/FanMaxSpeedOperation
+    - ebusd/bai/FanMinSpeedOperation
+    - ebusd/bai/FanPWMSum
+    - ebusd/bai/FanPWMTest
+    - ebusd/bai/FanSpeed
+    - ebusd/bai/FanSpeedOffsetMax
+    - ebusd/bai/FanSpeedOffsetMin
+    - ebusd/bai/FanStarts
+    - ebusd/bai/Flame
+    - ebusd/bai/FlameSensingASIC
+    - ebusd/bai/FloorHeatingContact
+    - ebusd/bai/FlowsetHcMax
+    - ebusd/bai/FlowsetHwcMax
+    - ebusd/bai/FlowTemp
+    - ebusd/bai/FlowTempDesired
+    - ebusd/bai/FlowTempMax
+    - ebusd/bai/Fluegasvalve
+    - ebusd/bai/FluegasvalveOpen
+    - ebusd/bai/Gasvalve3UC
+    - ebusd/bai/GasvalveASICFeedback
+    - ebusd/bai/GasvalveUC
+    - ebusd/bai/GasvalveUCFeedback
+    - ebusd/bai/HcHours
+    - ebusd/bai/HcPumpMode
+    - ebusd/bai/HcPumpStarts
+    - ebusd/bai/HcStarts
+    - ebusd/bai/HcUnderHundredStarts
+    - ebusd/bai/HeatingSwitch
+    - ebusd/bai/HoursTillService
+    - ebusd/bai/HwcDemand
+    - ebusd/bai/HwcHours
+    - ebusd/bai/HwcImpellorSwitch
+    - ebusd/bai/HwcPostrunTime
+    - ebusd/bai/HwcStarts
+    - ebusd/bai/HwcSwitch
+    - ebusd/bai/HwcTemp
+    - ebusd/bai/HwcTempDesired
+    - ebusd/bai/HwcTempMax
+    - ebusd/bai/HwcTypes
+    - ebusd/bai/HwcUnderHundredStarts
+    - ebusd/bai/HwcWaterflow
+    - ebusd/bai/HwcWaterflowMax
+    - ebusd/bai/Ignitor
+    - ebusd/bai/InitialisationEEPROM
+    - ebusd/bai/IonisationVoltageLevel
+    - ebusd/bai/Maintenancedata_HwcTempMax
+    - ebusd/bai/MaxIgnitiontime
+    - ebusd/bai/MinIgnitiontime
+    - ebusd/bai/ModulationDesired
+    - ebusd/bai/OptionalRelais
+    - ebusd/bai/OutdoorstempSensor
+    - ebusd/bai/OverflowCounter
+    - ebusd/bai/ParamToken
+    - ebusd/bai/PartloadHcKW
+    - ebusd/bai/PartloadHwcKW
+    - ebusd/bai/PartnumberBox
+    - ebusd/bai/PositionValveSet
+    - ebusd/bai/PowerValue
+    - ebusd/bai/PrAPSCounter
+    - ebusd/bai/PrAPSSum
+    - ebusd/bai/PrEnergyCountHc1
+    - ebusd/bai/PrEnergyCountHc2
+    - ebusd/bai/PrEnergyCountHc3
+    - ebusd/bai/PrEnergyCountHwc1
+    - ebusd/bai/PrEnergyCountHwc2
+    - ebusd/bai/PrEnergyCountHwc3
+    - ebusd/bai/PrEnergySumHc1
+    - ebusd/bai/PrEnergySumHc2
+    - ebusd/bai/PrEnergySumHc3
+    - ebusd/bai/PrEnergySumHwc1
+    - ebusd/bai/PrEnergySumHwc2
+    - ebusd/bai/PrEnergySumHwc3
+    - ebusd/bai/ProductionByte
+    - ebusd/bai/PrVortexFlowSensorValue
+    - ebusd/bai/PumpHours
+    - ebusd/bai/PumpHwcFlowNumber
+    - ebusd/bai/PumpHwcFlowSum
+    - ebusd/bai/PumpPower
+    - ebusd/bai/PumpPowerDesired
+    - ebusd/bai/RemainingBoilerblocktime
+    - ebusd/bai/ReturnRegulation
+    - ebusd/bai/ReturnTemp
+    - ebusd/bai/ReturnTempExternal
+    - ebusd/bai/ReturnTempMax
+    - ebusd/bai/SerialNumber
+    - ebusd/bai/SetFactoryValues
+    - ebusd/bai/SetMode
+    - ebusd/bai/SHEMaxDeltaHwcFlow
+    - ebusd/bai/SHEMaxFlowTemp
+    - ebusd/bai/SolPostHeat
+    - ebusd/bai/SpecialAdj
+    - ebusd/bai/Statenumber
+    - ebusd/bai/Status01
+    - ebusd/bai/Status02
+    - ebusd/bai/Status16
+    - ebusd/bai/Status
+    - ebusd/bai/StatusCirPump
+    - ebusd/bai/Storageloadpump
+    - ebusd/bai/StorageLoadPumpHours
+    - ebusd/bai/StorageloadPumpStarts
+    - ebusd/bai/StorageLoadTimeMax
+    - ebusd/bai/StoragereleaseClock
+    - ebusd/bai/StorageTemp
+    - ebusd/bai/StorageTempDesired
+    - ebusd/bai/StorageTempMax
+    - ebusd/bai/TargetFanSpeed
+    - ebusd/bai/TargetFanSpeedOutput
+    - ebusd/bai/TempDiffBlock
+    - ebusd/bai/TempDiffFailure
+    - ebusd/bai/TempGradientFailure
+    - ebusd/bai/Templimiter
+    - ebusd/bai/TemplimiterWithNTC
+    - ebusd/bai/TempMaxDiffExtTFT
+    - ebusd/bai/Testbyte
+    - ebusd/bai/TimerInputHc
+    - ebusd/bai/ValveMode
+    - ebusd/bai/ValveStarts
+    - ebusd/bai/VolatileLockout
+    - ebusd/bai/VolatileLockoutIFCGV
+    - ebusd/bai/WarmstartDemand
+    - ebusd/bai/WarmstartOffset
+    - ebusd/bai/WaterHcFlowMax
+    - ebusd/bai/WaterPressure
+    - ebusd/bai/WaterpressureBranchControlOff
+    - ebusd/bai/WaterpressureMeasureCounter
+    - ebusd/bai/WaterpressureVariantSum
+    - ebusd/bai/WP
+    - ebusd/bai/WPPostrunTime
+    - ebusd/bai/WPSecondStage
+    - ebusd/Broadcast/ControlCmd
+    - ebusd/Broadcast/Datetime
+    - ebusd/Broadcast/Error
+    - ebusd/Broadcast/HwcStatus
+    - ebusd/Broadcast/IdAnswer
+    - ebusd/Broadcast/Load
+    - ebusd/Broadcast/Netloss
+    - ebusd/Broadcast/Netresetcfg
+    - ebusd/Broadcast/Netresetstate
+    - ebusd/Broadcast/Outsidetemp
+    - ebusd/Broadcast/RcOperation
+    - ebusd/Broadcast/RcTarget
+    - ebusd/Broadcast/Signoflife
+    - ebusd/Broadcast/Vdatetime
+    - ebusd/hwc/ActorFernsteuerung
+    - ebusd/hwc/ActualKrm
+    - ebusd/hwc/ActualTappingTempDesired
+    - ebusd/hwc/ActualTnm
+    - ebusd/hwc/AutoTappingTempDesired
+    - ebusd/hwc/BigHExThreshold
+    - ebusd/hwc/CalculatedMixerPosition
+    - ebusd/hwc/CircoPump
+    - ebusd/hwc/Currenterror
+    - ebusd/hwc/Date
+    - ebusd/hwc/DateTime
+    - ebusd/hwc/ElectricalHeater
+    - ebusd/hwc/EnableHwcOperation
+    - ebusd/hwc/Errorhistory
+    - ebusd/hwc/FlowTemp
+    - ebusd/hwc/HeatDemand
+    - ebusd/hwc/HExIndex
+    - ebusd/hwc/HexMonitoringCounter
+    - ebusd/hwc/HExThreshold
+    - ebusd/hwc/HolidayStart
+    - ebusd/hwc/Krm
+    - ebusd/hwc/KrmFaktorMiddl
+    - ebusd/hwc/KrmFaktorSmall
+    - ebusd/hwc/Krp
+    - ebusd/hwc/LegioStartDay
+    - ebusd/hwc/LegioStartTime
+    - ebusd/hwc/ManualTappingTempDesired
+    - ebusd/hwc/Mode
+    - ebusd/hwc/Ntc1Sensor
+    - ebusd/hwc/Ntc2Sensor
+    - ebusd/hwc/Ntc3Sensor
+    - ebusd/hwc/OperatingHours
+    - ebusd/hwc/OperatingMode
+    - ebusd/hwc/OverheatTimer
+    - ebusd/hwc/Params
+    - ebusd/hwc/PartyStart
+    - ebusd/hwc/PumpED
+    - ebusd/hwc/QuickVetoStart
+    - ebusd/hwc/QuickVetoTempDesired
+    - ebusd/hwc/SingleStorageCharge
+    - ebusd/hwc/StateCircoKick
+    - ebusd/hwc/StateHExMonitoring
+    - ebusd/hwc/StateMainControl
+    - ebusd/hwc/StateMixerPumpControl
+    - ebusd/hwc/Status0a
+    - ebusd/hwc/Status16
+    - ebusd/hwc/Status
+    - ebusd/hwc/SteBusCheckFailedCounter
+    - ebusd/hwc/StFrostProtCounter
+    - ebusd/hwc/StInstallationDate
+    - ebusd/hwc/StLegioAbortTimeCounter
+    - ebusd/hwc/StLegioStopTimeCounter
+    - ebusd/hwc/TeleSwitch
+    - ebusd/hwc/TeleSwitchState
+    - ebusd/hwc/Time
+    - ebusd/hwc/Timer_Friday
+    - ebusd/hwc/Timer_Monday
+    - ebusd/hwc/Timer_Saturday
+    - ebusd/hwc/Timer_Sunday
+    - ebusd/hwc/Timer_Thursday
+    - ebusd/hwc/Timer_Tuesday
+    - ebusd/hwc/Timer_Wednesday
+    - ebusd/hwc/TimeTicker
+    - ebusd/hwc/Tm
+    - ebusd/hwc/Tnm
+    - ebusd/hwc/TnmFaktorMiddl
+    - ebusd/hwc/TnmFaktorSmall
+    - ebusd/hwc/Tp
+    - ebusd/hwc/Tvm
+    - ebusd/hwc/Tvp
+    - ebusd/hwc/Vortex
+    - ebusd/hwc/VPMWMode
+    - ebusd/hwc/Weekday
+    - ebusd/pms/ASIDetected
+    - ebusd/pms/BufferControlDiff
+    - ebusd/pms/BufferControlInt
+    - ebusd/pms/BufferControlPress
+    - ebusd/pms/BufferPumpPower
+    - ebusd/pms/CountryZone
+    - ebusd/pms/CurrentASCStateforASI
+    - ebusd/pms/CurrentASCStateforExternals
+    - ebusd/pms/CurrentBufferTempDesired
+    - ebusd/pms/Currenterror
+    - ebusd/pms/CurrentFlow
+    - ebusd/pms/CurrentSolTempDesired
+    - ebusd/pms/CurrentSystemMode
+    - ebusd/pms/CurrentVPMLoadingMode
+    - ebusd/pms/Date
+    - ebusd/pms/DateAndTimeIsSet
+    - ebusd/pms/Errorhistory
+    - ebusd/pms/ExternalHcRequest
+    - ebusd/pms/ExternalHcTempDesired
+    - ebusd/pms/ExternalHwcRequest
+    - ebusd/pms/ExternalHwcTempDesired
+    - ebusd/pms/FlowSensorFrequency
+    - ebusd/pms/ForceStartSolPumpKick
+    - ebusd/pms/InternalHcTempDesired
+    - ebusd/pms/InternalHwcTempDesired
+    - ebusd/pms/MonitorBufferPIDValue
+    - ebusd/pms/MonitorMatlabHcCalculation
+    - ebusd/pms/MonitorMatlabHwcCalculation
+    - ebusd/pms/MonitorMatlabLast5minSolAverage
+    - ebusd/pms/MonitorMatlabState
+    - ebusd/pms/MonitorOverheatState
+    - ebusd/pms/MonitorSolPIDValue
+    - ebusd/pms/Ntc1RawData
+    - ebusd/pms/Ntc1Sensor
+    - ebusd/pms/Ntc2RawData
+    - ebusd/pms/Ntc2Sensor
+    - ebusd/pms/Ntc3RawData
+    - ebusd/pms/Ntc3Sensor
+    - ebusd/pms/Ntc4RawData
+    - ebusd/pms/Ntc4Sensor
+    - ebusd/pms/PowerOnCounter
+    - ebusd/pms/RequestForExternalDateTimeSetting
+    - ebusd/pms/RTCLowVoltageCounter
+    - ebusd/pms/RunTimeBufferPumpHours
+    - ebusd/pms/RunTimeBufferPumpMinutes
+    - ebusd/pms/RunTimePump1Hours
+    - ebusd/pms/RunTimePump1Minutes
+    - ebusd/pms/SolControlDiff
+    - ebusd/pms/SolControlInt
+    - ebusd/pms/SolControlPress
+    - ebusd/pms/SolPumpPower
+    - ebusd/pms/SolPumpRelay
+    - ebusd/pms/Time
+    - ebusd/pms/Variante
+    - ebusd/pms/YieldCurrentDay
+    - ebusd/pms/YieldTotal
+    - ebusd/sc/BufferPumpPower
+    - ebusd/sc/Col
+    - ebusd/sc/ColKickPumpTime
+    - ebusd/sc/ColKickTempDelta
+    - ebusd/sc/CollPump
+    - ebusd/sc/CurrentASCStateforASI
+    - ebusd/sc/CurrentASCStateforExternals
+    - ebusd/sc/Currenterror
+    - ebusd/sc/CurrentSolTempDesired
+    - ebusd/sc/CurrentVPMLoadingMode
+    - ebusd/sc/D1Temp
+    - ebusd/sc/D2Temp
+    - ebusd/sc/Date
+    - ebusd/sc/DateAndTimeIsSet
+    - ebusd/sc/EDFunction
+    - ebusd/sc/EnableScProtection
+    - ebusd/sc/Errorhistory
+    - ebusd/sc/ExternalHcRequest
+    - ebusd/sc/ExternalHcTempDesired
+    - ebusd/sc/ExternalHwcRequest
+    - ebusd/sc/ExternalHwcTempDesired
+    - ebusd/sc/FlowRate
+    - ebusd/sc/FrostProtectionEnabled
+    - ebusd/sc/FrostProtectionLimit
+    - ebusd/sc/Hc1PumpKol1PP1Port
+    - ebusd/sc/Hc2aLegPumpP2Port
+    - ebusd/sc/Hc2zPort
+    - ebusd/sc/HydraulicScheme
+    - ebusd/sc/InitCircuit
+    - ebusd/sc/IsInBoostMode
+    - ebusd/sc/KickFunction
+    - ebusd/sc/LpZpMaPort
+    - ebusd/sc/MAPreferredStorage
+    - ebusd/sc/MaximalTemp2
+    - ebusd/sc/MaximalTemp
+    - ebusd/sc/MonitorMatlabLast5minSolAverage
+    - ebusd/sc/MultifunctionOutput
+    - ebusd/sc/Ntc1RawData
+    - ebusd/sc/Ntc1Sensor
+    - ebusd/sc/Ntc2RawData
+    - ebusd/sc/Ntc2Sensor
+    - ebusd/sc/Ntc3RawData
+    - ebusd/sc/Ntc3Sensor
+    - ebusd/sc/Ntc4RawData
+    - ebusd/sc/Ntc4Sensor
+    - ebusd/sc/OMultifunction
+    - ebusd/sc/PumpAntiLockingFlags
+    - ebusd/sc/QuickVetoStart
+    - ebusd/sc/ResetSolGain
+    - ebusd/sc/RuntimeCollPump
+    - ebusd/sc/RuntimeCollPumpSeconds
+    - ebusd/sc/RunTimePump1Hours
+    - ebusd/sc/RunTimePump1Minutes
+    - ebusd/sc/ScProtectionHysteresis
+    - ebusd/sc/ScProtectionLimit
+    - ebusd/sc/ScProtectionTime
+    - ebusd/sc/SolCollPumpDcIntegrator
+    - ebusd/sc/SolCollPumpED
+    - ebusd/sc/SolGain
+    - ebusd/sc/SolOperationMode
+    - ebusd/sc/SolPumpPower
+    - ebusd/sc/SolPumpRelay
+    - ebusd/sc/SP1
+    - ebusd/sc/SP2
+    - ebusd/sc/SumSolGain
+    - ebusd/sc/SumSolGainDayBefore
+    - ebusd/sc/SystemMode
+    - ebusd/sc/TempDifferenceOff2
+    - ebusd/sc/TempDifferenceOff
+    - ebusd/sc/TempDifferenceOffTD12
+    - ebusd/sc/TempDifferenceOn2
+    - ebusd/sc/TempDifferenceOn
+    - ebusd/sc/TempDifferenceOnTD12
+    - ebusd/sc/Time
+    - ebusd/sc/Weekday
+    - ebusd/sc/YieldLastYear
+    - ebusd/sc/YieldThisYear
+    - ebusd/vr_70/Currenterror
+    - ebusd/vr_70/Errorhistory
+    - ebusd/vr_70/SensorData
+  sequence:
+  - repeat:
+      for_each: '{{ ebus_topics }}'
+      sequence:
+      - action: mqtt.publish
+        data:
+          topic: '{{ repeat.item }}/get'
+          payload: ''
+  mode: single
+weather_and_comfort_report:
+  alias: Weather and comfort report
+  sequence:
+  - action: ai_task.generate_data
+    data:
+      task_name: weather comfort report
+      instructions: 'Basierend auf den aktuellen Bedingungen:
+
+        - Außentemperatur: {{ states(''sensor.durchschnittstemperatur'') }}°C
+
+        - Wetter: {{ states(''weather.forecast_home'') }}
+
+        - Innen Temperatur: {{ states(''sensor.durchschnittstemperatur_haus'') }}°C
+
+        - Innen Luftfeuchtigkeit: {{ states(''sensor.durchschnittsluftfeuchtigkeit_haus'')
+        }}%
+
+
+        Erstellen Sie eine lustige Wetterbeschreibung und bewerten Sie den Komfort
+        im Innenbereich.
+
+        '
+      structure:
+        weather_description:
+          description: Eine humorvolle Beschreibung des aktuellen Wetters draußen
+          required: true
+          selector:
+            text:
+        indoor_comfort:
+          description: Einschätzung, wie komfortabel es drinnen im Vergleich zu draußen
+            ist
+          required: true
+          selector:
+            text:
+    response_variable: comfort_report
+  - action: notify.persistent_notification
+    data:
+      title: "\U0001F3E0 Home climate report"
+      message: "\U0001F324️ **Wetter draußen:**\n{{ comfort_report.data.weather_description
+        }}\n\n\U0001F6CB️ **Komfort im Innenbereich:**\n{{ comfort_report.data.indoor_comfort
+        }}\n"
+  description: ''
+comfoclime_modus_setzen:
+  alias: ComfoClime Modus setzen
+  sequence:
+  - variables:
+      settings:
+        heating:
+          temp: 23
+          mode: heat
+        cooling:
+          temp: 18
+          mode: cool
+        transition:
+          temp: 22
+          mode: fan_only
+      state: '{{ states(''select.comfoclime_24_jahreszeitwahl'') }}'
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.comfoclime_comfoclime_24
+    data:
+      temperature: '{{ settings[state].temp | default(22) }}'
+      hvac_mode: '{{ settings[state].mode | default(''off'') }}'
+  description: ''
+  icon: mdi:hvac
+benachrichtungstemplate:
+  alias: Benachrichtungstemplate
+  use_blueprint:
+    path: FourtyNos/Master_Notify.yaml
+    input:
+      user_group_admins:
+      - b655385b381680e292b2eb85a64a8720
+      user_group_family:
+      - e922f7cf817a612929b8098fde79cd34
+      tts_provider: tts.google_ai_tts
+      tts_group_devices:
+      - media_player.gong_gong
+      - media_player.musikgruppe
+      - media_player.musikgruppe_2
+  description: ''
+  icon: mdi:message-badge
+staubsauger_wohnzimmer_kuche:
+  sequence:
+  - action: vacuum.clean_area
+    alias: Wohnzimmer & Küche
+    target:
+      entity_id: vacuum.roborock_qrevo_slim
+    data:
+      cleaning_area_id:
+      - eg_wohnzimmer
+      - eg_kuche
+  alias: Staubsauger - Wohnzimmer & Küche
+  description: ''
+  icon: mdi:robot-vacuum
+staubsauger_flur_bad:
+  sequence:
+  - action: vacuum.clean_area
+    alias: Flur & Bad
+    target:
+      entity_id: vacuum.roborock_qrevo_slim
+    data:
+      cleaning_area_id:
+      - eg_flur
+      - eg_badezimmer
+  alias: Staubsauger - Flur & Bad
+  description: ''
+  icon: mdi:robot-vacuum
+staubsauger_buro:
+  sequence:
+  - alias: Büro
+    action: vacuum.clean_area
+    target:
+      entity_id: vacuum.roborock_qrevo_slim
+    data:
+      cleaning_area_id:
+      - eg_buro
+  alias: Staubsauger - Büro
+  description: ''
+  icon: mdi:robot-vacuum

@@ -1,0 +1,180 @@
+
+sensor:
+  # --- Zählernummer (String, kein numerischer Sensor) ---
+  - name: "Smartmeter Zählernummer"
+    unique_id: smartmeter_id
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.id }}"
+    entity_category: diagnostic
+
+  # --- Energie ---
+  - name: "Smartmeter Zählerstand Bezug"
+    unique_id: smartmeter_total_in
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.total_in }}"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+    availability_topic: "tele/smartmeter_3C7D10/LWT"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+
+  - name: "Smartmeter Zählerstand Einspeisung"
+    unique_id: smartmeter_total_out
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.total_out }}"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: total_increasing
+
+  # --- Leistung (ersetzt sensor.smartmeter_power) ---
+  - name: "Smartmeter Power"
+    unique_id: smartmeter_power
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.power }}"
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+
+  # --- Rollierende Verbrauchsfenster ---
+  - name: "Smartmeter Verbrauch 1 Tag"
+    unique_id: smartmeter_total_1d
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.total_1d }}"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: measurement
+
+  - name: "Smartmeter Verbrauch 7 Tage"
+    unique_id: smartmeter_total_7d
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.total_7d }}"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: measurement
+
+  - name: "Smartmeter Verbrauch 30 Tage"
+    unique_id: smartmeter_total_30d
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.total_30d }}"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: measurement
+
+  - name: "Smartmeter Verbrauch 365 Tage"
+    unique_id: smartmeter_total_365d
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.total_365d }}"
+    unit_of_measurement: "kWh"
+    device_class: energy
+    state_class: measurement
+
+  # --- Spannung ---
+  - name: "Smartmeter Spannung L1"
+    unique_id: smartmeter_voltage_l1
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.voltage_l1 }}"
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+
+  - name: "Smartmeter Spannung L2"
+    unique_id: smartmeter_voltage_l2
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.voltage_l2 }}"
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+
+  - name: "Smartmeter Spannung L3"
+    unique_id: smartmeter_voltage_l3
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.voltage_l3 }}"
+    unit_of_measurement: "V"
+    device_class: voltage
+    state_class: measurement
+
+  # --- Strom ---
+  - name: "Smartmeter Strom L1"
+    unique_id: smartmeter_current_l1
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.amperage_l1 }}"
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+
+  - name: "Smartmeter Strom L2"
+    unique_id: smartmeter_current_l2
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.amperage_l2 }}"
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+
+  - name: "Smartmeter Strom L3"
+    unique_id: smartmeter_current_l3
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.amperage_l3 }}"
+    unit_of_measurement: "A"
+    device_class: current
+    state_class: measurement
+
+  # --- Phasenwinkel ---
+  - name: "Smartmeter Phasenwinkel UL2-UL1"
+    unique_id: smartmeter_angle_ul2_ul1
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.angle_ul2_ul1 }}"
+    unit_of_measurement: "°"
+    state_class: measurement
+    entity_category: diagnostic
+
+  - name: "Smartmeter Phasenwinkel UL3-UL1"
+    unique_id: smartmeter_angle_ul3_ul1
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.angle_ul3_ul1 }}"
+    unit_of_measurement: "°"
+    state_class: measurement
+    entity_category: diagnostic
+
+  - name: "Smartmeter Phasenwinkel IL1-UL1"
+    unique_id: smartmeter_angle_il1_ul1
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.angle_il1_ul1 }}"
+    unit_of_measurement: "°"
+    state_class: measurement
+    entity_category: diagnostic
+
+  - name: "Smartmeter Phasenwinkel IL2-UL2"
+    unique_id: smartmeter_angle_il2_ul2
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.angle_il2_ul2 }}"
+    unit_of_measurement: "°"
+    state_class: measurement
+    entity_category: diagnostic
+
+  - name: "Smartmeter Phasenwinkel IL3-UL3"
+    unique_id: smartmeter_angle_il2_ul3
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.angle_il2_ul3 }}"
+    unit_of_measurement: "°"
+    state_class: measurement
+    entity_category: diagnostic
+
+  # --- Netzfrequenz ---
+  - name: "Smartmeter Netzfrequenz"
+    unique_id: smartmeter_frequency
+    state_topic: "tele/smartmeter_3C7D10/SENSOR"
+    value_template: "{{ value_json.LK13BE.frequency }}"
+    unit_of_measurement: "Hz"
+    device_class: frequency
+    state_class: measurement
+
+# --- Diagnose: Online/Offline via LWT ---
+binary_sensor:
+  - name: "Smartmeter Online"
+    unique_id: smartmeter_online
+    state_topic: "tele/smartmeter_3C7D10/LWT"
+    payload_on: "Online"
+    payload_off: "Offline"
+    device_class: connectivity
+    entity_category: diagnostic

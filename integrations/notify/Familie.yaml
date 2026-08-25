@@ -1,0 +1,5 @@
+platform: group
+name: Familie
+services:
+  - service: mobile_app_pixel_8a
+  - service: mobile_app_pixel_9a

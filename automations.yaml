@@ -1,0 +1,4266 @@
+- id: '1673469571776'
+  alias: Weihnachtsbeleuchtung Aus
+  description: Weihnachtsbeleuchtung Ausschalten
+  triggers:
+  - at: '22:30:00'
+    id: Abends
+    trigger: time
+  - entity_id:
+    - input_boolean.tag_nacht_modus
+    from: 'off'
+    to: 'on'
+    id: Morgens
+    trigger: state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+  - trigger: switch.turned_on
+    target:
+      entity_id: input_boolean.tag_nacht_modus
+    options: {}
+    enabled: false
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.weihnachtszeit
+      state: 'on'
+    then:
+    - data: {}
+      action: light.turn_off
+      target:
+        entity_id:
+        - light.weihnachtsbeleuchtung
+      enabled: true
+    else:
+    - data: {}
+      action: light.turn_off
+      enabled: true
+      target:
+        entity_id: light.flur_steckdose
+  mode: single
+- id: '1673541549283'
+  alias: Licht Abends Ein
+  description: Beleuchtung ein
+  triggers:
+  - trigger: illuminance.detected
+    target:
+      entity_id: binary_sensor.abends_licht_an
+    options: {}
+    id: Licht ein
+  - trigger: zone.entered
+    target:
+      entity_id:
+      - person.oliver
+      - person.marina
+    options:
+      behavior: first
+      for: 00:00:00
+      zone: zone.home
+    id: Ankommen
+  - trigger: sun.dusk
+    options:
+      offset:
+        days: 0
+        hours: 0
+        minutes: 0
+        seconds: 0
+      offset_type: before
+      type: civil
+  conditions:
+  - condition: light.is_off
+    target:
+      entity_id: light.pergola_licht
+    options:
+      behavior: any
+      for: 00:00:00
+  - condition: zone.in_zone
+    target:
+      entity_id:
+      - person.oliver
+      - person.marina
+    options:
+      behavior: any
+      for: 00:00:00
+      zone: zone.home
+  - condition: sun.elevation
+    options:
+      threshold:
+        type: below
+        value:
+          active_choice: number
+          number: 20
+  - condition: illuminance.is_detected
+    target:
+      entity_id: binary_sensor.abends_licht_an
+    options:
+      for: 00:00:00
+  actions:
+  - if:
+    - condition: state
+      entity_id: switch.kino
+      state: 'on'
+    then:
+    - data:
+        brightness_pct: 100
+      target:
+        entity_id:
+        - light.elements_1d57_nanoleafs
+      action: light.turn_on
+    else:
+    - data:
+        brightness_pct: 100
+      target:
+        entity_id:
+        - light.wohnzimmer_indirekt
+      action: light.turn_on
+  mode: single
+- id: '1674164566101'
+  alias: Countdown Decrement
+  description: Countdowns werden heruntergezählt
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition: []
+  action:
+  - service: counter.decrement
+    data: {}
+    target:
+      entity_id:
+      - counter.comfoair_einzelfilter_saugen
+      - counter.enthartung_salz_nachfullen
+      - counter.comfoair_einzelfilter_tauschen
+  mode: single
+- id: '1674412280607'
+  alias: Wäsche Shelly An
+  description: ''
+  triggers:
+  - trigger: light.turned_on
+    target:
+      entity_id: light.wasche_licht
+    options: {}
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      entity_id: switch.wasche_gerate
+    action: switch.turn_on
+  - alias: 'Trockner fertig zurücksetzen '
+    if:
+    - condition: state
+      entity_id: switch.trockner_fertig
+      state: 'on'
+    then:
+    - action: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.trockner_fertig
+    - action: notify.familie
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: trockner_fertig
+  - alias: 'Waschmaschine fertig zurücksetzen '
+    if:
+    - condition: state
+      entity_id: switch.waschmaschine_fertig
+      state: 'on'
+    then:
+    - action: switch.turn_off
+      target:
+        entity_id: switch.waschmaschine_fertig
+      data: {}
+    - action: notify.familie
+      metadata: {}
+      data:
+        message: clear_notification
+        data:
+          tag: waschmaschine_fertig
+  mode: single
+- id: '1674412867439'
+  alias: Wäsche Shelly Aus
+  description: ''
+  triggers:
+  - entity_id:
+    - light.wasche_licht
+    from:
+    - 'on'
+    to:
+    - 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    trigger: state
+  conditions: []
+  actions:
+  - data: {}
+    action: switch.turn_off
+    target:
+      entity_id: switch.hebeanlage
+  - if:
+    - condition: state
+      entity_id: binary_sensor.trockner_lauft
+      state: 'off'
+    then:
+    - data: {}
+      target:
+        entity_id: switch.trockner
+      action: switch.turn_off
+  - if:
+    - condition: state
+      entity_id: binary_sensor.waschmaschine_lauft
+      state: 'off'
+    then:
+    - data: {}
+      target:
+        entity_id: switch.waschmaschine
+      action: switch.turn_off
+  mode: single
+- id: '1674415163885'
+  alias: Weihnachtsbeleuchtung Ein Morgens
+  description: Weihnachtsbeleuchtung Einschalten
+  triggers:
+  - at: 06:30:00
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.weihnachtszeit
+    state: 'on'
+  actions:
+  - data: {}
+    action: light.turn_on
+    target:
+      entity_id: light.weihnachtsbeleuchtung
+  mode: single
+- id: '1674470799329'
+  alias: Hoflicht ein
+  description: ''
+  triggers:
+  - trigger: motion.detected
+    target:
+      entity_id: binary_sensor.hof_bewegungsmelder_bewegung
+    options: {}
+  - trigger: door.opened
+    target:
+      entity_id: binary_sensor.haustur
+    options: {}
+  - trigger: garage_door.opened
+    target:
+      entity_id: cover.garagentor
+    options: {}
+  - trigger: occupancy.detected
+    target:
+      entity_id: binary_sensor.haustuer_person_occupancy
+    options:
+      behavior: each
+      for: 00:00:00
+  conditions:
+  - condition: illuminance.is_detected
+    target:
+      entity_id: binary_sensor.abends_licht_an
+    options: {}
+  actions:
+  - data: {}
+    target:
+      entity_id: light.hoflicht
+    action: light.turn_on
+  mode: single
+- id: '1674481953199'
+  alias: Garagentor fährt auf
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - cover.garagentor
+    from:
+    - closed
+    to:
+    - opening
+  conditions: []
+  actions:
+  - action: lock.unlock
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - lock.garagentor_warnung
+  - action: notify.familie
+    metadata: {}
+    data:
+      data:
+        sticky: true
+        tag: garagentor_bewegung_{{ now().timestamp() | int }}
+        group: Garagentor
+        channel: Garagentor
+        clickAction: settings://notification_history
+        color: orange
+        notification_icon: mdi:garage-alert-variant
+        car_ui: true
+      message: Garagentor fährt auf
+      title: Garagentor
+  mode: single
+- id: '1674481973213'
+  alias: Garagentor fährt zu
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - cover.garagentor
+    to:
+    - closing
+    from:
+    - open
+  conditions: []
+  actions:
+  - action: notify.familie
+    metadata: {}
+    data:
+      data:
+        sticky: true
+        tag: garagentor_bewegung_{{ now().timestamp() | int }}
+        group: Garagentor
+        channel: Garagentor
+        clickAction: settings://notification_history
+        color: lime
+        notification_icon: mdi:garage-alert-variant
+        car_ui: true
+      message: Garagentor fährt zu
+      title: Garagentor
+  mode: single
+- id: '1674482023615'
+  alias: Garagentor geschlossen
+  description: ''
+  triggers:
+  - trigger: garage_door.closed
+    target:
+      entity_id: cover.garagentor
+    options: {}
+  conditions: []
+  actions:
+  - action: lock.lock
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - lock.garagentor_warnung
+  - action: notify.familie
+    metadata: {}
+    data:
+      data:
+        sticky: true
+        tag: garagentor_bewegung_{{ now().timestamp() | int }}
+        group: Garagentor
+        channel: Garagentor
+        clickAction: settings://notification_history
+        color: green
+        notification_icon: mdi:garage-alert-variant
+        car_ui: true
+      message: Garagentor geschlossen
+      title: Garagentor
+  mode: single
+- id: '1674560816382'
+  alias: Klingel
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      entity_id: event.klingel
+    options:
+      event_type:
+      - ring
+      - press_long
+  conditions: []
+  actions:
+  - parallel:
+    - action: notify.familie
+      metadata: {}
+      data:
+        title: Klingel
+        message: Es hat geklingelt
+        data:
+          sticky: true
+          tag: haustuer_klingel
+          group: Klingel
+          channel: Klingel
+          color: red
+          notification_icon: mdi:bell
+          clickAction: entityId:camera.haustur_standardauflosung
+          image: /api/camera_proxy/camera.haustur_standardauflosung
+          ttl: 0
+          priority: high
+    - if:
+      - condition: state
+        entity_id: binary_sensor.schlafenszeit
+        state:
+        - 'off'
+      - condition: switch.is_off
+        target:
+          entity_id: input_boolean.babygeschrei
+        options:
+          behavior: any
+          for: 00:00:00
+      then:
+      - action: media_player.volume_set
+        metadata: {}
+        target:
+          entity_id: media_player.gong_gong
+        data:
+          volume_level: 1
+      - target:
+          entity_id: media_player.gong_gong
+        data:
+          media:
+            media_content_id: media-source://media_source/local/salamisound-6852546-klingel-ding-dong_2x.mp3
+            media_content_type: audio/mpeg
+            metadata:
+              title: salamisound-6852546-klingel-ding-dong_2x.mp3
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.gong_gong
+          announce: true
+        action: media_player.play_media
+        enabled: true
+  mode: single
+- id: '1674665350520'
+  alias: Abwesenheit
+  description: ''
+  triggers:
+  - trigger: zone.left
+    target:
+      entity_id:
+      - person.oliver
+      - person.marina
+    options:
+      behavior: all
+      for: 00:00:00
+      zone: zone.home
+  conditions:
+  - condition: zone.not_in_zone
+    target:
+      entity_id:
+      - person.marina
+      - person.oliver
+    options:
+      behavior: all
+      for: 00:00:00
+      zone: zone.home
+  actions:
+  - data: {}
+    target:
+      floor_id:
+      - garten
+      - og
+      - eg
+      - kg
+    action: light.turn_off
+  - action: media_player.turn_off
+    metadata: {}
+    data: {}
+    target:
+      floor_id:
+      - eg
+      - og
+  mode: single
+- id: '1675691226389'
+  alias: PC an
+  description: ''
+  triggers:
+  - trigger: tag
+    tag_id: 8cfb4b9a-bbd0-4129-8471-b986fa2d0a2c
+  conditions: []
+  actions:
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.buro_steckdose_buro_steckdose
+    data: {}
+  mode: single
+- id: '1675691433077'
+  alias: PC aus
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.secunet_laptop_ping
+    - binary_sensor.epson_drucker_ping
+    - binary_sensor.pc_oliver_ping
+    from:
+    - 'on'
+    to:
+    - 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  - trigger: power.crossed_threshold
+    target:
+      entity_id: sensor.buro_steckdose_buro_steckdose_power
+    options:
+      threshold:
+        type: below
+        value:
+          active_choice: number
+          number: 20
+          unit_of_measurement: W
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 10
+  conditions:
+  - condition: switch.is_on
+    target:
+      entity_id: switch.buro_steckdose_buro_steckdose
+    options:
+      behavior: any
+      for: 00:00:00
+  - condition: state
+    entity_id: binary_sensor.secunet_laptop_ping
+    state:
+    - 'off'
+  - condition: state
+    entity_id: binary_sensor.pc_oliver_ping
+    state:
+    - 'off'
+  - condition: state
+    entity_id: binary_sensor.epson_drucker_ping
+    state:
+    - 'off'
+  - condition: power.is_value
+    target:
+      entity_id: sensor.buro_steckdose_buro_steckdose_power
+    options:
+      threshold:
+        type: below
+        value:
+          active_choice: number
+          number: 20
+          unit_of_measurement: W
+      behavior: any
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 5
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.buro_steckdose_buro_steckdose
+  mode: single
+- id: '1675772715542'
+  alias: Rollladen Status off
+  description: ''
+  triggers:
+  - trigger: illuminance.cleared
+    target:
+      entity_id:
+      - binary_sensor.tag_nacht_sensor
+    options:
+      behavior: all
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      entity_id: input_boolean.tag_nacht_modus
+    action: input_boolean.turn_off
+  - wait_for_trigger:
+    - trigger: cover.shutter_closed
+      target:
+        label_id: beschattung
+      options:
+        behavior: all
+    timeout:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+    continue_on_timeout: false
+  - action: cover.close_cover
+    metadata: {}
+    target:
+      entity_id: cover.rollladen_alles
+    data: {}
+  mode: single
+- id: '1678127453034'
+  alias: Homematic(IP) Local Persistent notification
+  description: ''
+  use_blueprint:
+    path: danielperna84/homematicip_local_persistent_notification.yaml
+- id: '1680038503346'
+  alias: Müllabholung Benachrichtigung
+  description: ''
+  triggers:
+  - at: '17:00:00'
+    trigger: time
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.abfall
+    below: 2
+    attribute: daysTo
+  actions:
+  - data:
+      message: ♲ {{states('sensor.abfall')}} ♲
+      data:
+        sticky: true
+        tag: abfall
+        group: Abfall
+        channel: Abfall
+        clickAction: settings://notification_history
+        color: green
+        notification_icon: mdi:recycle-variant
+    action: notify.familie
+    metadata: {}
+  - data:
+      message: ♲ {{states('sensor.abfall')}} ♲
+      title: Haushalt
+      notification_id: Müll
+    action: persistent_notification.create
+  mode: single
+- id: '1683105319826'
+  alias: Alarm Beleuchtung Aussentuer
+  description: ''
+  triggers:
+  - trigger: door.opened
+    target:
+      entity_id: binary_sensor.garagentur_aussen
+    options: {}
+  conditions:
+  - condition: time
+    after: '23:00:00'
+    before: 06:00:00
+  actions:
+  - data: {}
+    target:
+      label_id: licht_alarm
+      entity_id: light.schlafzimmer_licht
+    action: light.turn_on
+  mode: single
+- id: '1694724308144'
+  alias: Fritzbox Wifi reset
+  description: ''
+  triggers:
+  - trigger: switch.turned_off
+    target:
+      entity_id:
+      - switch.fritzbox_wifi_status
+    options:
+      behavior: each
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 5
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      entity_id: switch.fritzbox_wifi_status
+    action: switch.turn_on
+  mode: single
+- id: '1695746956655'
+  alias: Hauswasserwerk aus
+  description: ''
+  triggers:
+  - trigger: power.crossed_threshold
+    target:
+      entity_id:
+      - sensor.hauswasserwerk_leistung
+    options:
+      behavior: all
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+      threshold:
+        type: below
+        value:
+          active_choice: number
+          unit_of_measurement: W
+          number: 5
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      entity_id: switch.hauswasserwerk
+    action: switch.turn_off
+  mode: single
+- id: '1699299353395'
+  alias: 3D Drucker einschalten
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      entity_id: event.em_1_keller1_lichttaster
+    options:
+      event_type:
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: switch.is_off
+        target:
+          entity_id: switch.3d_drucker
+        options:
+          behavior: any
+          for: 00:00:00
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.3d_drucker
+    - conditions:
+      - condition: switch.is_on
+        target:
+          entity_id: switch.3d_drucker
+        options:
+          behavior: any
+          for: 00:00:00
+      - condition: state
+        entity_id: sensor.prusalink
+        state:
+        - finished
+        - stopped
+        - idle
+        - ready
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.3d_drucker
+    enabled: true
+  mode: single
+- id: '1699444646047'
+  alias: 'Trockner fertig '
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.trockner_lauft
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+    trigger: state
+  conditions:
+  - condition: light.is_off
+    target:
+      area_id: kg_wasche
+    options:
+      behavior: any
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.trockner
+    data: {}
+  - action: switch.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.trockner_fertig
+  mode: single
+- id: '1699792550914'
+  alias: 3D Drucker Benachrichtigung
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.prusalink
+    from: printing
+    to: finished
+    trigger: state
+    id: Fertig
+  - entity_id:
+    - sensor.prusalink
+    to:
+    - error
+    trigger: state
+    id: Fehler
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Fertig
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          title: PrusaMini
+          message: Drucker fertig
+          data:
+            sticky: true
+            tag: prusamini_fertig
+            group: 3D_Drucker
+            channel: 3D_Drucker
+            clickAction: /3d-drucker/prusalink
+            notification_icon: mdi:printer-3d-nozzle
+            image: /api/camera_proxy/camera.octoprint_camera
+    - conditions:
+      - condition: trigger
+        id:
+        - Fehler
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          title: PrusaMini
+          message: Drucker FEHLER
+          data:
+            sticky: true
+            tag: prusamini_fehler
+            group: 3D_Drucker
+            channel: 3D_Drucker
+            color: red
+            clickAction: /3d-drucker/prusalink
+            notification_icon: mdi:printer-3d-nozzle
+            image: /api/camera_proxy/camera.octoprint_camera
+  mode: single
+- id: '1700418812170'
+  alias: Licht Abends Weihnachtszeit an
+  description: Weihnachtsbeleuchtung ein
+  triggers:
+  - trigger: illuminance.detected
+    target:
+      entity_id: binary_sensor.weihnachtsbeleuchtung_an
+    options: {}
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: switch.kino
+      state: 'on'
+    then:
+    - data: {}
+      target:
+        entity_id:
+        - light.flur_steckdose
+        - light.haustur_steckdose
+      action: light.turn_on
+    else:
+    - data: {}
+      target:
+        entity_id: light.weihnachtsbeleuchtung
+      action: light.turn_on
+  mode: single
+- id: '1700604704357'
+  alias: Heizung OG Bad Timer
+  description: ''
+  triggers:
+  - entity_id:
+    - input_button.heizung_og_bad_manuel
+    trigger: state
+  - trigger: event.received
+    target:
+      entity_id: event.em_2_bad_og_lichttaster
+    options:
+      event_type:
+      - press_long
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      entity_id: timer.timer_og_bad_heizung
+    action: timer.cancel
+  - data: {}
+    target:
+      entity_id: timer.timer_og_bad_heizung
+    action: timer.start
+  mode: single
+- id: '1701175617853'
+  alias: Abendroutine
+  description: ''
+  triggers:
+  - entity_id:
+    - input_button.abendroutine
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.abends_licht_an
+    state: 'on'
+  actions:
+  - parallel:
+    - data: {}
+      target:
+        label_id:
+        - licht
+      action: light.turn_off
+    - data: {}
+      enabled: false
+      action: light.turn_on
+      target:
+        entity_id:
+        - light.schlafzimmer_licht
+        - light.bad_og_licht
+  mode: single
+- id: '1701804439120'
+  alias: Garagentor öffnen mit NFC Tag
+  description: ''
+  triggers:
+  - tag_id: df172957-b293-484f-a56b-8585fbe569a3
+    trigger: tag
+  conditions: []
+  actions:
+  - data: {}
+    action: cover.toggle
+    target:
+      entity_id: cover.garagentor_olli
+  mode: single
+- id: '1702953300397'
+  alias: Testbenachrichtigung
+  description: ''
+  triggers: []
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_8a
+    data:
+      title: Attention!
+      message: This is an example!
+      data:
+        tag: Alarm
+        channel: Alarm
+        color: red
+        ttl: 0
+        priority: high
+        sticky: true
+        persistent: true
+  mode: single
+- id: '1703433972379'
+  alias: DWD Warnung Benachrichtigung
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe
+    - sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe
+    attribute: warning_count
+    trigger: state
+  conditions:
+  - condition: or
+    conditions:
+    - condition: numeric_state
+      entity_id: sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe
+      above: 0
+    - condition: numeric_state
+      entity_id: sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe
+      above: 0
+  actions:
+  - data:
+      notification_id: DWD
+      message: "{% set current_count = int(state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
+        \"warning_count\"), 0) %} {% set weekdays = {'Mon': 'Mo', 'Tue': 'Di', 'Wed':
+        'Mi', 'Thu': 'Do', 'Fri': 'Fr', 'Sat': 'Sa', 'Sun': 'So'} %} {% if current_count
+        > 0 %} <h2><font color=red>DWD Vorwarnungen</font></h2><hr><hr> {% endif %}
+        {% for i in range(current_count) %}\n  {% set headline = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
+        \"warning_\" ~ loop.index ~ \"_headline\") %}\n  {% set description = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
+        \"warning_\" ~ loop.index ~ \"_description\") %}\n  {% set level = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
+        \"warning_\" ~ loop.index ~ \"_level\") %}\n  {% set time_start = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
+        \"warning_\" ~ loop.index ~ \"_start\") | as_local %}\n  {% set time_end =
+        state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
+        \"warning_\" ~ loop.index ~ \"_end\") | as_local %}\n  {% set level_color
+        = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
+        \"warning_\" ~ loop.index ~ \"_color\") %}\n  <b><font color={{ level_color
+        }}>{{ headline }}</font></b> <br>\n  <u>{{ weekdays[time_start.strftime(\"%a\")]
+        ~ \". \" ~ time_start.strftime(\"%H:%M\") ~ \" - \" ~ weekdays[time_end.strftime(\"%a\")]
+        ~ \". \" ~ time_end.strftime(\"%H:%M\") }}</u> <br>\n  <i>{{ description }}</i>
+        <hr>\n{% endfor %} {% set advance_count = int(state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
+        \"warning_count\"), 0) %} {% if advance_count > 0 %} <h2><font color=red>DWD
+        Aktuelle Warnungen</font></h2><hr><hr> {% endif %} {% for i in range(advance_count)
+        %}\n  {% set headline = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
+        \"warning_\" ~ loop.index ~ \"_headline\") %}\n  {% set description = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
+        \"warning_\" ~ loop.index ~ \"_description\") %}\n  {% set level = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
+        \"warning_\" ~ loop.index ~ \"_level\") %}\n  {% set time_start = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
+        \"warning_\" ~ loop.index ~ \"_start\") | as_local %}\n  {% set time_end =
+        state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
+        \"warning_\" ~ loop.index ~ \"_end\") | as_local %}\n  {% set level_color
+        = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
+        \"warning_\" ~ loop.index ~ \"_color\") %}\n  <b><font color={{ level_color
+        }}>{{ headline }}</font></b> <br>\n  <u>{{ weekdays[time_start.strftime(\"%a\")]
+        ~ \". \" ~ time_start.strftime(\"%H:%M\") ~ \" - \" ~ weekdays[time_end.strftime(\"%a\")]
+        ~ \". \" ~ time_end.strftime(\"%H:%M\") }}</u> <br>\n  <i>{{ description }}</i>
+        <hr>\n{% endfor %}"
+    action: persistent_notification.create
+  mode: single
+- id: '1704356525125'
+  alias: Update Solarnet
+  description: ''
+  triggers:
+  - minutes: /1
+    trigger: time_pattern
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.symo_4_5_3_m_1_errorcode
+    below: 1
+  actions:
+  - metadata: {}
+    data:
+      entity_id:
+      - sensor.solarnet_einspeisetarif
+      - sensor.solarnet_co2_faktor
+      - sensor.solarnet_bezugstarif
+      - sensor.solarnet_energie_jahr
+      - sensor.solarnet_pv_leistung
+      - sensor.solarnet_energie_gesamt
+      - sensor.solarnet_energie_tag
+    action: homeassistant.update_entity
+  mode: single
+- id: '1704541839638'
+  alias: Rollladen auf
+  description: ''
+  triggers:
+  - at: input_datetime.rollladen_offnen_um
+    trigger: time
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      entity_id: input_boolean.tag_nacht_modus
+    action: input_boolean.turn_on
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.ankleide_rollladen_1_morgens_auf
+  mode: single
+- id: '1705508413836'
+  alias: Feuerwehreinsatz Benachrichtigung
+  description: Löst aus, wenn der aPager geht
+  triggers:
+  - entity_id:
+    - binary_sensor.apager_alarm
+    from: 'off'
+    to: 'on'
+    trigger: state
+  conditions: []
+  actions:
+  - parallel:
+    - data:
+        message: <b>{{states("sensor.apager_keyword")}}</b>
+        title: "\U0001F6A8 Feuerwehreinsatz \U0001F6A8"
+        notification_id: 112
+      action: persistent_notification.create
+    - action: telegram_bot.send_message
+      data:
+        target:
+        - '-1002821117729'
+        message: <b> {{states("sensor.apager_keyword")}} </b>
+        config_entry_id: 01JYN5MMDEAF9AY7ZB9THXCHY5
+        title: "\U0001F6A8 Feuerwehreinsatz \U0001F6A8"
+        parse_mode: html
+        inline_keyboard: Rücksetzen:/ffw_reset
+      enabled: false
+    - action: notify.familie
+      metadata: {}
+      data:
+        data:
+          sticky: true
+          tag: feuerwehr_einsatz
+          group: Feuerwehr
+          channel: Feuerwehr
+          importance: high
+          color: red
+          notification_icon: mdi:fire-truck
+          car_ui: true
+        message: '{{states("sensor.apager_keyword")}}'
+        title: "\U0001F6A8 Feuerwehreinsatz \U0001F6A8"
+    enabled: true
+  mode: single
+- id: '1711002378640'
+  alias: Garagenlicht ein
+  description: ''
+  triggers:
+  - trigger: door.opened
+    target:
+      area_id: eg_garage
+    options:
+      behavior: each
+  - trigger: garage_door.opened
+    target:
+      entity_id: cover.garagentor
+    options:
+      behavior: each
+  conditions: []
+  actions:
+  - data: {}
+    action: light.turn_on
+    target:
+      entity_id: light.garage_licht_2
+  mode: single
+- id: '1711031670136'
+  alias: Rollladensteuerung Büro 2
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.buro_rollladen_2
+- id: '1711093119620'
+  alias: Rollladensteuerung Büro 1
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.buro_rollladen_1
+- id: '1711093201340'
+  alias: Rollladensteuerung EG Bad
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.bad_eg_rollladen
+- id: '1711093219296'
+  alias: Rollladensteuerung Ankleide 1
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.ankleide_rollladen_1
+- id: '1711093245380'
+  alias: Rollladensteuerung Ankleide 2
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.ankleide_rollladen_2
+- id: '1711093274954'
+  alias: Rollladensteuerung Esszimmer 1
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.esszimmer_rollladen_1
+- id: '1711093308905'
+  alias: Rollladensteuerung Esszimmer 2
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.esszimmer_rollladen_2
+- id: '1711093332136'
+  alias: Rollladensteuerung Kind1 1
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.kind1_rollladen_1
+- id: '1711093351976'
+  alias: Rollladensteuerung Kind1 2
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.kind1_rollladen_2
+- id: '1711093371628'
+  alias: Rollladensteuerung Sebastian 1
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.sebastian_rollladen_1
+- id: '1711093391639'
+  alias: Rollladensteuerung Sebastian 2
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.sebastian_rollladen_2
+- id: '1711093409982'
+  alias: Rollladensteuerung Küche 1
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.kuche_rollladen_1
+- id: '1711093429415'
+  alias: Rollladensteuerung Küche 2
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.kuche_rollladen_2
+- id: '1711093450722'
+  alias: Rollladensteuerung OG Bad 1
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.bad_og_rollladen_1
+- id: '1711093470695'
+  alias: Rollladensteuerung OG Bad 2
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.bad_og_rollladen_2
+- id: '1711093499417'
+  alias: Rollladensteuerung Schlafzimmer
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.schlafzimmer_rollladen
+- id: '1711093528324'
+  alias: Rollladensteuerung Speisekammer
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.speisekammer_rollladen
+- id: '1711093545895'
+  alias: Rollladensteuerung Wohnzimmer
+  description: ''
+  use_blueprint:
+    path: homeassistant/RollladenSteuerung_NEU.yaml
+    input:
+      rolllade_input: cover.wohnzimmer_rollladen
+- id: '1711305808402'
+  alias: Garagenlicht aus
+  description: ''
+  triggers:
+  - trigger: garage_door.closed
+    target:
+      entity_id: cover.garagentor
+    options:
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+      behavior: each
+  - trigger: door.closed
+    target:
+      area_id: eg_garage
+    options:
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+      behavior: all
+  conditions:
+  - condition: garage_door.is_closed
+    target:
+      entity_id: cover.garagentor
+    options:
+      behavior: all
+  - condition: door.is_closed
+    target:
+      area_id: eg_garage
+    options:
+      behavior: all
+  actions:
+  - data: {}
+    action: light.turn_off
+    target:
+      entity_id: light.garage_licht_2
+  mode: single
+- id: '1711306347533'
+  alias: Hoflicht aus
+  description: ''
+  triggers:
+  - trigger: motion.cleared
+    target:
+      entity_id:
+      - binary_sensor.hof_bewegungsmelder_bewegung
+    options:
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+      behavior: all
+  - trigger: door.closed
+    target:
+      entity_id:
+      - binary_sensor.haustur
+    options:
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+      behavior: all
+  - trigger: garage_door.closed
+    target:
+      entity_id:
+      - cover.garagentor
+    options:
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+      behavior: each
+  - trigger: occupancy.cleared
+    target:
+      entity_id: binary_sensor.haustuer_person_occupancy
+    options:
+      behavior: each
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+  conditions:
+  - condition: garage_door.is_closed
+    target:
+      entity_id: cover.garagentor
+    options: {}
+  - condition: door.is_closed
+    target:
+      entity_id: binary_sensor.haustur
+    options: {}
+  actions:
+  - data: {}
+    target:
+      entity_id: light.hoflicht
+    action: light.turn_off
+  mode: single
+- id: '1711578151435'
+  alias: Testlicht
+  description: ''
+  trigger: []
+  condition: []
+  action:
+  - service: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      floor_id: kg
+  mode: single
+- id: '1711639502578'
+  alias: Gardrobenlicht an
+  description: ''
+  triggers:
+  - trigger: door.opened
+    target:
+      entity_id:
+      - binary_sensor.garagentur_innen
+      - binary_sensor.haustur
+    options:
+      behavior: each
+  conditions: []
+  actions:
+  - data: {}
+    action: light.turn_on
+    target:
+      entity_id: light.gardrobe_licht_2
+  mode: single
+- id: '1711639548897'
+  alias: Gardrobenlicht aus
+  description: ''
+  triggers:
+  - trigger: door.closed
+    target:
+      entity_id:
+      - binary_sensor.garagentur_innen
+      - binary_sensor.haustur
+    options:
+      behavior: each
+      for:
+        hours: 0
+        minutes: 2
+        seconds: 0
+  conditions: []
+  actions:
+  - data: {}
+    action: light.turn_off
+    target:
+      entity_id: light.gardrobe_licht_2
+  mode: single
+- id: '1713762919510'
+  alias: DWD Warnung Benachrichtigung aus
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe
+    - sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe
+    attribute: warning_count
+    trigger: state
+    enabled: true
+    to: 0
+  conditions: []
+  actions:
+  - data:
+      notification_id: DWD
+    action: persistent_notification.dismiss
+  mode: single
+- id: '1714118818373'
+  alias: Automatischer Sommermodus
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.pumpstatus_heizkreis
+    trigger: state
+  conditions: []
+  actions:
+  - metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.sommermodus_heizung
+    action: input_boolean.turn_{{"on" if int(trigger.to_state.state)==0 else "off"}}
+  mode: single
+- id: '1714122775476'
+  alias: Feuerwehreinsatz Haussteuerung
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.apager_alarm
+    - binary_sensor.tpg2200_alarmrelais
+    - input_boolean.feuerwehralarm
+    from: 'off'
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: person.oliver
+    state: home
+  - condition: state
+    entity_id: binary_sensor.schlafenszeit
+    state:
+    - 'off'
+  - condition: switch.is_off
+    target:
+      entity_id: input_boolean.babygeschrei
+    options:
+      behavior: any
+      for: 00:00:00
+  actions:
+  - action: scene.create
+    metadata: {}
+    data:
+      snapshot_entities:
+      - light.flur_eg
+      - light.gardrobe
+      - light.wohnzimmer_licht
+      - light.ankleide_licht
+      - cover.garagentor
+      - lock.garagentor_warnung
+      - input_boolean.feuerwehralarm_zurucksetzten
+      - input_boolean.feuerwehralarm
+      - media_player.gong_gong
+      scene_id: vor_alarm_licht
+  - alias: Garagentor öffnen
+    if:
+    - condition: garage_door.is_closed
+      target:
+        label_id: licht_alarm
+      options:
+        behavior: all
+    then:
+    - data: {}
+      target:
+        label_id: licht_alarm
+      enabled: true
+      action: cover.open_cover
+  - alias: 'Garagenwarung aus '
+    action: lock.lock
+    target:
+      label_id: licht_alarm
+    data: {}
+  - action: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.feuerwehralarm_zurucksetzten
+  - data: {}
+    target:
+      label_id: licht_alarm
+    alias: Licht an
+    action: light.turn_on
+  - alias: Wenn aPager auslöst, Gong abspielen
+    if:
+    - condition: state
+      entity_id: binary_sensor.apager_alarm
+      state: 'on'
+    then:
+    - alias: Gong
+      target:
+        label_id: licht_alarm
+      data:
+        media:
+          media_content_id: media-source://tts/google_translate?message={{states("sensor.apager_keyword")}}&language=de
+          media_content_type: provider
+          metadata:
+            title: Alarmmeldung
+            thumbnail: https://brands.home-assistant.io/_/google_translate/logo.png
+            media_class: app
+            children_media_class:
+            navigateIds:
+            - {}
+            - media_content_type: app
+              media_content_id: media-source://tts
+            - media_content_type: provider
+              media_content_id: media-source://tts/google_translate?message={{states("sensor.apager_keyword")}}&language=de
+        announce: true
+      action: media_player.play_media
+    - alias: Gong Lokal
+      action: tts.speak
+      target:
+        entity_id: tts.google_ai_tts
+      data:
+        cache: true
+        media_player_entity_id: media_player.gong_gong
+        message: '{{ states(''sensor.apager_keyword'') }}'
+        language: de
+      enabled: false
+  mode: single
+- id: '1714636900084'
+  alias: Feuermelder neu
+  description: ''
+  triggers:
+  - trigger: air_quality.smoke_detected
+    target:
+      floor_id:
+      - og
+      - eg
+      - kg
+    options:
+      behavior: each
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.entity_id is not none and (not is_state(trigger.entity_id,
+      ''unavailable'') or not is_state(trigger.entity_id, ''unknown'')) }}'
+  actions:
+  - type: turn_off
+    device_id: 259058229febf3f9d7c96c0d54a532b5
+    entity_id: 21ac4c53f924029c5ad91c7bfdcd7ce6
+    domain: fan
+  - action: notify.familie
+    metadata: {}
+    data:
+      data:
+        sticky: true
+        tag: feuermelder
+        group: Alarm
+        channel: Alarm
+        importance: high
+        color: red
+        notification_icon: mdi:smoke-detector-alert
+        car_ui: true
+      message: '{{ trigger.to_state.state}}!!!!'
+      title: <b>{{ trigger.to_state.attributes.friendly_name }}</b>
+  mode: single
+- id: '1717220918251'
+  alias: Ess/Wohnzimmer Lichtsteuerung
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      entity_id:
+      - event.em_1_wohnzimmer_lichttaster
+      - event.em_1_wohnzimmer_lichttaster_2
+      - event.em_1_esszimmer_lichttaster
+    options:
+      event_type:
+      - press_long
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.ess_wohnzimmer
+  mode: single
+- id: '1721816089194'
+  alias: Rasenmähen
+  description: ''
+  triggers:
+  - at: 08:00:00
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.goat_gx_600_rasenmahen_heute_manuell
+    state:
+    - 'on'
+  actions:
+  - repeat:
+      sequence:
+      - metadata: {}
+        data: {}
+        action: lawn_mower.start_mowing
+        target:
+          entity_id:
+          - lawn_mower.goat_gx_600
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 30
+          milliseconds: 0
+      count: 2
+    enabled: true
+  - alias: Wenn der Rasenmäher nicht mäht, Meldung
+    if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: lawn_mower.goat_gx_600
+        state: mowing
+    then:
+    - action: notify.mobile_app_pixel_8a
+      metadata: {}
+      data:
+        data:
+          sticky: true
+          tag: rasenmaher_problem
+          channel: Rasenmäher
+          clickAction: settings://notification_history
+          color: red
+          notification_icon: mdi:mower
+        title: Rasenmäher
+        message: Rasenmäher läuft nicht
+  mode: single
+- id: '1723827893163'
+  alias: Rasen sprengen
+  description: ''
+  triggers:
+  - trigger: timer.started
+    target:
+      entity_id: timer.rasen_sprengen
+    id: Ein
+  - trigger: timer.finished
+    target:
+      entity_id: timer.rasen_sprengen
+    id: Aus
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Ein
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.hauswasserwerk
+    - conditions:
+      - condition: trigger
+        id:
+        - Aus
+      sequence:
+      - action: switch.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id: switch.hauswasserwerk
+      - action: notify.mobile_app_pixel_8a
+        metadata: {}
+        data:
+          message: fertig
+          title: Rasensprenger
+          data:
+            sticky: true
+            tag: rasensprenger_fertig
+            channel: Haushalt
+            clickAction: settings://notification_history
+            color: green
+            notification_icon: mdi:grass
+  mode: single
+- id: '1724087710511'
+  alias: 'Zonenbenachrichtigung '
+  description: ''
+  triggers:
+  - entity_id:
+    - person.oliver
+    - person.marina
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: "{{ trigger.to_state is not none and\n   (trigger.from_state is
+      none or\n    trigger.to_state.state != trigger.from_state.state) }}\n"
+  actions:
+  - data:
+      message: '{% set name = trigger.to_state.name %} {% set zone_map = {''home'':
+        ''Zuhause'', ''not_home'': ''Unterwegs''} %} {% set from = trigger.from_state.state                if
+        trigger.from_state is not none               else "unknown" %} {% set from
+        = zone_map.get(from, from) %}  {% set to = trigger.to_state.state %} {% set
+        to = zone_map.get(to, to) %}  {{ name }}: {{ from }} » {{ to }}'
+      data:
+        tag: '{{trigger.to_state.name}}'
+        group: Zonenbenachrichtigung
+        channel: Zonenbenachrichtigung
+        importance: low
+        notification_icon: mdi:map-marker-radius-outline
+    action: notify.mobile_app_pixel_8a
+  mode: single
+- id: '1724675959135'
+  alias: Leere Batterien Benachrichtigung
+  description: ''
+  triggers:
+  - trigger: battery.became_low
+    target:
+      floor_id:
+      - og
+      - eg
+      - kg
+      - dachboden
+      - beluftungsanlage
+      - garten
+    options:
+      for: 00:00:00
+      behavior: each
+    id: Batterie schwach
+  - trigger: battery.level_crossed_threshold
+    target:
+      floor_id:
+      - og
+      - eg
+      - kg
+      - garten
+      area_id: staubsauger
+    options:
+      behavior: each
+      for: 00:00:00
+      threshold:
+        type: below
+        value:
+          active_choice: number
+          number: 25
+    id: Batterie Schwellwert
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Batterie Schwellwert
+      sequence:
+      - action: notify.mobile_app_pixel_8a
+        metadata: {}
+        data:
+          data:
+            sticky: true
+            tag: leere_batterie
+            group: Leere_Batterie
+            channel: Leere Batterie
+            clickAction: /dashboard-home/batterien
+            color: orange
+            notification_icon: mdi:battery-alert-variant-outline
+          message: '{{ device_name(trigger.to_state.entity_id) | default(trigger.to_state.entity_id,
+            true) }}({{ trigger.to_state.state | int}} %)'
+          title: Leere Batterie
+    - conditions:
+      - condition: trigger
+        id:
+        - Batterie schwach
+      sequence:
+      - action: notify.mobile_app_pixel_8a
+        metadata: {}
+        data:
+          data:
+            sticky: true
+            tag: leere_batterie
+            group: Leere_Batterie
+            channel: Leere Batterie
+            clickAction: /dashboard-home/batterien
+            color: orange
+            notification_icon: mdi:battery-alert-variant-outline
+          message: '{{ device_name(trigger.to_state.entity_id) | default(trigger.to_state.entity_id,
+            true) }}'
+          title: Leere Batterie
+  mode: single
+- id: '1726840467981'
+  alias: Update Ebus
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    enabled: true
+    minutes: /2
+  conditions: []
+  actions:
+  - action: script.sende_get_befehle_basierend_auf_ebus_entitaten
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1730975983310'
+  alias: Spotify Musikgruppe abspielen
+  description: ''
+  triggers: []
+  conditions: []
+  actions:
+  - action: media_player.select_source
+    target:
+      entity_id: media_player.musikgruppe
+    data:
+      source: Musikgruppe
+  - action: media_player.play_media
+    target:
+      entity_id: media_player.musikgruppe
+    data:
+      media_content_id: https://open.spotify.com/playlist/37i9dQZF1EJDXKkFzA3zY4?si=XOKxfyd9SNm51B8WLja5_A
+      media_content_type: playlist
+  mode: single
+- id: '1732092072317'
+  alias: Warmwasser Benachrichtigung
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.warmwasser_erreicht
+    from: 'off'
+    to: 'on'
+    id: Heiß
+  - trigger: state
+    entity_id:
+    - binary_sensor.warmwasser_erreicht
+    from: 'on'
+    to: 'off'
+    id: Normal
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Heiß
+      sequence:
+      - action: persistent_notification.create
+        data:
+          title: Warmwasser
+          message: ist da
+          notification_id: 23
+      alias: Heiß
+    - conditions:
+      - condition: trigger
+        id:
+        - Normal
+      sequence:
+      - action: persistent_notification.dismiss
+        data:
+          notification_id: '23'
+      alias: Normal
+  mode: single
+- id: '1734601169706'
+  alias: Wassermelder Alarm
+  description: ''
+  triggers:
+  - trigger: moisture.detected
+    target:
+      floor_id: kg
+    options:
+      behavior: each
+  conditions: []
+  actions:
+  - action: notify.familie
+    metadata: {}
+    data:
+      data:
+        sticky: true
+        tag: wassermelder
+        group: Alarm
+        channel: Alarm
+        importance: high
+        color: red
+        notification_icon: mdi:water-alert
+        car_ui: true
+      message: '{{ trigger.to_state.state}}!!!!'
+      title: <b>{{ trigger.to_state.attributes.friendly_name }}</b>
+  mode: single
+- id: '1737214373584'
+  alias: Rollladen Ankleide öffnen
+  description: ''
+  triggers:
+  - at: sensor.pixel_9a_next_alarm
+    trigger: time
+    id: Marina
+  - at: sensor.pixel_8a_next_alarm
+    trigger: time
+    id: Oliver
+  conditions:
+  - condition: illuminance.is_detected
+    target:
+      entity_id: binary_sensor.tag_nacht_sensor
+    options: {}
+  - condition: switch.is_off
+    target:
+      entity_id: input_boolean.tag_nacht_modus
+    options: {}
+  - alias: Wenn jemand zuhause ist
+    condition: or
+    conditions:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - Oliver
+      - condition: zone
+        entity_id: person.oliver
+        zone: zone.home
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - Marina
+      - condition: zone
+        entity_id: person.marina
+        zone: zone.home
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.ankleide_rollladen_1_morgens_auf
+    data: {}
+  mode: single
+- id: '1737548714828'
+  alias: Fehlermeldung Roborock Slim Q
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.roborock_qrevo_slim_dock_fehler
+    trigger: state
+    from:
+    - ok
+    to:
+    - duct_blockage
+    - water_empty
+    - waste_water_tank_full
+    - maintenance_brush_jammed
+    - dirty_tank_latch_open
+    - no_dustbin
+    - cleaning_tank_full_or_blocked
+    id: Dock-Fehler
+  - trigger: state
+    entity_id:
+    - binary_sensor.roborock_qrevo_slim_dock_frischwassertank
+    from:
+    - 'off'
+    to:
+    - 'on'
+    id: Frischwassertank
+  - trigger: state
+    entity_id:
+    - binary_sensor.roborock_qrevo_slim_dock_schmutzwassertank
+    from:
+    - 'off'
+    to:
+    - 'on'
+    id: Schmutzwassertank
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Dock-Fehler
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          message: 'meldet: {{state_translated("sensor.roborock_qrevo_slim_dock_fehler")}}'
+          title: <b>Staubsauger</b>
+          data:
+            channel: Haushalt
+            sticky: true
+            tag: roborock_warning
+            group: Roborock
+            clickAction: settings://notification_history
+            color: blue
+            notification_icon: mdi:robot-vacuum-alert
+    - conditions:
+      - condition: trigger
+        id:
+        - Frischwassertank
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          title: <b>Staubsauger</b>
+          data:
+            channel: Haushalt
+            sticky: true
+            tag: roborock_warning
+            group: Roborock
+            clickAction: settings://notification_history
+            color: blue
+            notification_icon: mdi:robot-vacuum-alert
+          message: Frischwassertank leer
+    - conditions:
+      - condition: trigger
+        id:
+        - Schmutzwassertank
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          title: <b>Staubsauger</b>
+          data:
+            channel: Haushalt
+            sticky: true
+            tag: roborock_warning
+            group: Roborock
+            clickAction: settings://notification_history
+            color: blue
+            notification_icon: mdi:robot-vacuum-alert
+          message: Schmutzwassertank voll
+  mode: single
+- id: '1738313613836'
+  alias: Garagentor ist noch offen
+  description: ''
+  triggers:
+  - trigger: lock.unlocked
+    target:
+      entity_id:
+      - lock.garagentor_warnung
+    options:
+      behavior: each
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+  conditions:
+  - condition: garage_door.is_open
+    target:
+      entity_id: cover.garagentor
+    options:
+      behavior: any
+  actions:
+  - repeat:
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          data:
+            sticky: true
+            tag: garagentor_offen_{{ now().timestamp() | int }}
+            group: Garagentor
+            channel: Warnung
+            importance: high
+            clickAction: settings://notification_history
+            color: red
+            notification_icon: mdi:garage-alert-variant
+            car_ui: true
+            actions:
+            - action: garage_close
+              title: Schließen
+            - action: garage_acknowledge
+              title: Bestätigung
+          message: 'Garagentor ist noch OFFEN!!! '
+          title: Garagentor
+      - delay:
+          hours: 0
+          minutes: 1
+          seconds: 0
+          milliseconds: 0
+      until:
+      - condition: or
+        conditions:
+        - condition: garage_door.is_closed
+          target:
+            entity_id: cover.garagentor
+          options:
+            for: 00:00:00
+        - condition: lock.is_locked
+          target:
+            entity_id: lock.garagentor_warnung
+          options:
+            behavior: any
+            for: 00:00:00
+  mode: single
+- id: '1740566629856'
+  alias: Homeassistant Benachrichtigung
+  description: ''
+  triggers:
+  - trigger: homeassistant
+    event: start
+    id: Start
+  - trigger: homeassistant
+    event: shutdown
+    id: Stop
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Start
+      sequence:
+      - action: notify.mobile_app_pixel_8a
+        metadata: {}
+        data:
+          message: gestartet
+          title: Homeassistant
+          data:
+            sticky: true
+            tag: hassio
+            channel: Hassio
+            clickAction: settings://notification_history
+            color: green
+            notification_icon: mdi:home-assistant
+    - conditions:
+      - condition: trigger
+        id:
+        - Stop
+      sequence:
+      - action: notify.mobile_app_pixel_8a
+        metadata: {}
+        data:
+          message: gestoppt
+          title: Homeassistant
+          data:
+            sticky: true
+            tag: hassio
+            channel: Hassio
+            clickAction: settings://notification_history
+            color: red
+            notification_icon: mdi:home-assistant
+  mode: single
+- id: '1751263942199'
+  alias: 'Licht aus bei Rollladen auf '
+  description: ''
+  triggers:
+  - trigger: cover.shutter_opened
+    target:
+      floor_id:
+      - og
+      - eg
+    options:
+      behavior: each
+  conditions:
+  - condition: template
+    value_template: '{{trigger.entity_id != "cover.leinwand_leinwand"}}'
+  actions:
+  - variables:
+      bereich: '{{ area_id(trigger.entity_id) }}'
+  - delay: 00:00:10
+    enabled: true
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      area_id: '{{ bereich }}'
+  mode: parallel
+  max: 20
+- id: '1752085025820'
+  alias: Rollladen Automatik Helfer
+  description: Synchronisiert nur Entitäten, die noch dem alten globalen Status entsprechen
+  triggers:
+  - trigger: select.selection_changed
+    target:
+      entity_id: input_select.gesamt_rollladen_automatik
+  conditions: []
+  actions:
+  - action: input_select.select_option
+    data:
+      option: '{{ trigger.to_state.state }}'
+    target:
+      entity_id: "{% set old_state = trigger.from_state.state %} {{ label_entities('beschattung')
+        \n   | expand \n   | selectattr('domain', 'eq', 'input_select')\n   | selectattr('state',
+        'eq', old_state)\n   | map(attribute='entity_id') | list }}\n"
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - action: button.press
+    target:
+      entity_id: button.restart_beschattunsautomatisierung
+  mode: single
+- id: '1752333620860'
+  alias: Bad OG Spiegelschrank Licht an
+  description: ''
+  triggers:
+  - trigger: occupancy.detected
+    target:
+      entity_id: binary_sensor.bad_og_bewegungsmelder_occupancy
+    options: {}
+  conditions:
+  - condition: illuminance.is_value
+    target:
+      entity_id: sensor.bad_og_bewegungsmelder_illuminance
+    options:
+      for: 00:00:00
+      threshold:
+        type: below
+        value:
+          active_choice: number
+          number: 100
+  - condition: window.is_closed
+    target:
+      area_id: og_badezimmer
+    options:
+      for: 00:00:00
+      behavior: all
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.spiegelschrank
+  mode: single
+- id: '1752925421469'
+  alias: Bad OG Spiegelschrank Licht aus
+  description: ''
+  triggers:
+  - trigger: occupancy.cleared
+    target:
+      area_id: og_badezimmer
+    options:
+      behavior: first
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+  - trigger: light.turned_on
+    target:
+      entity_id: light.bad_og_licht
+    options: {}
+  - trigger: event.received
+    target:
+      entity_id: event.em_2_bad_og_lichttaster
+    options:
+      event_type:
+      - press_short
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.spiegelschrank_input_0
+    state: 'off'
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.spiegelschrank
+  mode: single
+- id: '1755506119977'
+  alias: 'Gefriertruhe an '
+  description: ''
+  triggers:
+  - trigger: switch.turned_off
+    target:
+      entity_id: switch.keller1_gefriertruhe
+    options: {}
+  conditions: []
+  actions:
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.keller1_gefriertruhe
+    data: {}
+  mode: single
+- id: '1756446552073'
+  alias: Updates durchführen
+  description: ''
+  triggers: []
+  conditions: []
+  actions:
+  - target:
+      entity_id: '{{ expand(states.update)  | selectattr(''state'',''eq'',''on'')  |
+        rejectattr(''entity_id'',''eq'',''update.immich_version'')  | map(attribute=''entity_id'')  |
+        list }}
+
+        '
+    action: update.install
+    data: {}
+    enabled: true
+  - action: update.install
+    metadata: {}
+    target:
+      label_id: update
+    data: {}
+    enabled: false
+  mode: single
+- id: '1757024903079'
+  alias: Kino
+  description: ''
+  triggers:
+  - trigger: switch.turned_on
+    target:
+      entity_id: switch.kino
+    options: {}
+    id: Kino an
+  - trigger: switch.turned_off
+    target:
+      entity_id: switch.kino
+    options: {}
+    id: Kino aus
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Kino an
+      sequence:
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          entity_id: input_select.wohnzimmer_rollladen_automatik
+        data:
+          option: Zu
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.raumteiler
+          - light.wohnwand
+      - action: media_player.turn_off
+        metadata: {}
+        data: {}
+        target:
+          floor_id: eg
+      - action: cover.close_cover
+        metadata: {}
+        data: {}
+        target:
+          area_id: eg_wohnzimmer
+        enabled: true
+    - conditions:
+      - condition: trigger
+        id:
+        - Kino aus
+      sequence:
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          entity_id: input_select.wohnzimmer_rollladen_automatik
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}'
+      - action: cover.open_cover
+        metadata: {}
+        data: {}
+        enabled: true
+        target:
+          entity_id: cover.leinwand_leinwand
+      - alias: 'Licht wieder an? '
+        if:
+        - condition: time
+          before: '22:00:00'
+          after: 07:00:00
+        - condition: illuminance.is_detected
+          target:
+            entity_id: binary_sensor.abends_licht_an
+          options: {}
+        then:
+        - action: light.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id:
+            - light.raumteiler
+            - light.wohnwand
+  - action: button.press
+    metadata: {}
+    target:
+      entity_id: button.restart_beschattunsautomatisierung
+    data: {}
+  mode: single
+- id: '1760432906479'
+  alias: Fenster/Tür geöffnet Benachrichtigung
+  description: ''
+  triggers:
+  - trigger: window.opened
+    target:
+      floor_id:
+      - og
+      - eg
+    options:
+      behavior: each
+    id: Fenster
+  - trigger: door.opened
+    target:
+      floor_id:
+      - og
+      - eg
+    options:
+      behavior: each
+    id: Tür
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.anwesenheit
+      state: 'on'
+    then:
+    - action: notify.familie
+      metadata: {}
+      data:
+        message: wurde geöffnet
+        title: '{{ trigger.to_state.attributes.friendly_name }}'
+        data:
+          tag: '{{ trigger.to_state.attributes.friendly_name }}_{{ now().timestamp()
+            | int }}'
+          group: '{{ trigger.id }}'
+          channel: Haushalt
+          clickAction: /dashboard-handy/benachrichtigungen
+          notification_icon: '{{ ''mdi:door-open'' if trigger.id == "Tür" else ''mdi:window-open''
+            }}'
+    else:
+    - action: notify.familie
+      metadata: {}
+      data:
+        message: wurde geöffnet
+        title: '{{ trigger.to_state.attributes.friendly_name }}'
+        data:
+          tag: '{{ trigger.to_state.attributes.friendly_name }}_{{ now().timestamp()
+            | int }}'
+          group: '{{ trigger.id }}'
+          channel: Warnung
+          importance: high
+          color: red
+          clickAction: /dashboard-handy/benachrichtigungen
+          notification_icon: '{{ ''mdi:door-open'' if trigger.id == "Tür" else ''mdi:window-open''
+            }}'
+  mode: single
+- id: '1762168377405'
+  alias: Energieoptimierte Heizungssteuerung
+  description: PV-Überschuss → Komfort; Netzbezug → Reset
+  triggers:
+  - trigger: homeassistant
+    event: start
+    id: Start
+  - trigger: numeric_state
+    entity_id: sensor.smartmeter_power
+    for: 00:00:30
+    below: -300
+    id: Überschuss
+  - trigger: numeric_state
+    entity_id: sensor.smartmeter_power
+    for: 00:05:00
+    above: 500
+    id: Netzbezug
+  - trigger: state
+    entity_id: climate.bad_og_thermostat
+    id: Thermostat
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Überschuss
+        - Start
+      - condition: numeric_state
+        entity_id: sensor.smartmeter_power
+        below: -300
+      sequence:
+      - action: climate.turn_on
+        target:
+          entity_id: climate.comfoclime_comfoclime_24
+        data: {}
+      - choose:
+        - alias: Heizmodus (~400W)
+          conditions:
+          - condition: state
+            entity_id: select.comfoclime_comfoclime_24_jahreszeitwahl
+            state:
+            - heating
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 23
+              hvac_mode: heat
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: high
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+        - alias: Kühlmodus (~200W)
+          conditions:
+          - condition: state
+            entity_id: select.comfoclime_comfoclime_24_jahreszeitwahl
+            state:
+            - cooling
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 18
+              hvac_mode: cool
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: medium
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+        - alias: Übergangsmodus
+          conditions:
+          - condition: state
+            entity_id: select.comfoclime_comfoclime_24_jahreszeitwahl
+            state:
+            - transition
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 22
+              hvac_mode: fan_only
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: medium
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+      - if:
+        - condition: state
+          entity_id: select.comfoclime_comfoclime_24_jahreszeitwahl
+          state:
+          - heating
+        - condition: state
+          entity_id: timer.timer_og_bad_heizung
+          state: idle
+        - condition: numeric_state
+          entity_id: sensor.smartmeter_power
+          below: -700
+        - condition: template
+          value_template: '{{ state_attr(''climate.bad_og_thermostat'', ''current_temperature'')
+            < float(states(''sensor.og_badezimmer_thermostat_og_bad_heizung_schwellenwert''))
+            }}
+
+            '
+        then:
+        - action: switch.turn_on
+          target:
+            entity_id: switch.elektroheizung
+        else:
+        - action: switch.turn_off
+          target:
+            entity_id: switch.elektroheizung
+    - conditions:
+      - condition: trigger
+        id: Netzbezug
+      sequence:
+      - parallel:
+        - alias: 'Comfoclime einstellen '
+          sequence:
+          - action: climate.set_temperature
+            data:
+              temperature: 21
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+          - action: climate.set_fan_mode
+            data:
+              fan_mode: medium
+            target:
+              entity_id: climate.comfoclime_comfoclime_24
+        - action: switch.turn_off
+          target:
+            entity_id: switch.elektroheizung
+          data: {}
+    - conditions:
+      - condition: trigger
+        id: Thermostat
+      - condition: state
+        entity_id: timer.timer_og_bad_heizung
+        state: idle
+      - condition: state
+        entity_id: select.comfoclime_comfoclime_24_jahreszeitwahl
+        state:
+        - heating
+      sequence:
+      - if:
+        - condition: numeric_state
+          entity_id: sensor.smartmeter_power
+          below: -700
+        - condition: template
+          value_template: '{{ state_attr(''climate.bad_og_thermostat'', ''current_temperature'')
+            < float(states(''sensor.og_badezimmer_thermostat_og_bad_heizung_schwellenwert''))
+            }}
+
+            '
+        then:
+        - action: switch.turn_on
+          target:
+            entity_id: switch.elektroheizung
+        else:
+        - action: switch.turn_off
+          target:
+            entity_id: switch.elektroheizung
+  mode: restart
+- id: '1763015204641'
+  alias: Weihnachtsbeleuchtung - Prüfe alle Steckdosen
+  description: ''
+  triggers:
+  - trigger: light.turned_on
+    target:
+      entity_id:
+      - light.weihnachtsbaum
+      - light.flur_steckdose
+      - light.haustur_steckdose
+    options:
+      behavior: each
+  actions:
+  - variables:
+      triggered_switch: '{{ trigger.entity_id }}'
+      power_sensor: '{{ trigger.entity_id | replace(''light.'', ''sensor.'') ~ ''_power''
+        }}'
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ states(power_sensor) | float(0) < 3 }}'
+      sequence:
+      - target:
+          entity_id: '{{ triggered_switch }}'
+        action: switch.turn_off
+        data: {}
+  mode: parallel
+  max: 10
+- id: '1763056404987'
+  alias: Webhook TEST
+  description: ''
+  triggers:
+  - webhook_id: aPager_9ef80d7ac7fef6a410265df259abb7458623c71a
+    trigger: webhook
+    allowed_methods:
+    - POST
+    - PUT
+    local_only: true
+  actions:
+  - data:
+      message: 'Webhook Debug Daten: {{ trigger.json }}'
+      level: info
+    action: system_log.write
+  mode: single
+- id: '1766236473320'
+  alias: Babygeschrei
+  description: Löst bei Babyfon Geschreierkennung aus
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.sebastian_babyfon_babyschrei_verhaltnis
+    above: 20
+  conditions:
+  - condition: switch.is_on
+    target:
+      entity_id: input_boolean.babygeschrei
+    options:
+      behavior: any
+      for: 00:00:00
+  actions:
+  - action: notify.familie
+    metadata: {}
+    data:
+      data:
+        sticky: true
+        tag: babygeschrei
+        group: Babygeschrei
+        channel: Babygeschrei
+        importance: high
+        color: red
+        ttl: 0
+        priority: high
+        vibrationPattern: 0,1000,500,1000,500,1000
+        notification_icon: mdi:baby
+        clickAction: entityId:camera.babyfon_standardauflosung
+        image: /api/camera_proxy/camera.babyfon_schnappschusse_in_hochauflosung
+        actions:
+        - action: babygeschrei_end
+          title: Ausschalten
+        - action: babygeschrei_acknowledge
+          title: Bestätigung
+      message: Sebastian braucht uns
+  - if:
+    - condition: switch.is_off
+      target:
+        entity_id: input_boolean.tag_nacht_modus
+      options:
+        behavior: any
+        for: 00:00:00
+    then:
+    - action: light.turn_on
+      metadata: {}
+      target:
+        area_id:
+        - og_schlafzimmer
+        entity_id: light.sebastian_nachtlicht_nachtlicht
+      data: {}
+  mode: single
+- id: '1766334911697'
+  alias: Haushalt Benachrichtigungen (Filter & Salz)
+  description: ''
+  triggers:
+  - trigger: counter.decremented
+    target:
+      label_id: zahler
+  conditions:
+  - condition: template
+    value_template: '{{ states(trigger.entity_id) | int <= 10 }}'
+  actions:
+  - variables:
+      val: '{{ states(trigger.entity_id) | int }}'
+      is_salz: '{{ ''salz'' in trigger.entity_id }}'
+      label: '{{ ''Salz nachfüllen'' if is_salz else ''Einzelfilter '' ~ (''Tauschen''
+        if ''tauschen'' in trigger.entity_id else ''Saugen'') }}'
+      final_msg: '{{ label }} {{ "seit " ~ (val | abs) if val < 0 else "in " ~ val
+        }} Tag(en)'
+  - action: notify.mobile_app_pixel_8a
+    metadata: {}
+    data:
+      message: '{{ final_msg }}'
+      data:
+        sticky: true
+        tag: '{{ trigger.entity_id }}'
+        group: '{{ ''Salz'' if is_salz else ''Filter'' }}'
+        channel: Haushalt
+        clickAction: settings://notification_history
+        color: white
+        notification_icon: '{{ ''mdi:shaker-outline'' if is_salz else ''mdi:filter-check-outline''
+          }}'
+  mode: single
+- id: '1766492341368'
+  alias: Waschmaschine fertig
+  description: ''
+  triggers:
+  - entity_id:
+    - binary_sensor.waschmaschine_lauft
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+    trigger: state
+  conditions:
+  - condition: light.is_off
+    target:
+      area_id: kg_wasche
+    options:
+      behavior: any
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.waschmaschine
+    data: {}
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.waschmaschine_fertig
+    data: {}
+  mode: single
+- id: '1767386642393'
+  alias: Benachrichtigung 10min
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    minutes: /10
+  conditions:
+  - condition: state
+    entity_id: schedule.benachrichtungszeitraum
+    state: 'on'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: switch.trockner_fertig
+      state:
+      - 'on'
+      for:
+        hours: 0
+        minutes: 10
+        seconds: 0
+    - condition: state
+      entity_id: switch.waschmaschine_fertig
+      state:
+      - 'on'
+      for:
+        hours: 0
+        minutes: 10
+        seconds: 0
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: switch.trockner_fertig
+        state:
+        - 'on'
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          title: Trockner
+          message: 'Trockner fertig seit: {{ as_datetime(states.switch.trockner_fertig.last_changed)
+            | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
+          data:
+            sticky: true
+            tag: trockner_fertig
+            group: Trockner
+            channel: Haushalt
+            clickAction: settings://notification_history
+            color: green
+            notification_icon: mdi:tumble-dryer
+            actions:
+            - action: haushalt_acknowledge
+              title: Bestätigen
+    - conditions:
+      - condition: state
+        entity_id: switch.waschmaschine_fertig
+        state:
+        - 'on'
+      sequence:
+      - action: notify.familie
+        metadata: {}
+        data:
+          title: Waschmaschine
+          message: 'Waschmaschine fertig seit: {{ as_datetime(states.switch.waschmaschine_fertig.last_changed)
+            | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
+          data:
+            sticky: true
+            tag: waschmaschine_fertig
+            group: Waschmaschine
+            channel: Haushalt
+            clickAction: settings://notification_history
+            color: green
+            notification_icon: mdi:washing-machine
+            actions:
+            - action: haushalt_acknowledge
+              title: Bestätigen
+  mode: single
+- id: '1767776519621'
+  alias: Warnung Luftfeuchtigkeit KG
+  description: Löst bei >60% rel. Luftfeuchtigkeit aus
+  triggers:
+  - trigger: humidity.crossed_threshold
+    target:
+      floor_id: kg
+    options:
+      threshold:
+        type: above
+        value:
+          active_choice: number
+          number: 60
+      behavior: each
+  conditions:
+  - condition: template
+    value_template: '{{float(trigger.from_state.attributes.current_humidity,0) < float(trigger.to_state.attributes.current_humidity,0)}}'
+  - condition: template
+    value_template: '{{trigger.entity_id != "climate.wasche_thermostat"}}'
+  actions:
+  - action: notify.familie
+    metadata: {}
+    data:
+      title: Hohe Luftfeuchtigkeit
+      message: '{{ trigger.to_state.attributes.friendly_name }} meldet {{ trigger.to_state.attributes.current_humidity
+        }}% Feuchtigkeit.'
+      data:
+        sticky: true
+        tag: luftfeuchtigkeit_hoch
+        group: Luftfeuchtigkeit
+        channel: Warnung
+        importance: high
+        color: blue
+        notification_icon: mdi:water-percent-alert
+  mode: single
+- id: '1768485481859'
+  alias: Feuerwehreinsatz Haussteuerung rücksetzen
+  description: Löst aus, wenn der aPager zurückgesetzt wird
+  triggers:
+  - entity_id:
+    - binary_sensor.apager_alarm
+    from: 'on'
+    to: 'off'
+    trigger: state
+  - entity_id:
+    - binary_sensor.tpg2200_alarmrelais
+    from: 'off'
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    trigger: state
+  - entity_id:
+    - input_boolean.feuerwehralarm
+    to: 'on'
+    from: 'off'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    enabled: true
+    id: Feueralarm 5min
+    trigger: state
+  - entity_id:
+    - input_boolean.feuerwehralarm
+    to: 'off'
+    from: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    enabled: true
+    trigger: state
+  - event_type: telegram_callback
+    event_data:
+      data: /ffw_reset
+    context: {}
+    trigger: event
+  conditions:
+  - condition: switch.is_on
+    target:
+      entity_id: input_boolean.feuerwehralarm_zurucksetzten
+    options:
+      behavior: any
+      for: 00:00:00
+  actions:
+  - action: scene.turn_on
+    metadata: {}
+    target:
+      entity_id: scene.vor_alarm_lichteinstellungen
+    data: {}
+  mode: single
+- id: '1770926427434'
+  alias: Benachrichtigungen loggen
+  description: ''
+  triggers:
+  - event_type: call_service
+    event_data:
+      domain: notify
+    trigger: event
+  conditions:
+  - condition: template
+    value_template: '{{trigger.event.data.service_data.message != "clear_notification"}}'
+  actions:
+  - target:
+      entity_id: input_text.notification_history
+    data:
+      value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message
+        }}'
+    action: input_text.set_value
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{trigger.event.data.service == "mobile_app_pixel_9a"}}'
+        alias: Marina
+      sequence:
+      - target:
+          entity_id:
+          - input_text.notification_history_marina
+        data:
+          value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message
+            }}'
+        action: input_text.set_value
+    - conditions:
+      - alias: Oliver
+        condition: template
+        value_template: '{{trigger.event.data.service == "mobile_app_pixel_8a"}}'
+      sequence:
+      - target:
+          entity_id:
+          - input_text.notification_history_oliver
+        data:
+          value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message
+            }}'
+        action: input_text.set_value
+- id: '1772333810710'
+  alias: Licht aus wenn Handys oben
+  description: ''
+  triggers:
+  - trigger: time
+    at: '22:00:00'
+  conditions:
+  - condition: state
+    entity_id: sensor.pixel8a_connected_to
+    state:
+    - OG
+  - condition: state
+    entity_id: sensor.pixel9a_connected_to
+    state:
+    - OG
+  - condition: state
+    entity_id: binary_sensor.pixel_8a_is_charging
+    state:
+    - 'on'
+  - condition: state
+    entity_id: binary_sensor.pixel_9a_is_charging
+    state:
+    - 'on'
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      floor_id:
+      - og
+      - eg
+      - kg
+      - garten
+  mode: single
+- id: '1774652177395'
+  alias: Staubsauger Steuerung
+  description: ''
+  triggers:
+  - trigger: time
+    at: 06:00:00
+    weekday:
+    - mon
+    - wed
+    - fri
+    enabled: true
+  - trigger: time
+    at: 06:00:00
+    weekday:
+    - tue
+    - thu
+    - sat
+    enabled: true
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.roborock_qrevo_slim_dock_frischwassertank
+    state:
+    - 'off'
+    - unavailable
+  - condition: state
+    entity_id: binary_sensor.roborock_qrevo_slim_dock_schmutzwassertank
+    state:
+    - 'off'
+    - unavailable
+  actions:
+  - action: select.select_option
+    metadata: {}
+    target:
+      entity_id: select.roborock_qrevo_slim_ausgewahlte_karte
+    data:
+      option: EG
+    continue_on_error: true
+  - choose:
+    - conditions:
+      - condition: time
+        weekday:
+        - mon
+        - wed
+        - fri
+      sequence:
+      - alias: Wohnzimmer & Küche
+        action: vacuum.clean_area
+        metadata: {}
+        target:
+          entity_id: vacuum.roborock_qrevo_slim
+        data:
+          cleaning_area_id:
+          - eg_wohnzimmer
+          - eg_kuche
+        enabled: false
+      - action: script.staubsauger_wohnzimmer_kuche
+        metadata: {}
+        data: {}
+      alias: Mo, Mi, Fr / Wohnzimmer & Küche
+    - conditions:
+      - condition: time
+        weekday:
+        - tue
+        - thu
+      sequence:
+      - alias: Flur & Bad
+        action: vacuum.clean_area
+        metadata: {}
+        target:
+          entity_id: vacuum.roborock_qrevo_slim
+        data:
+          cleaning_area_id:
+          - eg_flur
+          - eg_badezimmer
+        enabled: false
+      - action: script.staubsauger_flur_bad
+        metadata: {}
+        data: {}
+      alias: Di, Do / Flur & Bad
+    - conditions:
+      - condition: time
+        weekday:
+        - sat
+      sequence:
+      - alias: Büro
+        action: vacuum.clean_area
+        metadata: {}
+        target:
+          entity_id: vacuum.roborock_qrevo_slim
+        data:
+          cleaning_area_id:
+          - eg_buro
+        enabled: false
+      - action: script.staubsauger_buro
+        metadata: {}
+        data: {}
+      alias: Sa / Büro
+  mode: single
+- id: '1774717458421'
+  alias: Rollladentaster Schlafzimmer
+  description: Rolladen in der Ankleide durch Taster in Schlafzimmer steuern und die
+    Automatik von den Räumen steuern
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: og_schlafzimmer
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      sequence:
+      - if:
+        - condition: switch.is_off
+          target:
+            entity_id: input_boolean.tag_nacht_modus
+          options:
+            behavior: any
+            for: 00:00:00
+        then:
+        - action: input_boolean.turn_off
+          metadata: {}
+          target:
+            entity_id: input_boolean.babygeschrei
+          data: {}
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id:
+          - og_schlafzimmer
+          - og_ankleidezimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_schlafzimmer
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id:
+          - og_schlafzimmer
+          - og_ankleidezimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_schlafzimmer
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1774723089540'
+  alias: Rollladensteuerung Morgens aus
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      entity_id: event.em_2_ankleider_rolllade_runter
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.ankleide_rollladen_1_morgens_auf
+    data: {}
+  mode: single
+- id: '1774857183582'
+  alias: Batterie Warnung zu To-Do
+  description: Erstellt oder aktualisiert einen To-Do Eintrag bei schwacher Batterie.
+  triggers:
+  - trigger: battery.became_low
+    target:
+      label_id: leere_batterie
+    options:
+      behavior: each
+  actions:
+  - target:
+      entity_id: todo.haushalt_2
+    response_variable: t_list
+    action: todo.get_items
+    data:
+      status: needs_action
+  - variables:
+      base_name: 'Batterie leer: {{ state_attr(trigger.entity_id, ''device_name'')
+        }}'
+      match: '{{ t_list[''todo.haushalt_2''][''items''] | selectattr(''summary'',
+        ''search'', base_name) | list }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ match | length > 0 }}'
+      sequence:
+      - target:
+          entity_id: todo.haushalt_2
+        data:
+          item: '{{ match[0].uid }}'
+          rename: "{% set parts = match[0].summary.split('(') %} {% set count = (parts[1].split('x')[0]
+            | int + 1) if parts | length > 1 else 2 %} \n{{ base_name }} ({{ count
+            }}x)\n"
+        action: todo.update_item
+    default:
+    - target:
+        entity_id: todo.haushalt_2
+      data:
+        item: '{{ base_name }} (1x)'
+        due_date: '{{ (now() + timedelta(days=1)).strftime(''%Y-%m-%d'') }}'
+      action: todo.add_item
+  mode: parallel
+- id: '1775032084590'
+  alias: Update Location
+  description: ''
+  triggers: []
+  conditions: []
+  actions:
+  - action: notify.mobile_app_pixel_8a
+    metadata: {}
+    data:
+      message: request_location_update
+  - action: notify.mobile_app_pixel_9a
+    metadata: {}
+    data:
+      message: request_location_update
+  mode: single
+- id: '1775245876379'
+  alias: aPager Empfang
+  description: Empfängt Webhooks vom aPager-System.
+  triggers:
+  - trigger: webhook
+    allowed_methods:
+    - POST
+    - PUT
+    local_only: false
+    webhook_id: aPager_9ef80d7ac7fef6a410265df259abb7458623c71a
+  conditions: []
+  actions: []
+  mode: single
+- id: '1775982608391'
+  alias: Rollladentaster Sebastian
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: og_kinderzimmer_2
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      sequence: []
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_2
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_2
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_2
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_2
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1777399798475'
+  alias: ESPHome Update
+  description: Führt um Mitternacht alle Updates von ESPHome Geräten aus
+  triggers:
+  - trigger: time
+    at: 00:00:00
+  conditions: []
+  actions:
+  - action: update.install
+    metadata: {}
+    target:
+      label_id: update_esphome
+    data: {}
+  mode: single
+- id: '1777530226651'
+  alias: Elektroheizung Steuerung (Status-basiert)
+  triggers:
+  - trigger: state
+    entity_id: timer.timer_og_bad_heizung
+  actions:
+  - action: switch.turn_{{ 'on' if is_state('timer.timer_og_bad_heizung', 'active')
+      else 'off' }}
+    target:
+      entity_id: switch.elektroheizung
+- id: wasche_gerate_fertig_benachrichtigung
+  alias: Wäschegeräte fertig Benachrichtigung
+  description: ''
+  triggers:
+  - trigger: switch.turned_on
+    target:
+      entity_id:
+      - switch.waschmaschine_fertig
+    id: waschmaschine
+    options:
+      behavior: each
+      for: 00:00:00
+  - trigger: switch.turned_on
+    target:
+      entity_id:
+      - switch.trockner_fertig
+    id: trockner
+    options:
+      behavior: each
+      for: 00:00:00
+  actions:
+  - repeat:
+      sequence:
+      - if:
+        - condition: state
+          entity_id: schedule.benachrichtungszeitraum
+          state: 'on'
+        then:
+        - action: notify.familie
+          data:
+            title: '{{ device_name }}'
+            message: '{{ device_name }} fertig seit: {{ as_datetime(states[switch_entity].last_changed)
+              | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
+            data:
+              sticky: true
+              tag: '{{ trigger.id }}_fertig'
+              group: '{{ device_name }}'
+              channel: Haushalt
+              notification_icon: '{{ device_icon }}'
+              actions:
+              - action: haushalt_acknowledge
+                title: Bestätigen
+      - delay:
+          minutes: 1
+      until:
+      - condition: template
+        value_template: '{{ is_state(switch_entity, ''off'') or repeat.index >= 5
+          }}'
+  variables:
+    device_name: '{{ ''Waschmaschine'' if trigger.id == ''waschmaschine'' else ''Trockner''
+      }}'
+    device_icon: '{{ ''mdi:washing-machine'' if trigger.id == ''waschmaschine'' else
+      ''mdi:tumble-dryer'' }}'
+    switch_entity: '{{ trigger.entity_id }}'
+  mode: parallel
+  max: 2
+- id: treppenlicht_aus
+  alias: Treppenlicht Aus
+  description: ''
+  triggers:
+  - trigger: light.turned_on
+    target:
+      entity_id:
+      - light.treppe_licht_1
+      - light.treppe_licht
+    options:
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 30
+      behavior: each
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: '{{ trigger.entity_id }}'
+    data: {}
+  mode: single
+- id: gasuhr_fehler_benachrichtigung
+  alias: Gasuhr Fehler Benachrichtigung
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.gasuhr_problem
+    to: 'on'
+    for: 00:05:00
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.gasuhr_problem
+    state: 'on'
+  actions:
+  - action: notify.mobile_app_pixel_8a
+    data:
+      title: Gasuhr Fehler
+      message: '{{ states(''sensor.gasuhr_error'') }}'
+      data:
+        sticky: true
+        tag: gasuhr_fehler
+        channel: Info
+        color: red
+        notification_icon: mdi:gas-burner
+  mode: single
+- id: wasseruhr_fehler_benachrichtigung
+  alias: Wasseruhr Fehler Benachrichtigung
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.wasseruhr_problem
+    to: 'on'
+    for: 00:05:00
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.wasseruhr_problem
+    state: 'on'
+  actions:
+  - action: notify.mobile_app_pixel_8a
+    data:
+      title: Wasseruhr Fehler
+      message: '{{ states(''sensor.wasseruhr_error'') }}'
+      data:
+        sticky: true
+        tag: wasseruhr_fehler
+        channel: Info
+        color: red
+        notification_icon: mdi:water-alert
+  mode: single
+- id: '1780288582868'
+  alias: Mobile Benachrichtigung Reaktion
+  description: Hier wird alles zusammengefasst, um auf Nachrichten zu reagieren
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: garage_acknowledge
+    id: Warnung aus
+    alias: Warnung aus
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: garage_close
+    id: Schließen
+    alias: 'Garagentor schließen '
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: haushalt_acknowledge
+    id: Wäsche
+    alias: Wäsche
+  - alias: Babygeschrei aus
+    trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: babygeschrei_end
+    id: Babygeschrei aus
+  - alias: Babygeschrei ignorieren
+    trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: babygeschrei_acknowledge
+    id: Babygeschrei ignorieren
+    note: Damit man das Babygeschrei mal kurz pausieren kann
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - Warnung aus
+      sequence:
+      - action: lock.lock
+        metadata: {}
+        data: {}
+        target:
+          entity_id: lock.garagentor_warnung
+      alias: Warnung aus
+    - conditions:
+      - condition: trigger
+        id:
+        - Schließen
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          entity_id: cover.garagentor
+        data: {}
+      alias: 'Garagentor schließen '
+    - conditions:
+      - condition: trigger
+        id:
+        - Wäsche
+      sequence:
+      - variables:
+          tag: '{{ trigger.event.data.tag }}'
+      - action: switch.turn_off
+        target:
+          entity_id: switch.{{ tag }}
+        data: {}
+      - action: notify.familie
+        data:
+          message: clear_notification
+          data:
+            tag: '{{ tag }}'
+      alias: Wäsche
+    - conditions:
+      - condition: trigger
+        id:
+        - Babygeschrei aus
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        target:
+          entity_id: input_boolean.babygeschrei
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - Babygeschrei ignorieren
+      sequence:
+      - action: input_boolean.turn_off
+        metadata: {}
+        target:
+          entity_id: input_boolean.babygeschrei
+        data: {}
+      - delay:
+          hours: 0
+          minutes: 5
+          seconds: 0
+          milliseconds: 0
+      - action: input_boolean.turn_on
+        metadata: {}
+        target:
+          entity_id: input_boolean.babygeschrei
+        data: {}
+  mode: queued
+  max: 10
+- id: '1781107865242'
+  alias: 'Frigate: Zonen-Benachrichtigung'
+  triggers:
+  - trigger: mqtt
+    options:
+      topic: frigate/events
+  conditions:
+  - condition: template
+    value_template: "{{ trigger.payload_json.after.camera != 'babyfon'\n   and (trigger.payload_json.after.entered_zones
+      | default([], true))\n   | reject('in', trigger.payload_json.before.entered_zones
+      | default([], true))\n   | list | length > 0 }}\n"
+    enabled: false
+  - condition: template
+    value_template: '{{ trigger.payload_json.after.camera != ''babyfon'' and trigger.payload_json.type
+      == ''new''}}
+
+      '
+  - condition: template
+    value_template: '{{not (trigger.payload_json.after.camera == "hintertuer" and
+      trigger.payload_json.after.label == "car")}}'
+    enabled: true
+  actions:
+  - action: notify.mobile_app_pixel_8a
+    data:
+      title: "\U0001F4F9 {{ trigger.payload_json.after.label | capitalize }} - {{
+        trigger.payload_json.after.camera | capitalize}}"
+      message: 'Zone: {{ trigger.payload_json.after.entered_zones| map(''capitalize'')
+        | join('', '') }}'
+      data:
+        image: https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id
+          }}/thumbnail.jpg
+        clickAction: https://hassio.suedholt.synology.me/api/frigate/notifications/{{
+          trigger.payload_json.after.id }}/clip.mp4
+    continue_on_error: true
+  - action: telegram_bot.send_photo
+    data:
+      entity_id:
+      - notify.telegram_bot_2058163316_155848237
+      url: https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id
+        }}/thumbnail.jpg
+      caption: "*\U0001F4F9 {{ trigger.payload_json.after.label | capitalize }} –
+        {{ trigger.payload_json.after.camera | capitalize }}* Zone: {{ trigger.payload_json.after.entered_zones
+        | map('capitalize') | join(', ') }}"
+      inline_keyboard:
+      - - - "\U0001F3AC Clip ansehen"
+          - https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id
+            }}/clip.mp4
+      disable_notification: true
+    continue_on_error: true
+    enabled: false
+- id: '1782328297629'
+  alias: ComfoClime Reset
+  description: ''
+  triggers:
+  - trigger: time
+    at: 00:00:00
+  conditions: []
+  actions:
+  - action: comfoclime.reset_system
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1782709169933'
+  alias: Sommer Bypass Lüftungssteuerung
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.comfoairq_bypass_state
+    - sensor.comfoclime_comfoairq_350_bypass_zustand
+    above: 80
+    id: Bypass Ein
+    enabled: true
+  - trigger: numeric_state
+    entity_id:
+    - sensor.comfoairq_bypass_state
+    - sensor.comfoclime_comfoairq_350_bypass_zustand
+    id: Bypass Aus
+    enabled: true
+    below: 80
+  conditions: []
+  actions:
+  - if:
+    - condition: trigger
+      id:
+      - Bypass Ein
+    then:
+    - action: fan.set_percentage
+      metadata: {}
+      target:
+        entity_id: fan.comfoairq
+      data:
+        percentage: 100
+      continue_on_error: true
+    - action: climate.set_fan_mode
+      metadata: {}
+      target:
+        entity_id: climate.comfoclime_comfoclime_24
+      data:
+        fan_mode: high
+      continue_on_error: true
+    else:
+    - action: fan.set_percentage
+      metadata: {}
+      target:
+        entity_id: fan.comfoairq
+      data:
+        percentage: 66
+      continue_on_error: true
+    - action: climate.set_fan_mode
+      metadata: {}
+      target:
+        entity_id: climate.comfoclime_comfoclime_24
+      data:
+        fan_mode: medium
+      continue_on_error: true
+  mode: single
+- id: '1783104753437'
+  alias: Rollladentaster Kind 1
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: og_kinderzimmer_1
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      sequence: []
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_1
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_1
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_1
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_kinderzimmer_1
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1783105195309'
+  alias: Rollladentaster Büro
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: eg_buro
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        target:
+          area_id: eg_buro
+        data: {}
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id: eg_buro
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_buro
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id: eg_buro
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_buro
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1783106481421'
+  alias: Rollladentaster Wohnzimmer
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: eg_wohnzimmer
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      sequence: []
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id: eg_wohnzimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_wohnzimmer
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id: eg_wohnzimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_wohnzimmer
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1783106619007'
+  alias: Rollladentaster Bad OG
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: og_badezimmer
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      sequence:
+      - action: switch.turn_on
+        metadata: {}
+        data: {}
+        target:
+          area_id: og_badezimmer
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id: og_badezimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_badezimmer
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id: og_badezimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: og_badezimmer
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1783106743070'
+  alias: Rollladentaster Bad EG
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: eg_badezimmer
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      sequence: []
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id: eg_badezimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_badezimmer
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id: eg_badezimmer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_badezimmer
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1783106866350'
+  alias: Rollladentaster Küche
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: eg_kuche
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{"lichttaster" in trigger.to_state.entity_id}}'
+      - condition: template
+        value_template: '{{"press_long" in trigger.to_state.attributes.event_type}}'
+      - condition: illuminance.is_detected
+        target:
+          entity_id: binary_sensor.abends_licht_an
+        options:
+          behavior: any
+          for: 00:00:00
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          area_id:
+          - eg_badezimmer
+          - eg_buro
+          - eg_wohnzimmer
+          - eg_flur
+          - eg_gardrobe
+          - eg_kuche
+          - eg_speisekammer
+      alias: Licht
+    - conditions:
+      - condition: template
+        value_template: '{{"hoch" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.open_cover
+        metadata: {}
+        target:
+          area_id:
+          - eg_kuche
+          - eg_speisekammer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_kuche
+        data:
+          option: '{{states("input_select.gesamt_rollladen_automatik")}}
+
+            '
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Hoch
+    - conditions:
+      - condition: template
+        value_template: '{{"runter" in trigger.to_state.entity_id}}'
+      sequence:
+      - action: cover.close_cover
+        metadata: {}
+        target:
+          area_id:
+          - eg_kuche
+          - eg_speisekammer
+        data: {}
+      - action: input_select.select_option
+        metadata: {}
+        target:
+          area_id: eg_kuche
+        data:
+          option: Zu
+      - action: button.press
+        metadata: {}
+        target:
+          entity_id: button.restart_beschattunsautomatisierung
+        data: {}
+      alias: Runter
+  mode: single
+- id: '1784477573079'
+  alias: Babygeschrei Schalter ein
+  description: ''
+  triggers:
+  - trigger: event.received
+    target:
+      area_id: og_flur
+    options:
+      event_type:
+      - press_long
+  conditions: []
+  actions:
+  - action: input_boolean.turn_on
+    metadata: {}
+    target:
+      entity_id: input_boolean.babygeschrei
+    data: {}
+  mode: single
+- id: '1784556840129'
+  alias: Nachtlicht automatisch ein-/ausschalten
+  description: ''
+  triggers:
+  - trigger: select.selection_changed
+    target:
+      entity_id: input_select.sebastian_rollladen_automatik
+    options: {}
+  - trigger: switch.turned_off
+    target:
+      entity_id: input_boolean.tag_nacht_modus
+    options:
+      behavior: each
+      for: 00:00:00
+  - trigger: switch.turned_on
+    target:
+      entity_id: input_boolean.tag_nacht_modus
+    options:
+      behavior: each
+      for: 00:00:00
+  conditions: []
+  actions:
+  - if:
+    - condition: or
+      conditions:
+      - condition: cover.shutter_is_closed
+        target:
+          area_id: og_kinderzimmer_2
+        options:
+          for: 00:00:00
+          behavior: all
+      - condition: select.is_option_selected
+        target:
+          entity_id: input_select.sebastian_rollladen_automatik
+        options:
+          behavior: any
+          for: 00:00:00
+          option:
+          - Zu
+    then:
+    - action: switch.turn_on
+      metadata: {}
+      target:
+        entity_id: switch.nachtlicht_nachtlicht
+      data: {}
+    else:
+    - action: switch.turn_off
+      metadata: {}
+      target:
+        entity_id: switch.nachtlicht_nachtlicht
+      data: {}
+    - action: input_boolean.turn_off
+      metadata: {}
+      target:
+        entity_id: input_boolean.babygeschrei
+      data: {}
+  mode: single
+- id: '1786476557463'
+  alias: Rollladentaster (zentral)
+  triggers:
+  - trigger: event.received
+    target:
+      area_id:
+      - og_schlafzimmer
+      - og_kinderzimmer_1
+      - og_kinderzimmer_2
+      - eg_buro
+      - eg_wohnzimmer
+      - og_badezimmer
+      - eg_badezimmer
+      - eg_kuche
+    options:
+      event_type:
+      - press_short
+      - press_long
+  conditions: []
+  actions: []
+  mode: queued
+  max: 10
+  variables:
+    ziel_area: '{{ area_id(trigger.entity_id) }}'
+- id: '1787288639387'
+  alias: Wartung · Tagesreport dauerhaft offline
+  description: Meldet einmal täglich alle steuerbaren Entitäten, die seit über 24
+    h unavailable sind. Bekannte Dauerbaustellen (ebusd, padspan) sind gefiltert.
+  triggers:
+  - trigger: time
+    at: '18:30:00'
+  conditions:
+  - alias: HA läuft lange genug für eine sinnvolle 24h-Aussage
+    condition: template
+    value_template: '{{ (now() - states.sun.sun.last_changed).total_seconds() < 86400
+      }}'
+  actions:
+  - variables:
+      offline: "{% set ns = namespace(l=[]) %} {% for s in states %}\n  {% if s.state
+        == 'unavailable'\n        and s.domain in ['light','switch','cover','climate','lock',\n
+        \                        'fan','vacuum','camera','media_player','binary_sensor']\n
+        \       and 'ebusd' not in s.entity_id\n        and 'padspan' not in s.entity_id\n
+        \       and (now() - s.last_changed).total_seconds() > 86400 %}\n    {% set
+        ns.l = ns.l + [s.name] %}\n  {% endif %}\n{% endfor %} {{ ns.l | sort }}"
+  - condition: template
+    value_template: '{{ offline | count > 0 }}'
+  - action: notify.mobile_app_pixel_8a
+    data:
+      title: "\U0001F527 {{ offline | count }} Entitäten offline (>24 h)"
+      message: "{{ offline[:12] | join(' · ') }}{{ ' …und %d weitere' | format(offline
+        | count - 12)\n   if offline | count > 12 else '' }}"
+      data:
+        tag: offline-report
+        group: wartung
+        channel: Wartung
+  - action: todo.add_item
+    target:
+      entity_id: todo.haushalt_2
+    data:
+      item: '{{ offline | count }} HA-Entitäten offline ({{ now().strftime(''%d.%m.'')
+        }})'
+      description: '{{ offline | join('', '') }}'
+    continue_on_error: true
+  mode: single

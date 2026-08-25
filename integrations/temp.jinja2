@@ -1,0 +1,28 @@
+    {% set current_count = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe",
+    "warning_count") %} {% if current_count > 0 %} <h2><font color=red }}>DWD Vorwarnungen</font></h2><hr><hr> 
+    {%endif%} 
+    {% for i in range(current_count) %}
+        {% set headline = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe", "warning_" ~ loop.index ~ "_headline") %}
+        {% set description = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe", "warning_" ~ loop.index ~ "_description") %}
+        {% set level = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe", "warning_" ~ loop.index ~ "_level") %}
+        {% set time_start = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe", "warning_" ~ loop.index ~ "_start") %}
+        {% set time_end = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe", "warning_" ~ loop.index ~ "_end") %}
+        {% set level_color = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe", "warning_" ~ loop.index ~ "_color") %}
+        <b><font color={{ level_color }}>{{ headline }}</font></b> <br> <u>
+        {{time_start.strftime("%a %H:%M") ~ " - " ~ time_end.strftime("%a %H:%M")}}</u> <br> <i>{{ description }}</i> <hr> {% endfor %} {% set advance_count
+        = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe",
+        "warning_count") %} 
+
+    {% if advance_count > 0 %} <h2><font color=red>DWD Aktuelle Warnungen</font></h2><hr><hr>{%endif%}
+
+    {% for i in range(advance_count) %}
+      {% set headline = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe", "warning_" ~ loop.index ~ "_headline") %}
+      {% set description = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe", "warning_" ~ loop.index ~ "_description") %}
+      {% set level = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe", "warning_" ~ loop.index ~ "_level") %}
+      {% set time_start = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe", "warning_" ~ loop.index ~ "_start") %}
+      {% set time_end = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe", "warning_" ~ loop.index ~ "_end") %}
+      {% set level_color = state_attr("sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe", "warning_" ~ loop.index ~ "_color") %}
+    <b><font color={{ level_color }}>{{ headline }}</font></b> <br> <u>{{time_start.strftime("%a %H:%M") ~ " - " ~ time_end.strftime("%a %H:%M")
+    }}</u> <br> <i>{{ description }}</i> <hr>
+
+    {% endfor %}
