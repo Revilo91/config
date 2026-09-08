@@ -1,10 +1,19 @@
-default: info
-# logs:
+default: warning
+
+logs:
+  # device_pulse meldet im Minutentakt "ping failed" fuer Geraete, die
+  # schlicht ausgeschaltet sind (PCs, Tablets, Drucker). Auf error, damit
+  # echte Integrationsfehler sichtbar bleiben, das Rauschen aber weg ist.
+  # Die Kind-Logger brauchen einen eigenen Eintrag, der Parent vererbt hier
+  # nicht (sie setzen ihr Level selbst).
+  custom_components.device_pulse: error
+  custom_components.device_pulse.coordinator: error
+  custom_components.device_pulse.utils: error
+
+# Bei Bedarf gezielt hochdrehen, nie global auf info/debug:
 #   custom_components.multiscrape: debug
 #   homeassistant.components.backup: debug
-#   homeassistant.components.script: warning
 #   homeassistant.components.recorder: debug
 #   custom_components.pyscript: info
-#   homeassistant.components.reolink_aio: warn
 #   homeassistant.components.rest: debug
 #   homeassistant.components.webhook: debug

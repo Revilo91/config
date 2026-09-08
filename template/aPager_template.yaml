@@ -1,23 +1,23 @@
 # https://hassio.suedholt.synology.me/api/webhook/aPager_9ef80d7ac7fef6a410265df259abb7458623c71a
 trigger:
-  - platform: webhook
-    webhook_id: aPager_9ef80d7ac7fef6a410265df259abb7458623c71a
-    allowed_methods:
-      - POST
-      - PUT
-    local_only: false
+- platform: webhook
+  webhook_id: aPager_9ef80d7ac7fef6a410265df259abb7458623c71a
+  allowed_methods:
+  - POST
+  - PUT
+  local_only: false
 sensor:
-  - name: "aPager Keyword"
-    unique_id: "apager_keyword"
-    state: "{{ trigger.json.keyword }}"
-  - name: "aPager Unit"
-    unique_id: "apager_unit"
-    state: "{{ trigger.json.unit }}"
+- name: "aPager Keyword"
+  unique_id: "apager_keyword"
+  state: "{{ trigger.json.keyword }}"
+- name: "aPager Unit"
+  unique_id: "apager_unit"
+  state: "{{ trigger.json.unit }}"
 binary_sensor:
-  - name: "aPager Alarm"
-    unique_id: "apager_alarm"
-    state: >
-      {{ trigger.json.unit == "Alarmmeldung FFL" or trigger.json.unit == "FF Langquaid EZ"}}
-    auto_off:
-      minutes: 5
-    device_class: tamper
+- name: "aPager Alarm"
+  unique_id: "apager_alarm"
+  state: >
+    {{ trigger.json.unit == "Alarmmeldung FFL" or trigger.json.unit == "FF Langquaid EZ"}}
+  auto_off:
+    minutes: 5
+  device_class: tamper

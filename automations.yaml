@@ -957,38 +957,47 @@
   actions:
   - data:
       notification_id: DWD
-      message: "{% set current_count = int(state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
-        \"warning_count\"), 0) %} {% set weekdays = {'Mon': 'Mo', 'Tue': 'Di', 'Wed':
-        'Mi', 'Thu': 'Do', 'Fri': 'Fr', 'Sat': 'Sa', 'Sun': 'So'} %} {% if current_count
-        > 0 %} <h2><font color=red>DWD Vorwarnungen</font></h2><hr><hr> {% endif %}
-        {% for i in range(current_count) %}\n  {% set headline = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
-        \"warning_\" ~ loop.index ~ \"_headline\") %}\n  {% set description = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
-        \"warning_\" ~ loop.index ~ \"_description\") %}\n  {% set level = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
-        \"warning_\" ~ loop.index ~ \"_level\") %}\n  {% set time_start = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
-        \"warning_\" ~ loop.index ~ \"_start\") | as_local %}\n  {% set time_end =
-        state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
-        \"warning_\" ~ loop.index ~ \"_end\") | as_local %}\n  {% set level_color
-        = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\",
-        \"warning_\" ~ loop.index ~ \"_color\") %}\n  <b><font color={{ level_color
-        }}>{{ headline }}</font></b> <br>\n  <u>{{ weekdays[time_start.strftime(\"%a\")]
-        ~ \". \" ~ time_start.strftime(\"%H:%M\") ~ \" - \" ~ weekdays[time_end.strftime(\"%a\")]
-        ~ \". \" ~ time_end.strftime(\"%H:%M\") }}</u> <br>\n  <i>{{ description }}</i>
-        <hr>\n{% endfor %} {% set advance_count = int(state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
-        \"warning_count\"), 0) %} {% if advance_count > 0 %} <h2><font color=red>DWD
-        Aktuelle Warnungen</font></h2><hr><hr> {% endif %} {% for i in range(advance_count)
-        %}\n  {% set headline = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
-        \"warning_\" ~ loop.index ~ \"_headline\") %}\n  {% set description = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
-        \"warning_\" ~ loop.index ~ \"_description\") %}\n  {% set level = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
-        \"warning_\" ~ loop.index ~ \"_level\") %}\n  {% set time_start = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
-        \"warning_\" ~ loop.index ~ \"_start\") | as_local %}\n  {% set time_end =
-        state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
-        \"warning_\" ~ loop.index ~ \"_end\") | as_local %}\n  {% set level_color
-        = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\",
-        \"warning_\" ~ loop.index ~ \"_color\") %}\n  <b><font color={{ level_color
-        }}>{{ headline }}</font></b> <br>\n  <u>{{ weekdays[time_start.strftime(\"%a\")]
-        ~ \". \" ~ time_start.strftime(\"%H:%M\") ~ \" - \" ~ weekdays[time_end.strftime(\"%a\")]
-        ~ \". \" ~ time_end.strftime(\"%H:%M\") }}</u> <br>\n  <i>{{ description }}</i>
-        <hr>\n{% endfor %}"
+      message: "{% set current_count = int(state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\", \"warning_count\"), 0) %} {% set weekdays = {'Mon': 'Mo', 'Tue': 'Di', 'Wed': 'Mi', 'Thu': 'Do', 'Fri': 'Fr', 'Sat': 'Sa', 'Sun': 'So'} %} {% if current_count > 0 %} <h2><font color=red>DWD Vorwarnungen</font></h2><hr><hr> {% endif %} {% for i in range(current_count) %}
+
+        \  {% set headline = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\", \"warning_\" ~ loop.index ~ \"_headline\") %}
+
+        \  {% set description = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\", \"warning_\" ~ loop.index ~ \"_description\") %}
+
+        \  {% set level = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\", \"warning_\" ~ loop.index ~ \"_level\") %}
+
+        \  {% set time_start = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\", \"warning_\" ~ loop.index ~ \"_start\") | as_local %}
+
+        \  {% set time_end = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\", \"warning_\" ~ loop.index ~ \"_end\") | as_local %}
+
+        \  {% set level_color = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_vorwarnstufe\", \"warning_\" ~ loop.index ~ \"_color\") %}
+
+        \  <b><font color={{ level_color }}>{{ headline }}</font></b> <br>
+
+        \  <u>{{ weekdays[time_start.strftime(\"%a\")] ~ \". \" ~ time_start.strftime(\"%H:%M\") ~ \" - \" ~ weekdays[time_end.strftime(\"%a\")] ~ \". \" ~ time_end.strftime(\"%H:%M\") }}</u> <br>
+
+        \  <i>{{ description }}</i> <hr>
+
+        {% endfor %} {% set advance_count = int(state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\", \"warning_count\"), 0) %} {% if advance_count > 0 %} <h2><font color=red>DWD Aktuelle Warnungen</font></h2><hr><hr> {% endif %} {% for i in range(advance_count) %}
+
+        \  {% set headline = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\", \"warning_\" ~ loop.index ~ \"_headline\") %}
+
+        \  {% set description = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\", \"warning_\" ~ loop.index ~ \"_description\") %}
+
+        \  {% set level = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\", \"warning_\" ~ loop.index ~ \"_level\") %}
+
+        \  {% set time_start = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\", \"warning_\" ~ loop.index ~ \"_start\") | as_local %}
+
+        \  {% set time_end = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\", \"warning_\" ~ loop.index ~ \"_end\") | as_local %}
+
+        \  {% set level_color = state_attr(\"sensor.mitgliedsgemeinde_in_verwaltungsgemeinschaft_langquaid_aktuelle_warnstufe\", \"warning_\" ~ loop.index ~ \"_color\") %}
+
+        \  <b><font color={{ level_color }}>{{ headline }}</font></b> <br>
+
+        \  <u>{{ weekdays[time_start.strftime(\"%a\")] ~ \". \" ~ time_start.strftime(\"%H:%M\") ~ \" - \" ~ weekdays[time_end.strftime(\"%a\")] ~ \". \" ~ time_end.strftime(\"%H:%M\") }}</u> <br>
+
+        \  <i>{{ description }}</i> <hr>
+
+        {% endfor %}"
     action: persistent_notification.create
   mode: single
 - id: '1704356525125'
@@ -1046,7 +1055,7 @@
   - parallel:
     - data:
         message: <b>{{states("sensor.apager_keyword")}}</b>
-        title: "\U0001F6A8 Feuerwehreinsatz \U0001F6A8"
+        title: "🚨 Feuerwehreinsatz 🚨"
         notification_id: 112
       action: persistent_notification.create
     - action: telegram_bot.send_message
@@ -1055,7 +1064,7 @@
         - '-1002821117729'
         message: <b> {{states("sensor.apager_keyword")}} </b>
         config_entry_id: 01JYN5MMDEAF9AY7ZB9THXCHY5
-        title: "\U0001F6A8 Feuerwehreinsatz \U0001F6A8"
+        title: "🚨 Feuerwehreinsatz 🚨"
         parse_mode: html
         inline_keyboard: Rücksetzen:/ffw_reset
       enabled: false
@@ -1072,7 +1081,7 @@
           notification_icon: mdi:fire-truck
           car_ui: true
         message: '{{states("sensor.apager_keyword")}}'
-        title: "\U0001F6A8 Feuerwehreinsatz \U0001F6A8"
+        title: "🚨 Feuerwehreinsatz 🚨"
     enabled: true
   mode: single
 - id: '1711002378640'
@@ -1520,10 +1529,7 @@
       - kg
     options:
       behavior: each
-  conditions:
-  - condition: template
-    value_template: '{{ trigger.entity_id is not none and (not is_state(trigger.entity_id,
-      ''unavailable'') or not is_state(trigger.entity_id, ''unknown'')) }}'
+  conditions: []
   actions:
   - type: turn_off
     device_id: 259058229febf3f9d7c96c0d54a532b5
@@ -1671,15 +1677,14 @@
     trigger: state
   conditions:
   - condition: template
-    value_template: "{{ trigger.to_state is not none and\n   (trigger.from_state is
-      none or\n    trigger.to_state.state != trigger.from_state.state) }}\n"
+    value_template: "{{ trigger.to_state is not none and
+
+      \   (trigger.from_state is none or
+
+      \    trigger.to_state.state != trigger.from_state.state) }}\n"
   actions:
   - data:
-      message: '{% set name = trigger.to_state.name %} {% set zone_map = {''home'':
-        ''Zuhause'', ''not_home'': ''Unterwegs''} %} {% set from = trigger.from_state.state                if
-        trigger.from_state is not none               else "unknown" %} {% set from
-        = zone_map.get(from, from) %}  {% set to = trigger.to_state.state %} {% set
-        to = zone_map.get(to, to) %}  {{ name }}: {{ from }} » {{ to }}'
+      message: '{% set name = trigger.to_state.name %} {% set zone_map = {''home'': ''Zuhause'', ''not_home'': ''Unterwegs''} %} {% set from = trigger.from_state.state                if trigger.from_state is not none               else "unknown" %} {% set from = zone_map.get(from, from) %}  {% set to = trigger.to_state.state %} {% set to = zone_map.get(to, to) %}  {{ name }}: {{ from }} » {{ to }}'
       data:
         tag: '{{trigger.to_state.name}}'
         group: Zonenbenachrichtigung
@@ -1741,8 +1746,7 @@
             clickAction: /dashboard-home/batterien
             color: orange
             notification_icon: mdi:battery-alert-variant-outline
-          message: '{{ device_name(trigger.to_state.entity_id) | default(trigger.to_state.entity_id,
-            true) }}({{ trigger.to_state.state | int}} %)'
+          message: '{{ device_name(trigger.to_state.entity_id) | default(trigger.to_state.entity_id, true) }}({{ trigger.to_state.state | int}} %)'
           title: Leere Batterie
     - conditions:
       - condition: trigger
@@ -1760,8 +1764,7 @@
             clickAction: /dashboard-home/batterien
             color: orange
             notification_icon: mdi:battery-alert-variant-outline
-          message: '{{ device_name(trigger.to_state.entity_id) | default(trigger.to_state.entity_id,
-            true) }}'
+          message: '{{ device_name(trigger.to_state.entity_id) | default(trigger.to_state.entity_id, true) }}'
           title: Leere Batterie
   mode: single
 - id: '1726840467981'
@@ -1922,6 +1925,9 @@
     - dirty_tank_latch_open
     - no_dustbin
     - cleaning_tank_full_or_blocked
+    - no_dustbin_or_filter
+    - auto_empty_dock_fan_error
+    - auto_empty_dock_voltage_error
     id: Dock-Fehler
   - trigger: state
     entity_id:
@@ -2079,7 +2085,6 @@
         - Start
       sequence:
       - action: notify.mobile_app_pixel_8a
-        metadata: {}
         data:
           message: gestartet
           title: Homeassistant
@@ -2087,7 +2092,6 @@
             sticky: true
             tag: hassio
             channel: Hassio
-            clickAction: settings://notification_history
             color: green
             notification_icon: mdi:home-assistant
     - conditions:
@@ -2096,7 +2100,6 @@
         - Stop
       sequence:
       - action: notify.mobile_app_pixel_8a
-        metadata: {}
         data:
           message: gestoppt
           title: Homeassistant
@@ -2104,7 +2107,6 @@
             sticky: true
             tag: hassio
             channel: Hassio
-            clickAction: settings://notification_history
             color: red
             notification_icon: mdi:home-assistant
   mode: single
@@ -2147,9 +2149,15 @@
     data:
       option: '{{ trigger.to_state.state }}'
     target:
-      entity_id: "{% set old_state = trigger.from_state.state %} {{ label_entities('beschattung')
-        \n   | expand \n   | selectattr('domain', 'eq', 'input_select')\n   | selectattr('state',
-        'eq', old_state)\n   | map(attribute='entity_id') | list }}\n"
+      entity_id: "{% set old_state = trigger.from_state.state %} {{ label_entities('beschattung')\ 
+
+        \   | expand\ 
+
+        \   | selectattr('domain', 'eq', 'input_select')
+
+        \   | selectattr('state', 'eq', old_state)
+
+        \   | map(attribute='entity_id') | list }}\n"
   - delay:
       hours: 0
       minutes: 0
@@ -2165,12 +2173,13 @@
   triggers:
   - trigger: occupancy.detected
     target:
-      entity_id: binary_sensor.bad_og_bewegungsmelder_occupancy
-    options: {}
+      area_id: og_badezimmer
+    options:
+      behavior: each
   conditions:
   - condition: illuminance.is_value
     target:
-      entity_id: sensor.bad_og_bewegungsmelder_illuminance
+      area_id: og_badezimmer
     options:
       for: 00:00:00
       threshold:
@@ -2178,6 +2187,7 @@
         value:
           active_choice: number
           number: 100
+      behavior: any
   - condition: window.is_closed
     target:
       area_id: og_badezimmer
@@ -2250,9 +2260,7 @@
   conditions: []
   actions:
   - target:
-      entity_id: '{{ expand(states.update)  | selectattr(''state'',''eq'',''on'')  |
-        rejectattr(''entity_id'',''eq'',''update.immich_version'')  | map(attribute=''entity_id'')  |
-        list }}
+      entity_id: '{{ expand(states.update)  | selectattr(''state'',''eq'',''on'')  | rejectattr(''entity_id'',''eq'',''update.immich_version'')  | map(attribute=''entity_id'')  | list }}
 
         '
     action: update.install
@@ -2384,13 +2392,11 @@
         message: wurde geöffnet
         title: '{{ trigger.to_state.attributes.friendly_name }}'
         data:
-          tag: '{{ trigger.to_state.attributes.friendly_name }}_{{ now().timestamp()
-            | int }}'
+          tag: '{{ trigger.to_state.attributes.friendly_name }}_{{ now().timestamp() | int }}'
           group: '{{ trigger.id }}'
           channel: Haushalt
           clickAction: /dashboard-handy/benachrichtigungen
-          notification_icon: '{{ ''mdi:door-open'' if trigger.id == "Tür" else ''mdi:window-open''
-            }}'
+          notification_icon: '{{ ''mdi:door-open'' if trigger.id == "Tür" else ''mdi:window-open'' }}'
     else:
     - action: notify.familie
       metadata: {}
@@ -2398,15 +2404,13 @@
         message: wurde geöffnet
         title: '{{ trigger.to_state.attributes.friendly_name }}'
         data:
-          tag: '{{ trigger.to_state.attributes.friendly_name }}_{{ now().timestamp()
-            | int }}'
+          tag: '{{ trigger.to_state.attributes.friendly_name }}_{{ now().timestamp() | int }}'
           group: '{{ trigger.id }}'
           channel: Warnung
           importance: high
           color: red
           clickAction: /dashboard-handy/benachrichtigungen
-          notification_icon: '{{ ''mdi:door-open'' if trigger.id == "Tür" else ''mdi:window-open''
-            }}'
+          notification_icon: '{{ ''mdi:door-open'' if trigger.id == "Tür" else ''mdi:window-open'' }}'
   mode: single
 - id: '1762168377405'
   alias: Energieoptimierte Heizungssteuerung
@@ -2510,9 +2514,7 @@
           entity_id: sensor.smartmeter_power
           below: -700
         - condition: template
-          value_template: '{{ state_attr(''climate.bad_og_thermostat'', ''current_temperature'')
-            < float(states(''sensor.og_badezimmer_thermostat_og_bad_heizung_schwellenwert''))
-            }}
+          value_template: '{{ state_attr(''climate.bad_og_thermostat'', ''current_temperature'') < float(states(''sensor.og_badezimmer_thermostat_og_bad_heizung_schwellenwert'')) }}
 
             '
         then:
@@ -2560,9 +2562,7 @@
           entity_id: sensor.smartmeter_power
           below: -700
         - condition: template
-          value_template: '{{ state_attr(''climate.bad_og_thermostat'', ''current_temperature'')
-            < float(states(''sensor.og_badezimmer_thermostat_og_bad_heizung_schwellenwert''))
-            }}
+          value_template: '{{ state_attr(''climate.bad_og_thermostat'', ''current_temperature'') < float(states(''sensor.og_badezimmer_thermostat_og_bad_heizung_schwellenwert'')) }}
 
             '
         then:
@@ -2589,8 +2589,7 @@
   actions:
   - variables:
       triggered_switch: '{{ trigger.entity_id }}'
-      power_sensor: '{{ trigger.entity_id | replace(''light.'', ''sensor.'') ~ ''_power''
-        }}'
+      power_sensor: '{{ trigger.entity_id | replace(''light.'', ''sensor.'') ~ ''_power'' }}'
   - delay:
       hours: 0
       minutes: 0
@@ -2630,7 +2629,8 @@
   - trigger: numeric_state
     entity_id:
     - sensor.sebastian_babyfon_babyschrei_verhaltnis
-    above: 20
+    above: 10
+    id: '10'
   conditions:
   - condition: switch.is_on
     target:
@@ -2674,7 +2674,11 @@
       target:
         area_id:
         - og_schlafzimmer
-        entity_id: light.sebastian_nachtlicht_nachtlicht
+      data: {}
+    - action: switch.turn_on
+      metadata: {}
+      target:
+        entity_id: switch.nachtlicht_nachtlicht
       data: {}
   mode: single
 - id: '1766334911697'
@@ -2691,10 +2695,8 @@
   - variables:
       val: '{{ states(trigger.entity_id) | int }}'
       is_salz: '{{ ''salz'' in trigger.entity_id }}'
-      label: '{{ ''Salz nachfüllen'' if is_salz else ''Einzelfilter '' ~ (''Tauschen''
-        if ''tauschen'' in trigger.entity_id else ''Saugen'') }}'
-      final_msg: '{{ label }} {{ "seit " ~ (val | abs) if val < 0 else "in " ~ val
-        }} Tag(en)'
+      label: '{{ ''Salz nachfüllen'' if is_salz else ''Einzelfilter '' ~ (''Tauschen'' if ''tauschen'' in trigger.entity_id else ''Saugen'') }}'
+      final_msg: '{{ label }} {{ "seit " ~ (val | abs) if val < 0 else "in " ~ val }} Tag(en)'
   - action: notify.mobile_app_pixel_8a
     metadata: {}
     data:
@@ -2706,8 +2708,7 @@
         channel: Haushalt
         clickAction: settings://notification_history
         color: white
-        notification_icon: '{{ ''mdi:shaker-outline'' if is_salz else ''mdi:filter-check-outline''
-          }}'
+        notification_icon: '{{ ''mdi:shaker-outline'' if is_salz else ''mdi:filter-check-outline'' }}'
   mode: single
 - id: '1766492341368'
   alias: Waschmaschine fertig
@@ -2780,8 +2781,7 @@
         metadata: {}
         data:
           title: Trockner
-          message: 'Trockner fertig seit: {{ as_datetime(states.switch.trockner_fertig.last_changed)
-            | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
+          message: 'Trockner fertig seit: {{ as_datetime(states.switch.trockner_fertig.last_changed) | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
           data:
             sticky: true
             tag: trockner_fertig
@@ -2803,8 +2803,7 @@
         metadata: {}
         data:
           title: Waschmaschine
-          message: 'Waschmaschine fertig seit: {{ as_datetime(states.switch.waschmaschine_fertig.last_changed)
-            | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
+          message: 'Waschmaschine fertig seit: {{ as_datetime(states.switch.waschmaschine_fertig.last_changed) | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
           data:
             sticky: true
             tag: waschmaschine_fertig
@@ -2841,8 +2840,7 @@
     metadata: {}
     data:
       title: Hohe Luftfeuchtigkeit
-      message: '{{ trigger.to_state.attributes.friendly_name }} meldet {{ trigger.to_state.attributes.current_humidity
-        }}% Feuchtigkeit.'
+      message: '{{ trigger.to_state.attributes.friendly_name }} meldet {{ trigger.to_state.attributes.current_humidity }}% Feuchtigkeit.'
       data:
         sticky: true
         tag: luftfeuchtigkeit_hoch
@@ -2925,8 +2923,7 @@
   - target:
       entity_id: input_text.notification_history
     data:
-      value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message
-        }}'
+      value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message }}'
     action: input_text.set_value
   - choose:
     - conditions:
@@ -2938,8 +2935,7 @@
           entity_id:
           - input_text.notification_history_marina
         data:
-          value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message
-            }}'
+          value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message }}'
         action: input_text.set_value
     - conditions:
       - alias: Oliver
@@ -2950,8 +2946,7 @@
           entity_id:
           - input_text.notification_history_oliver
         data:
-          value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message
-            }}'
+          value: '{{ trigger.event.data.service_data.title }} | {{trigger.event.data.service_data.message }}'
         action: input_text.set_value
 - id: '1772333810710'
   alias: Licht aus wenn Handys oben
@@ -2982,10 +2977,10 @@
     data: {}
     target:
       floor_id:
-      - og
       - eg
       - kg
       - garten
+      - og
   mode: single
 - id: '1774652177395'
   alias: Staubsauger Steuerung
@@ -3005,90 +3000,109 @@
     - thu
     - sat
     enabled: true
-  conditions:
-  - condition: state
-    entity_id: binary_sensor.roborock_qrevo_slim_dock_frischwassertank
-    state:
-    - 'off'
-    - unavailable
-  - condition: state
-    entity_id: binary_sensor.roborock_qrevo_slim_dock_schmutzwassertank
-    state:
-    - 'off'
-    - unavailable
+  conditions: []
   actions:
-  - action: select.select_option
-    metadata: {}
-    target:
-      entity_id: select.roborock_qrevo_slim_ausgewahlte_karte
-    data:
-      option: EG
-    continue_on_error: true
-  - choose:
-    - conditions:
-      - condition: time
-        weekday:
-        - mon
-        - wed
-        - fri
-      sequence:
-      - alias: Wohnzimmer & Küche
-        action: vacuum.clean_area
-        metadata: {}
-        target:
-          entity_id: vacuum.roborock_qrevo_slim
+  - if:
+    - condition: state
+      entity_id: binary_sensor.roborock_qrevo_slim_dock_frischwassertank
+      state:
+      - 'off'
+      - unavailable
+    - condition: state
+      entity_id: binary_sensor.roborock_qrevo_slim_dock_schmutzwassertank
+      state:
+      - 'off'
+      - unavailable
+    - condition: state
+      entity_id: sensor.roborock_qrevo_slim_dock_fehler
+      state:
+      - ok
+      - unavailable
+    then:
+    - action: select.select_option
+      metadata: {}
+      target:
+        entity_id: select.roborock_qrevo_slim_ausgewahlte_karte
+      data:
+        option: EG
+      continue_on_error: true
+    - choose:
+      - conditions:
+        - condition: time
+          weekday:
+          - mon
+          - wed
+          - fri
+        sequence:
+        - alias: Wohnzimmer & Küche
+          action: vacuum.clean_area
+          metadata: {}
+          target:
+            entity_id: vacuum.roborock_qrevo_slim
+          data:
+            cleaning_area_id:
+            - eg_wohnzimmer
+            - eg_kuche
+          enabled: false
+        - action: script.staubsauger_wohnzimmer_kuche
+          metadata: {}
+          data: {}
+        alias: Mo, Mi, Fr / Wohnzimmer & Küche
+      - conditions:
+        - condition: time
+          weekday:
+          - tue
+          - thu
+        sequence:
+        - alias: Flur & Bad
+          action: vacuum.clean_area
+          metadata: {}
+          target:
+            entity_id: vacuum.roborock_qrevo_slim
+          data:
+            cleaning_area_id:
+            - eg_flur
+            - eg_badezimmer
+          enabled: false
+        - action: script.staubsauger_flur_bad
+          metadata: {}
+          data: {}
+        alias: Di, Do / Flur & Bad
+      - conditions:
+        - condition: time
+          weekday:
+          - sat
+        sequence:
+        - alias: Büro
+          action: vacuum.clean_area
+          metadata: {}
+          target:
+            entity_id: vacuum.roborock_qrevo_slim
+          data:
+            cleaning_area_id:
+            - eg_buro
+          enabled: false
+        - action: script.staubsauger_buro
+          metadata: {}
+          data: {}
+        alias: Sa / Büro
+    else:
+    - action: notify.familie
+      metadata: {}
+      data:
+        title: <b>Staubsauger</b>
         data:
-          cleaning_area_id:
-          - eg_wohnzimmer
-          - eg_kuche
-        enabled: false
-      - action: script.staubsauger_wohnzimmer_kuche
-        metadata: {}
-        data: {}
-      alias: Mo, Mi, Fr / Wohnzimmer & Küche
-    - conditions:
-      - condition: time
-        weekday:
-        - tue
-        - thu
-      sequence:
-      - alias: Flur & Bad
-        action: vacuum.clean_area
-        metadata: {}
-        target:
-          entity_id: vacuum.roborock_qrevo_slim
-        data:
-          cleaning_area_id:
-          - eg_flur
-          - eg_badezimmer
-        enabled: false
-      - action: script.staubsauger_flur_bad
-        metadata: {}
-        data: {}
-      alias: Di, Do / Flur & Bad
-    - conditions:
-      - condition: time
-        weekday:
-        - sat
-      sequence:
-      - alias: Büro
-        action: vacuum.clean_area
-        metadata: {}
-        target:
-          entity_id: vacuum.roborock_qrevo_slim
-        data:
-          cleaning_area_id:
-          - eg_buro
-        enabled: false
-      - action: script.staubsauger_buro
-        metadata: {}
-        data: {}
-      alias: Sa / Büro
+          channel: Haushalt
+          sticky: true
+          tag: roborock_warning
+          group: Roborock
+          color: blue
+          notification_icon: mdi:robot-vacuum-alert
+        message: Staubsauger läuft nicht, Störung!!!
   mode: single
 - id: '1774717458421'
   alias: Rollladentaster Schlafzimmer
-  description: Rolladen in der Ankleide durch Taster in Schlafzimmer steuern und die
-    Automatik von den Räumen steuern
+  description: Rolladen in der Ankleide durch Taster in Schlafzimmer steuern und die Automatik von den Räumen steuern
   triggers:
   - trigger: event.received
     target:
@@ -3205,10 +3219,8 @@
     data:
       status: needs_action
   - variables:
-      base_name: 'Batterie leer: {{ state_attr(trigger.entity_id, ''device_name'')
-        }}'
-      match: '{{ t_list[''todo.haushalt_2''][''items''] | selectattr(''summary'',
-        ''search'', base_name) | list }}'
+      base_name: 'Batterie leer: {{ state_attr(trigger.entity_id, ''device_name'') }}'
+      match: '{{ t_list[''todo.haushalt_2''][''items''] | selectattr(''summary'', ''search'', base_name) | list }}'
   - choose:
     - conditions:
       - condition: template
@@ -3218,9 +3230,9 @@
           entity_id: todo.haushalt_2
         data:
           item: '{{ match[0].uid }}'
-          rename: "{% set parts = match[0].summary.split('(') %} {% set count = (parts[1].split('x')[0]
-            | int + 1) if parts | length > 1 else 2 %} \n{{ base_name }} ({{ count
-            }}x)\n"
+          rename: "{% set parts = match[0].summary.split('(') %} {% set count = (parts[1].split('x')[0] | int + 1) if parts | length > 1 else 2 %}\ 
+
+            {{ base_name }} ({{ count }}x)\n"
         action: todo.update_item
     default:
     - target:
@@ -3344,8 +3356,7 @@
   - trigger: state
     entity_id: timer.timer_og_bad_heizung
   actions:
-  - action: switch.turn_{{ 'on' if is_state('timer.timer_og_bad_heizung', 'active')
-      else 'off' }}
+  - action: switch.turn_{{ 'on' if is_state('timer.timer_og_bad_heizung', 'active') else 'off' }}
     target:
       entity_id: switch.elektroheizung
 - id: wasche_gerate_fertig_benachrichtigung
@@ -3379,8 +3390,7 @@
         - action: notify.familie
           data:
             title: '{{ device_name }}'
-            message: '{{ device_name }} fertig seit: {{ as_datetime(states[switch_entity].last_changed)
-              | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
+            message: '{{ device_name }} fertig seit: {{ as_datetime(states[switch_entity].last_changed) | as_local | as_timestamp | timestamp_custom(''%d.%m.%Y %H:%M'') }}'
             data:
               sticky: true
               tag: '{{ trigger.id }}_fertig'
@@ -3394,13 +3404,10 @@
           minutes: 1
       until:
       - condition: template
-        value_template: '{{ is_state(switch_entity, ''off'') or repeat.index >= 5
-          }}'
+        value_template: '{{ is_state(switch_entity, ''off'') or repeat.index >= 5 }}'
   variables:
-    device_name: '{{ ''Waschmaschine'' if trigger.id == ''waschmaschine'' else ''Trockner''
-      }}'
-    device_icon: '{{ ''mdi:washing-machine'' if trigger.id == ''waschmaschine'' else
-      ''mdi:tumble-dryer'' }}'
+    device_name: '{{ ''Waschmaschine'' if trigger.id == ''waschmaschine'' else ''Trockner'' }}'
+    device_icon: '{{ ''mdi:washing-machine'' if trigger.id == ''waschmaschine'' else ''mdi:tumble-dryer'' }}'
     switch_entity: '{{ trigger.entity_id }}'
   mode: parallel
   max: 2
@@ -3429,18 +3436,24 @@
   alias: Gasuhr Fehler Benachrichtigung
   triggers:
   - trigger: state
-    entity_id: binary_sensor.gasuhr_problem
-    to: 'on'
-    for: 00:05:00
+    entity_id:
+    - binary_sensor.heizung_gasuhr_problem
+    to:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
   conditions:
   - condition: state
-    entity_id: binary_sensor.gasuhr_problem
-    state: 'on'
+    entity_id: binary_sensor.heizung_gasuhr_problem
+    state:
+    - 'on'
   actions:
   - action: notify.mobile_app_pixel_8a
     data:
       title: Gasuhr Fehler
-      message: '{{ states(''sensor.gasuhr_error'') }}'
+      message: '{{ states(''sensor.heizung_gasuhr_error'') }}'
       data:
         sticky: true
         tag: gasuhr_fehler
@@ -3452,18 +3465,24 @@
   alias: Wasseruhr Fehler Benachrichtigung
   triggers:
   - trigger: state
-    entity_id: binary_sensor.wasseruhr_problem
-    to: 'on'
-    for: 00:05:00
+    entity_id:
+    - binary_sensor.heizung_wasseruhr_problem
+    to:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
   conditions:
   - condition: state
-    entity_id: binary_sensor.wasseruhr_problem
-    state: 'on'
+    entity_id: binary_sensor.heizung_wasseruhr_problem
+    state:
+    - 'on'
   actions:
   - action: notify.mobile_app_pixel_8a
     data:
       title: Wasseruhr Fehler
-      message: '{{ states(''sensor.wasseruhr_error'') }}'
+      message: '{{ states(''sensor.heizung_wasseruhr_error'') }}'
       data:
         sticky: true
         tag: wasseruhr_fehler
@@ -3588,45 +3607,39 @@
       topic: frigate/events
   conditions:
   - condition: template
-    value_template: "{{ trigger.payload_json.after.camera != 'babyfon'\n   and (trigger.payload_json.after.entered_zones
-      | default([], true))\n   | reject('in', trigger.payload_json.before.entered_zones
-      | default([], true))\n   | list | length > 0 }}\n"
+    value_template: "{{ trigger.payload_json.after.camera != 'babyfon'
+
+      \   and (trigger.payload_json.after.entered_zones | default([], true))
+
+      \   | reject('in', trigger.payload_json.before.entered_zones | default([], true))
+
+      \   | list | length > 0 }}\n"
     enabled: false
   - condition: template
-    value_template: '{{ trigger.payload_json.after.camera != ''babyfon'' and trigger.payload_json.type
-      == ''new''}}
+    value_template: '{{ trigger.payload_json.after.camera != ''babyfon'' and trigger.payload_json.type == ''new''}}
 
       '
   - condition: template
-    value_template: '{{not (trigger.payload_json.after.camera == "hintertuer" and
-      trigger.payload_json.after.label == "car")}}'
+    value_template: '{{not (trigger.payload_json.after.camera == "hintertuer" and trigger.payload_json.after.label == "car")}}'
     enabled: true
   actions:
   - action: notify.mobile_app_pixel_8a
     data:
-      title: "\U0001F4F9 {{ trigger.payload_json.after.label | capitalize }} - {{
-        trigger.payload_json.after.camera | capitalize}}"
-      message: 'Zone: {{ trigger.payload_json.after.entered_zones| map(''capitalize'')
-        | join('', '') }}'
+      title: "📹 {{ trigger.payload_json.after.label | capitalize }} - {{ trigger.payload_json.after.camera | capitalize}}"
+      message: 'Zone: {{ trigger.payload_json.after.entered_zones| map(''capitalize'') | join('', '') }}'
       data:
-        image: https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id
-          }}/thumbnail.jpg
-        clickAction: https://hassio.suedholt.synology.me/api/frigate/notifications/{{
-          trigger.payload_json.after.id }}/clip.mp4
+        image: https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id }}/thumbnail.jpg
+        clickAction: https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id }}/clip.mp4
     continue_on_error: true
   - action: telegram_bot.send_photo
     data:
       entity_id:
       - notify.telegram_bot_2058163316_155848237
-      url: https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id
-        }}/thumbnail.jpg
-      caption: "*\U0001F4F9 {{ trigger.payload_json.after.label | capitalize }} –
-        {{ trigger.payload_json.after.camera | capitalize }}* Zone: {{ trigger.payload_json.after.entered_zones
-        | map('capitalize') | join(', ') }}"
+      url: https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id }}/thumbnail.jpg
+      caption: "*📹 {{ trigger.payload_json.after.label | capitalize }} – {{ trigger.payload_json.after.camera | capitalize }}* Zone: {{ trigger.payload_json.after.entered_zones | map('capitalize') | join(', ') }}"
       inline_keyboard:
-      - - - "\U0001F3AC Clip ansehen"
-          - https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id
-            }}/clip.mp4
+      - - - "🎬 Clip ansehen"
+          - https://hassio.suedholt.synology.me/api/frigate/notifications/{{ trigger.payload_json.after.id }}/clip.mp4
       disable_notification: true
     continue_on_error: true
     enabled: false
@@ -4186,13 +4199,13 @@
     - action: switch.turn_on
       metadata: {}
       target:
-        entity_id: switch.nachtlicht_nachtlicht
+        entity_id: switch.sebastian_nachtlicht_nachtlicht
       data: {}
     else:
     - action: switch.turn_off
       metadata: {}
       target:
-        entity_id: switch.nachtlicht_nachtlicht
+        entity_id: switch.sebastian_nachtlicht_nachtlicht
       data: {}
     - action: input_boolean.turn_off
       metadata: {}
@@ -4226,31 +4239,43 @@
     ziel_area: '{{ area_id(trigger.entity_id) }}'
 - id: '1787288639387'
   alias: Wartung · Tagesreport dauerhaft offline
-  description: Meldet einmal täglich alle steuerbaren Entitäten, die seit über 24
-    h unavailable sind. Bekannte Dauerbaustellen (ebusd, padspan) sind gefiltert.
+  description: Meldet einmal täglich alle steuerbaren Entitäten, die seit über 24 h unavailable sind. Bekannte Dauerbaustellen (ebusd, padspan) sind gefiltert.
   triggers:
   - trigger: time
     at: '18:30:00'
   conditions:
   - alias: HA läuft lange genug für eine sinnvolle 24h-Aussage
     condition: template
-    value_template: '{{ (now() - states.sun.sun.last_changed).total_seconds() < 86400
-      }}'
+    value_template: '{{ (now() - states.sun.sun.last_changed).total_seconds() < 86400 }}'
   actions:
   - variables:
-      offline: "{% set ns = namespace(l=[]) %} {% for s in states %}\n  {% if s.state
-        == 'unavailable'\n        and s.domain in ['light','switch','cover','climate','lock',\n
-        \                        'fan','vacuum','camera','media_player','binary_sensor']\n
-        \       and 'ebusd' not in s.entity_id\n        and 'padspan' not in s.entity_id\n
-        \       and (now() - s.last_changed).total_seconds() > 86400 %}\n    {% set
-        ns.l = ns.l + [s.name] %}\n  {% endif %}\n{% endfor %} {{ ns.l | sort }}"
+      offline: "{% set ns = namespace(l=[]) %} {% for s in states %}
+
+        \  {% if s.state == 'unavailable'
+
+        \        and s.domain in ['light','switch','cover','climate','lock',
+
+        \                         'fan','vacuum','camera','media_player','binary_sensor']
+
+        \        and 'ebusd' not in s.entity_id
+
+        \        and 'padspan' not in s.entity_id
+
+        \        and (now() - s.last_changed).total_seconds() > 86400 %}
+
+        \    {% set ns.l = ns.l + [s.name] %}
+
+        \  {% endif %}
+
+        {% endfor %} {{ ns.l | sort }}"
   - condition: template
     value_template: '{{ offline | count > 0 }}'
   - action: notify.mobile_app_pixel_8a
     data:
-      title: "\U0001F527 {{ offline | count }} Entitäten offline (>24 h)"
-      message: "{{ offline[:12] | join(' · ') }}{{ ' …und %d weitere' | format(offline
-        | count - 12)\n   if offline | count > 12 else '' }}"
+      title: "🔧 {{ offline | count }} Entitäten offline (>24 h)"
+      message: "{{ offline[:12] | join(' · ') }}{{ ' …und %d weitere' | format(offline | count - 12)
+
+        \   if offline | count > 12 else '' }}"
       data:
         tag: offline-report
         group: wartung
@@ -4259,8 +4284,26 @@
     target:
       entity_id: todo.haushalt_2
     data:
-      item: '{{ offline | count }} HA-Entitäten offline ({{ now().strftime(''%d.%m.'')
-        }})'
+      item: '{{ offline | count }} HA-Entitäten offline ({{ now().strftime(''%d.%m.'') }})'
       description: '{{ offline | join('', '') }}'
     continue_on_error: true
+  mode: single
+- id: '1788616901059'
+  alias: Countdown Erinnerung
+  description: Meldet, wenn noch 30, 7 oder 1 Tag(e) bis zum Countdown-Zieldatum (input_datetime.countdown_zieldatum) verbleiben.
+  triggers:
+  - entity_id: sensor.countdown_tage
+    to:
+    - '30'
+    - '7'
+    - '1'
+    trigger: state
+  actions:
+  - action: notify.mobile_app_pixel_8a
+    data:
+      data:
+        group: countdown
+        tag: countdown_{{ now().timestamp() | int }}
+      message: Noch {{ states('sensor.countdown_tage') }} Tag(e) bis {{ states('input_datetime.countdown_zieldatum') }}.
+      title: Countdown
   mode: single

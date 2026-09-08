@@ -1,16 +1,16 @@
 - platform: time_date
   display_options:
-    - "time"
-    - "date"
-    - "date_time"
-    - "date_time_utc"
-    - "date_time_iso"
-    - "time_date"
-    - "time_utc"
+  - "time"
+  - "date"
+  - "date_time"
+  - "date_time_utc"
+  - "date_time_iso"
+  - "time_date"
+  - "time_utc"
 
 - platform: history_stats
   name: "Babygeschrei Auslösungen (2 min)"
-  entity_id: binary_sensor.deine_reolink_babygeschrei_entity  # <-- Hier deinen Sensor eintragen
+  entity_id: binary_sensor.deine_reolink_babygeschrei_entity
   state: "on"
   type: count
   start: "{{ now() - timedelta(minutes=2) }}"

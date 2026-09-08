@@ -14,9 +14,9 @@ bucket: Hassio
 tags:
   source: HA
 tags_attributes:
-  - friendly_name  
-  - device_class
-  - unit_of_measurement
-  - area
-  - label
+- friendly_name
+- device_class
+- unit_of_measurement
+- area
+- label
 default_measurement: units

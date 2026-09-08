@@ -1,4 +1,3 @@
-
 shellyplus1pm_7c87ce64cda8:
   name: ShellyPlus1PM-7C87CE64CDA8
   mac: BLE_7C:87:CE:64:CD:AA
@@ -61,11 +60,10 @@ shellyplus1pm_7c87ce6538d0:
   icon:
   picture:
   track: true
-  
+
 pixel_8a_Oliver_BLE:
   name: Pixel-8a-Oliver
   mac: BLE_E8:D5:2B:19:A9:0F
   icon:
   picture:
   track: true
-

@@ -662,12 +662,10 @@ weather_and_comfort_report:
 
         - Innen Temperatur: {{ states(''sensor.durchschnittstemperatur_haus'') }}°C
 
-        - Innen Luftfeuchtigkeit: {{ states(''sensor.durchschnittsluftfeuchtigkeit_haus'')
-        }}%
+        - Innen Luftfeuchtigkeit: {{ states(''sensor.durchschnittsluftfeuchtigkeit_haus'') }}%
 
 
-        Erstellen Sie eine lustige Wetterbeschreibung und bewerten Sie den Komfort
-        im Innenbereich.
+        Erstellen Sie eine lustige Wetterbeschreibung und bewerten Sie den Komfort im Innenbereich.
 
         '
       structure:
@@ -677,18 +675,22 @@ weather_and_comfort_report:
           selector:
             text:
         indoor_comfort:
-          description: Einschätzung, wie komfortabel es drinnen im Vergleich zu draußen
-            ist
+          description: Einschätzung, wie komfortabel es drinnen im Vergleich zu draußen ist
           required: true
           selector:
             text:
     response_variable: comfort_report
   - action: notify.persistent_notification
     data:
-      title: "\U0001F3E0 Home climate report"
-      message: "\U0001F324️ **Wetter draußen:**\n{{ comfort_report.data.weather_description
-        }}\n\n\U0001F6CB️ **Komfort im Innenbereich:**\n{{ comfort_report.data.indoor_comfort
-        }}\n"
+      title: "🏠 Home climate report"
+      message: "🌤️ **Wetter draußen:**
+
+        {{ comfort_report.data.weather_description }}
+
+
+        🛋️ **Komfort im Innenbereich:**
+
+        {{ comfort_report.data.indoor_comfort }}\n"
   description: ''
 comfoclime_modus_setzen:
   alias: ComfoClime Modus setzen

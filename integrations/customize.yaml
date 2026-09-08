@@ -43,9 +43,7 @@ sensor.smartmeter_power_2:
 sensor.beschattung_status:
   templates:
     icon: >
-      if (state == 'beschatten') return 'mdi:weather-sunny';
-      if (state == 'neutral') return 'mdi:weather-partly-cloudy';
-      return 'mdi:weather-cloudy';
+      if (state == 'beschatten') return 'mdi:weather-sunny'; if (state == 'neutral') return 'mdi:weather-partly-cloudy'; return 'mdi:weather-cloudy';
 
 input_boolean.tag_nacht_modus:
   templates:
@@ -142,13 +140,6 @@ switch.3d_drucker:
   templates:
     icon: >
       if (state == 'on') return 'mdi:printer-3d-nozzle'; else return 'mdi:printer-3d-nozzle-off';
-
-switch.regen_erkannt:
-  templates:
-    icon: >
-      if (state == 'on') return 'mdi:weather-pouring'; else return 'mdi:weather-sunny';
-    icon_color: >
-      if (state == 'on') return 'blue'; else return 'yellow';
 
 select.comfoairq_bypass_mode:
   templates:
@@ -287,139 +278,127 @@ binary_sensor.esszimmer_fensterkontakt:
 
 # Cover to Fensterkontakt
 cover.esszimmer_rollladen_1:
-  window: ["binary_sensor.esszimmer_turkontakt"]
-  taster_hoch: ["event.em_1_esszimmer_rollladen_hoch"]
-  taster_runter: ["event.em_1_esszimmer_rollladen_runter"]
+  window: [ "binary_sensor.esszimmer_turkontakt" ]
+  taster_hoch: [ "event.em_1_esszimmer_rollladen_hoch" ]
+  taster_runter: [ "event.em_1_esszimmer_rollladen_runter" ]
   direction: "suden"
   room_switch: "input_select.wohnzimmer_rollladen_automatik"
 
 cover.sebastian_rollladen_2:
-  window: ["binary_sensor.sebastian_fensterkontakt_2"]
-  taster_hoch: ["event.em_2_sebastian_rolllade_hoch"]
-  taster_runter: ["event.em_2_sebastian_rolllade_runter"]
+  window: [ "binary_sensor.sebastian_fensterkontakt_2" ]
+  taster_hoch: [ "event.em_2_sebastian_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_sebastian_rolllade_runter" ]
   direction: "norden"
   room_switch: "input_select.sebastian_rollladen_automatik"
 
 cover.bad_og_rollladen_2:
-  window: ["binary_sensor.bad_og_fensterkontakt_2"]
-  taster_hoch: ["event.em_2_bad_og_rolllade_hoch"]
-  taster_runter: ["event.em_2_bad_og_rolllade_runter"]
+  window: [ "binary_sensor.bad_og_fensterkontakt_2" ]
+  taster_hoch: [ "event.em_2_bad_og_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_bad_og_rolllade_runter" ]
   direction: "osten"
   room_switch: "input_select.bad_og_rollladen_automatik"
 
 cover.schlafzimmer_rollladen:
-  window:
-    [
-      "binary_sensor.schlafzimmer_turkontakt_1",
-      "binary_sensor.schlafzimmer_turkontakt_2",
-    ]
-  taster_hoch: ["event.em_2_schlafzimmer_rolllade_hoch"]
-  taster_runter: ["event.em_2_schlafzimmer_rolllade_runter"]
+  window: [ "binary_sensor.schlafzimmer_turkontakt_1", "binary_sensor.schlafzimmer_turkontakt_2" ]
+  taster_hoch: [ "event.em_2_schlafzimmer_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_schlafzimmer_rolllade_runter" ]
   direction: "suden"
   room_switch: "input_select.schlafzimmer_rollladen_automatik"
 
 cover.kind1_rollladen_2:
-  window: ["binary_sensor.kind1_fensterkontakt_2"]
-  taster_hoch: ["event.em_2_kind1_rolllade_hoch"]
-  taster_runter: ["event.em_2_kind1_rolllade_runter"]
+  window: [ "binary_sensor.kind1_fensterkontakt_2" ]
+  taster_hoch: [ "event.em_2_kind1_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_kind1_rolllade_runter" ]
   direction: "westen"
   room_switch: "input_select.kind1_rollladen_automatik"
 
 cover.bad_eg_rollladen:
-  window: ["binary_sensor.bad_eg_fensterkontakt"]
-  taster_hoch: [""]
-  taster_runter: [""]
+  window: [ "binary_sensor.bad_eg_fensterkontakt" ]
+  taster_hoch: [ "" ]
+  taster_runter: [ "" ]
   direction: "osten"
   room_switch: "input_select.bad_eg_rollladen_automatik"
 
 cover.ankleide_rollladen_1:
-  window: ["binary_sensor.ankleide_fensterkontakt_1"]
-  taster_hoch: ["event.em_2_ankleide_rolllade_hoch"]
-  taster_runter: ["event.em_2_ankleider_rolllade_runter"]
+  window: [ "binary_sensor.ankleide_fensterkontakt_1" ]
+  taster_hoch: [ "event.em_2_ankleide_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_ankleider_rolllade_runter" ]
   direction: "osten"
   room_switch: "input_select.schlafzimmer_rollladen_automatik"
 
 cover.bad_og_rollladen_1:
-  window: ["binary_sensor.bad_og_fensterkontakt_1"]
-  taster_hoch: ["event.em_2_bad_og_rolllade_hoch"]
-  taster_runter: ["event.em_2_bad_og_rolllade_runter"]
+  window: [ "binary_sensor.bad_og_fensterkontakt_1" ]
+  taster_hoch: [ "event.em_2_bad_og_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_bad_og_rolllade_runter" ]
   direction: "norden"
   room_switch: "input_select.bad_og_rollladen_automatik"
 
 cover.buro_rollladen_2:
-  window: ["binary_sensor.buro_turkontakt"]
-  taster_hoch: ["event.em_1_buro_rolllade_hoch"]
-  taster_runter: ["event.em_1_buro_rolllade_runter"]
+  window: [ "binary_sensor.buro_turkontakt" ]
+  taster_hoch: [ "event.em_1_buro_rolllade_hoch" ]
+  taster_runter: [ "event.em_1_buro_rolllade_runter" ]
   direction: "suden"
   room_switch: "input_select.buro_rollladen_automatik"
 
 cover.kuche_rollladen_2:
-  window: ["binary_sensor.kuche_fensterkontakt_2"]
-  taster_hoch: ["event.em_1_kuche_rollladen_hoch_2"]
-  taster_runter: ["event.em_1_kuche_rollladen_runter_2"]
+  window: [ "binary_sensor.kuche_fensterkontakt_2" ]
+  taster_hoch: [ "event.em_1_kuche_rollladen_hoch_2" ]
+  taster_runter: [ "event.em_1_kuche_rollladen_runter_2" ]
   direction: "norden"
   room_switch: "input_select.kuche_rollladen_automatik"
 
 cover.sebastian_rollladen_1:
-  window: ["binary_sensor.sebastian_fensterkontakt_1"]
-  taster_hoch: ["event.em_2_sebastian_rolllade_hoch"]
-  taster_runter: ["event.em_2_sebastian_rolllade_runter"]
+  window: [ "binary_sensor.sebastian_fensterkontakt_1" ]
+  taster_hoch: [ "event.em_2_sebastian_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_sebastian_rolllade_runter" ]
   direction: "westen"
   room_switch: "input_select.sebastian_rollladen_automatik"
 
 cover.wohnzimmer_rollladen:
-  window: ["binary_sensor.wohnzimmer_schiebetur"]
-  taster_hoch:
-    [
-      "event.em_1_wohnzimmer_rolllade_hoch",
-      "event.em_1_wohnzimmer_rolllade_hoch_2",
-    ]
-  taster_runter:
-    [
-      "event.em_1_wohnzimmer_rolllade_runter",
-      "event.em_1_wohnzimmer_rolllade_runter_2",
-    ]
+  window: [ "binary_sensor.wohnzimmer_schiebetur" ]
+  taster_hoch: [ "event.em_1_wohnzimmer_rolllade_hoch", "event.em_1_wohnzimmer_rolllade_hoch_2" ]
+  taster_runter: [ "event.em_1_wohnzimmer_rolllade_runter", "event.em_1_wohnzimmer_rolllade_runter_2" ]
   direction: "suden"
   room_switch: "input_select.wohnzimmer_rollladen_automatik"
 
 cover.buro_rollladen_1:
-  window: ["binary_sensor.buro_fensterkontakt"]
-  taster_hoch: ["event.em_1_buro_rolllade_hoch"]
-  taster_runter: ["event.em_1_buro_rolllade_runter"]
+  window: [ "binary_sensor.buro_fensterkontakt" ]
+  taster_hoch: [ "event.em_1_buro_rolllade_hoch" ]
+  taster_runter: [ "event.em_1_buro_rolllade_runter" ]
   direction: "osten"
   room_switch: "input_select.buro_rollladen_automatik"
 
 cover.kind1_rollladen_1:
-  window: ["binary_sensor.kind1_fensterkontakt_1"]
-  taster_hoch: ["event.em_2_kind1_rolllade_hoch"]
-  taster_runter: ["event.em_2_kind1_rolllade_runter"]
+  window: [ "binary_sensor.kind1_fensterkontakt_1" ]
+  taster_hoch: [ "event.em_2_kind1_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_kind1_rolllade_runter" ]
   direction: "suden"
   room_switch: "input_select.kind1_rollladen_automatik"
 
 cover.ankleide_rollladen_2:
-  window: ["binary_sensor.ankleide_fensterkontakt_2"]
-  taster_hoch: ["event.em_2_ankleide_rolllade_hoch"]
-  taster_runter: ["event.em_2_ankleider_rolllade_runter"]
+  window: [ "binary_sensor.ankleide_fensterkontakt_2" ]
+  taster_hoch: [ "event.em_2_ankleide_rolllade_hoch" ]
+  taster_runter: [ "event.em_2_ankleider_rolllade_runter" ]
   direction: "suden"
   room_switch: "input_select.schlafzimmer_rollladen_automatik"
 
 cover.speisekammer_rollladen:
-  window: ["binary_sensor.speisekammer_fensterkontakt"]
-  taster_hoch: ["event.em_1_kuche_rollladen_hoch_2"]
-  taster_runter: ["event.em_1_kuche_rollladen_runter_2"]
+  window: [ "binary_sensor.speisekammer_fensterkontakt" ]
+  taster_hoch: [ "event.em_1_kuche_rollladen_hoch_2" ]
+  taster_runter: [ "event.em_1_kuche_rollladen_runter_2" ]
   direction: "norden"
   room_switch: "input_select.kuche_rollladen_automatik"
 
 cover.kuche_rollladen_1:
-  window: ["binary_sensor.kuche_fensterkontakt_1"]
-  taster_hoch: ["event.em_1_kuche_rollladen_hoch_2"]
-  taster_runter: ["event.em_1_kuche_rollladen_runter_2"]
+  window: [ "binary_sensor.kuche_fensterkontakt_1" ]
+  taster_hoch: [ "event.em_1_kuche_rollladen_hoch_2" ]
+  taster_runter: [ "event.em_1_kuche_rollladen_runter_2" ]
   direction: "westen"
   room_switch: "input_select.kuche_rollladen_automatik"
 
 cover.esszimmer_rollladen_2:
-  window: ["binary_sensor.esszimmer_fensterkontakt"]
-  taster_hoch: ["event.em_1_esszimmer_rollladen_hoch"]
-  taster_runter: ["event.em_1_esszimmer_rollladen_runter"]
+  window: [ "binary_sensor.esszimmer_fensterkontakt" ]
+  taster_hoch: [ "event.em_1_esszimmer_rollladen_hoch" ]
+  taster_runter: [ "event.em_1_esszimmer_rollladen_runter" ]
   direction: "westen"
   room_switch: "input_select.wohnzimmer_rollladen_automatik"

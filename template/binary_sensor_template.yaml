@@ -1,120 +1,112 @@
 binary_sensor:
-  - name: "Tür offen"
-    unique_id: "tur_offen"
-    state: >-
-      {{label_entities('turkontakt') | select('is_state', 'on') | list | count > 0 }}
-    attributes:
-      list: >-
-        {{label_entities('turkontakt') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
-      count: >-
-        {{label_entities('turkontakt') | select('is_state', 'on') | list | count }}
+- name: "Tür offen"
+  unique_id: "tur_offen"
+  state: >-
+    {{label_entities('turkontakt') | select('is_state', 'on') | list | count > 0 }}
+  attributes:
+    list: >-
+      {{label_entities('turkontakt') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
+    count: >-
+      {{label_entities('turkontakt') | select('is_state', 'on') | list | count }}
 
-  - name: "Fenster offen"
-    unique_id: "fenster_offen"
-    state: >-
-      {{label_entities('fensterkontakt') | select('is_state', 'on') | list | count > 0 }}
-    attributes:
-      list: >-
-        {{label_entities('fensterkontakt') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
-      count: >-
-        {{label_entities('fensterkontakt') | select('is_state', 'on') | list | count }}
+- name: "Fenster offen"
+  unique_id: "fenster_offen"
+  state: >-
+    {{label_entities('fensterkontakt') | select('is_state', 'on') | list | count > 0 }}
+  attributes:
+    list: >-
+      {{label_entities('fensterkontakt') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
+    count: >-
+      {{label_entities('fensterkontakt') | select('is_state', 'on') | list | count }}
 
-  - name: "Leere Batterien"
-    unique_id: "leere_batterien"
-    state: >-
-      {{label_entities('Leere Batterie') | select('is_state', 'on') | list | count > 0 }}
-    attributes:
-      list: >-
-        {{label_entities('Leere Batterie') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
-      count: >-
-        {{label_entities('Leere Batterie') | select('is_state', 'on') | list | count }}
+- name: "Leere Batterien"
+  unique_id: "leere_batterien"
+  state: >-
+    {{label_entities('Leere Batterie') | select('is_state', 'on') | list | count > 0 }}
+  attributes:
+    list: >-
+      {{label_entities('Leere Batterie') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
+    count: >-
+      {{label_entities('Leere Batterie') | select('is_state', 'on') | list | count }}
 
-  - name: "Steckdosen an"
-    unique_id: "steckdosen_an"
-    state: >-
-      {{label_entities('Steckdose') | select('is_state', 'on') | list | count > 0 }}
-    attributes:
-      list: >-
-        {{label_entities('Steckdose') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
-      count: >-
-        {{label_entities('Steckdose') | select('is_state', 'on') | list | count }}
+- name: "Steckdosen an"
+  unique_id: "steckdosen_an"
+  state: >-
+    {{label_entities('Steckdose') | select('is_state', 'on') | list | count > 0 }}
+  attributes:
+    list: >-
+      {{label_entities('Steckdose') | select('is_state', 'on') | sort(attribute='friendly_name') | map('state_attr', 'friendly_name') | sort | list }}
+    count: >-
+      {{label_entities('Steckdose') | select('is_state', 'on') | list | count }}
 
-  - name: "Licht an"
-    unique_id: "licht_an"
-    state: >-
-      {{label_entities('Licht') | select('is_state', 'on') | list | count > 0 }}
-    attributes:
-      list: >-
-        {{label_entities('Licht') | select('is_state', 'on') | map('state_attr', 'friendly_name') | sort | list }}
-      count: >-
-        {{label_entities('Licht') | select('is_state', 'on') | list | count }}
+- name: "Licht an"
+  unique_id: "licht_an"
+  state: >-
+    {{label_entities('Licht') | select('is_state', 'on') | list | count > 0 }}
+  attributes:
+    list: >-
+      {{label_entities('Licht') | select('is_state', 'on') | map('state_attr', 'friendly_name') | sort | list }}
+    count: >-
+      {{label_entities('Licht') | select('is_state', 'on') | list | count }}
 
-  - name: "Rasenmäher Heute Mähen"
-    unique_id: rasenmaher_heute_mahen
-    device_class: running
-    state: >
-      {% set wachstum = states('sensor.rasenmaher_mahzyklus') %}
-      {{ 
-        wachstum == 'stark' or
-        (wachstum == 'moderat' and now().isoweekday() in [1, 3, 5, 7]) or
-        (wachstum == 'schwach' and now().isoweekday() == 1)
-      }}
-    icon: >
-      {% if is_state('binary_sensor.rasenmaher_heute_mahen', 'on') %}
-        mdi:robot-mower
-      {% else %}
-        mdi:robot-mower-outline
-      {% endif %}
+- name: "Rasenmäher Heute Mähen"
+  # device_id: "503f543df1ba7e4305876d04e377cd66"
+  unique_id: rasenmaher_heute_mahen
+  device_class: running
+  state: >
+    {% set wachstum = states('sensor.rasenmaher_mahzyklus') %} {{ 
+      wachstum == 'stark' or
+      (wachstum == 'moderat' and now().isoweekday() in [1, 3, 5, 7]) or
+      (wachstum == 'schwach' and now().isoweekday() == 1)
+    }}
+  icon: >
+    {% if is_state('binary_sensor.rasenmaher_heute_mahen', 'on') %}
+      mdi:robot-mower
+    {% else %}
+      mdi:robot-mower-outline
+    {% endif %}
 
-  - name: "Wetterwarnungen Aktiv"
-    unique_id: wetterwarnungen_aktiv
-    state: >
-      {{ label_entities("Warnung") 
-          | map('states') 
-          | reject('in', ['off', 'unknown', 'unavailable', '0']) 
-          | list | count > 0 
-      }}
-  - name: "Beschattung Hysterese"
-    unique_id: beschattung_hysterese_dynamic
-    state: >
-      {% set elev = states('sensor.sun_solar_elevation') | float(0) %}
-      {% set lux  = states('sensor.helligkeit') | float(0) %}
+- name: "Wetterwarnungen Aktiv"
+  unique_id: wetterwarnungen_aktiv
+  state: >
+    {{ label_entities("Warnung") 
+        | map('states') 
+        | reject('in', ['off', 'unknown', 'unavailable', '0']) 
+        | list | count > 0 
+    }}
+- name: "Beschattung Hysterese"
+  unique_id: beschattung_hysterese_dynamic
+  state: >
+    {% set elev = states('sensor.sun_solar_elevation') | float(0) %} {% set lux  = states('sensor.helligkeit') | float(0) %}
 
-      {# Dynamische Schwelle: linear interpoliert zwischen Elevation 0° und 45° #}
-      {% set t_min = 2000  %}  {# Schwelle bei Elevation ≤ 0° #}
-      {% set t_max = 80000 %}  {# Schwelle bei Elevation ≥ 45° #}
-      {% set ratio = [([elev, 0] | max) / 45, 1.0] | min %}
-      {% set threshold = t_min + ratio * (t_max - t_min) %}
-      {# Hysterese: 20% unterhalb der Einschaltschwelle #}
-      {% set hysteresis = threshold * 0.20 %}
+    {# Dynamische Schwelle: linear interpoliert zwischen Elevation 0° und 45° #} {% set t_min = 2000  %}  {# Schwelle bei Elevation ≤ 0° #} {% set t_max = 80000 %}  {# Schwelle bei Elevation ≥ 45° #} {% set ratio = [([elev, 0] | max) / 45, 1.0] | min %} {% set threshold = t_min + ratio * (t_max - t_min) %} {# Hysterese: 20% unterhalb der Einschaltschwelle #} {% set hysteresis = threshold * 0.20 %}
 
-      {% if is_state('binary_sensor.beschattung_hysterese_dynamic', 'on') %}
-        {{ lux > (threshold - hysteresis) }}
-      {% else %}
-        {{ lux > threshold }}
-      {% endif %}
-    delay_on: "00:02:00"
-    delay_off: "00:04:00"
+    {% if is_state('binary_sensor.beschattung_hysterese_dynamic', 'on') %}
+      {{ lux > (threshold - hysteresis) }}
+    {% else %}
+      {{ lux > threshold }}
+    {% endif %}
+  delay_on: "00:02:00"
+  delay_off: "00:04:00"
 
+# - name: "Einspeisung für ComfoClime"
+#   unique_id: einspeisung_fur_comfoclime
+#   device_class: power
+#   state: >
+#     {{ states('sensor.smartmeter_power') | float < -350 }}
+#   delay_on: "00:00:05"
+#   delay_off: "00:10:00"
 
-  # - name: "Einspeisung für ComfoClime"
-  #   unique_id: einspeisung_fur_comfoclime
-  #   device_class: power
-  #   state: >
-  #     {{ states('sensor.smartmeter_power') | float < -350 }}
-  #   delay_on: "00:00:05"
-  #   delay_off: "00:10:00"
-
-  # - name: "Einspeisung für Heizung"
-  #   unique_id: einspeisung_fur_heizung
-  #   state: >
-  #     {% set power = states('sensor.smartmeter_power') | float %}
-  #     {% if power < -500 %}
-  #       on
-  #     {% elif power > 250 %}
-  #       off
-  #     {% else %}
-  #       {{ states('binary_sensor.einspeisung_fur_heizung') }}
-  #     {% endif %}
-  #   delay_on: "00:00:05"
-  #   delay_off: "00:01:00"
+# - name: "Einspeisung für Heizung"
+#   unique_id: einspeisung_fur_heizung
+#   state: >
+#     {% set power = states('sensor.smartmeter_power') | float %}
+#     {% if power < -500 %}
+#       on
+#     {% elif power > 250 %}
+#       off
+#     {% else %}
+#       {{ states('binary_sensor.einspeisung_fur_heizung') }}
+#     {% endif %}
+#   delay_on: "00:00:05"
+#   delay_off: "00:01:00"
