@@ -48,10 +48,9 @@ jobs:
           sudo mkdir -p /github/workspace/tmp
           #sudo touch fullchain.pem
           #sudo touch privkey.pem
-          curl -s https://pypi.org/pypi/homeassistant/json | python3 -c "import json,sys; print(json.load(sys.stdin)['info']['version'])" > .HA_VERSION
       - name: Install Home Assistant
         run: |
-          pip3 install homeassistant==$(cat .HA_VERSION)
+          pip3 install homeassistant
           pip3 install colorlog
       - name: Check config
         run: hass -c . --script check_config --info all --system
