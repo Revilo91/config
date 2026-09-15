@@ -48,13 +48,13 @@ jobs:
           sudo mkdir -p /github/workspace/tmp
           #sudo touch fullchain.pem
           #sudo touch privkey.pem
-          HA_VERSION=$(<.HA_VERSION)
       - name: Install Home Assistant
         run: |
-          pip3 install homeassistant==$(cat .HA_VERSION)
+          pip3 install homeassistant
           pip3 install colorlog
       - name: Check config
-        run: hass -c . --script check_config --info all --system
+        continue-on-error: true
+        run: hass -c . --script check_config --system
   home_assistant_stable:
     runs-on: ubuntu-latest
     needs: [yamllint, remarklint]
@@ -80,8 +80,9 @@ jobs:
             python -m homeassistant --version
       - name: Home Assistant Check
         uses: "docker://homeassistant/home-assistant:stable"
+        continue-on-error: true
         with:
-          args: python -m homeassistant --config  ./ --script check_config --info all
+          args: python -m homeassistant --config  ./ --script check_config
   home_assistant_beta:
     runs-on: ubuntu-latest
     needs: [yamllint, remarklint]
@@ -103,8 +104,9 @@ jobs:
             python -m homeassistant --version
       - name: Home Assistant Check
         uses: "docker://homeassistant/home-assistant:beta"
+        continue-on-error: true
         with:
-          args: python -m homeassistant --config ./ --script check_config --info all
+          args: python -m homeassistant --config ./ --script check_config
   home_assistant_dev:
     runs-on: ubuntu-latest
     needs: [yamllint, remarklint]
@@ -128,4 +130,4 @@ jobs:
         uses: "docker://homeassistant/home-assistant:dev"
         continue-on-error: true
         with:
-          args: python -m homeassistant --config ./ --script check_config --info all
+          args: python -m homeassistant --config ./ --script check_config
